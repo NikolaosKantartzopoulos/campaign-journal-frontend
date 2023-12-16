@@ -1,0 +1,15 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model sentients {
+  id        Int       @id @default(autoincrement())
+  firstName String    @db.TinyText
+  lastName  String?   @db.TinyText
+  birthDate DateTime? @db.Date
+}

@@ -1,31 +1,35 @@
 {
-  "name": "campaign-journal",
-  "version": "0.1.0",
-  "private": true,
-  "scripts": {
-    "predev": "cd ../campaign-journal-backend/ && npm run dbu",
-    "dev": "next dev",
-    "build": "next build",
-    "start": "next start",
-    "lint": "next lint",
-    "tsc": "tsc"
-  },
-  "dependencies": {
-    "@emotion/react": "^11.11.1",
-    "@emotion/styled": "^11.11.0",
-    "@mui/material": "^5.14.19",
-    "axios": "^1.6.2",
-    "mysql2": "^3.6.5",
-    "next": "14.0.3",
-    "react": "^18",
-    "react-dom": "^18"
-  },
-  "devDependencies": {
-    "@types/node": "^20",
-    "@types/react": "^18",
-    "@types/react-dom": "^18",
-    "eslint": "^8",
-    "eslint-config-next": "14.0.3",
-    "typescript": "^5"
-  }
+	"name": "campaign-journal",
+	"version": "0.1.0",
+	"private": true,
+	"scripts": {
+		"predev": "cd ../campaign-journal-backend/ && npm run dbu",
+		"dev": "next dev",
+		"build": "next build",
+		"start": "next start",
+		"lint": "next lint",
+		"tsc": "tsc",
+		"build:cp": "npm run build && sudo cp -r .next /var/www/dnd.rtlan.gr/ && sudo cp package.json /var/www/dnd.rtlan.gr/ && cd /var/www/dnd.rtlan.gr && sudo npm install --production && sudo pm2 start npm --name 'dnd-server' -- start -- --port 3500"
+	},
+	"dependencies": {
+		"@emotion/react": "^11.11.1",
+		"@emotion/styled": "^11.11.0",
+		"@mui/material": "^5.14.19",
+		"@prisma/client": "^5.7.0",
+		"axios": "^1.6.2",
+		"dotenv": "^16.3.1",
+		"mysql2": "^3.6.5",
+		"next": "14.0.3",
+		"prisma": "^5.7.0",
+		"react": "^18",
+		"react-dom": "^18"
+	},
+	"devDependencies": {
+		"@types/node": "^20",
+		"@types/react": "^18",
+		"@types/react-dom": "^18",
+		"eslint": "^8",
+		"eslint-config-next": "14.0.3",
+		"typescript": "^5"
+	}
 }
