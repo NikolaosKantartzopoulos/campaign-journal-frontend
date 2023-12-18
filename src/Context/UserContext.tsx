@@ -18,13 +18,9 @@ export interface UserContext {
 	showUserControlScreen: boolean;
 	setShowUserControlScreen: Dispatch<SetStateAction<boolean>>;
 	logoutUser: () => void;
-	createUser: (userName: string, userEmail: string) => Promise<void>;
-	loginUser: (userName: string, userEmail: string) => Promise<void>;
-	editUser: (
-		userId: number,
-		userName: string,
-		userEmail: string
-	) => Promise<void>;
+	createUser: (userName: string, userPassword: string) => Promise<void>;
+	loginUser: (userName: string, userPassword: string) => Promise<void>;
+	editUser: (userId: number, userName: string) => Promise<void>;
 }
 
 const UserContext = createContext<UserContext | null>(null);
@@ -40,12 +36,12 @@ export function UserContextProvider({ children }: { children: ReactNode }) {
 
 	async function createUser(
 		userName: string,
-		userEmail: string
+		userPassword: string
 	): Promise<void> {
 		try {
 			const response = await axios.post("/api/user-management", {
 				userName,
-				userEmail,
+				userPassword,
 			});
 			// Handle the response or any subsequent logic here
 		} catch (error) {
@@ -54,11 +50,14 @@ export function UserContextProvider({ children }: { children: ReactNode }) {
 		}
 	}
 
-	async function loginUser(userName: string, userEmail: string): Promise<void> {
+	async function loginUser(
+		userName: string,
+		userPassword: string
+	): Promise<void> {
 		try {
 			const response = await axios.put("/api/user-management", {
 				userName,
-				userEmail,
+				userPassword,
 			});
 		} catch (error) {
 			// Handle errors here
@@ -66,16 +65,11 @@ export function UserContextProvider({ children }: { children: ReactNode }) {
 		}
 	}
 
-	async function editUser(
-		userId: number,
-		userName: string,
-		userEmail: string
-	): Promise<void> {
+	async function editUser(userId: number, userName: string): Promise<void> {
 		try {
 			const response = await axios.patch("/api/user-management", {
 				userId,
 				userName,
-				userEmail,
 			});
 			// Handle the response or any subsequent logic here
 		} catch (error) {

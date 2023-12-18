@@ -7,17 +7,6 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model sentients {
-  sentient_id      Int               @id @default(autoincrement())
-  first_name       String            @db.VarChar(255)
-  last_name        String?           @db.TinyText
-  birth_date       DateTime?         @db.Date
-  heroes_team_name String?           @db.VarChar(255)
-  race_name        String            @db.VarChar(255)
-  short_title      String?           @db.VarChar(255)
-  status           sentients_status?
-}
-
 model attitudes {
   attitude_description String @id @db.VarChar(255)
 }
@@ -99,12 +88,10 @@ model organizations {
   organization_title String? @db.VarChar(255)
 }
 
-/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
 model orginization_membership {
-  sentient_id     Int
-  organization_id Int
-
-  @@ignore
+  sentient_id                Int
+  organization_id            Int
+  orginization_membership_id Int @id @default(autoincrement())
 }
 
 model province_scale {
@@ -142,6 +129,17 @@ model sentient_relations {
   @@id([sentient_id, heroes_team_name])
 }
 
+model sentients {
+  sentient_id      Int               @id @default(autoincrement())
+  first_name       String            @db.VarChar(255)
+  last_name        String?           @db.TinyText
+  birth_date       DateTime?         @db.Date
+  heroes_team_name String?           @db.VarChar(255)
+  race_name        String            @db.VarChar(255)
+  short_title      String?           @db.VarChar(255)
+  status           sentients_status?
+}
+
 model sentients_selected {
   players_selected_id Int  @id @default(autoincrement())
   sentient_id         Int?
@@ -151,7 +149,6 @@ model sentients_selected {
 model users {
   user_id       Int             @id @default(autoincrement())
   user_name     String          @db.VarChar(31)
-  user_email    String?         @db.VarChar(31)
   user_role     users_user_role
   user_password String?         @db.VarChar(32)
 }

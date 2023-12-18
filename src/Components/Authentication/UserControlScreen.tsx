@@ -26,13 +26,20 @@ const UserControlScreen = () => {
 	const theme = useTheme();
 
 	const [userName, setUserName] = useState<string>("");
-	const [password, setPassword] = useState<string>("");
+	const [userPassword, setUserPassword] = useState<string>("");
+	const [userEmail, setUserEmail] = useState<string>("");
 
-	function handleLogin() {
-		userCtx?.loginUser(userName, password);
+	async function handleLogin() {
+		await userCtx?.loginUser(userName, userPassword);
 	}
-	function handleSignUp() {
-		userCtx?.createUser(userName, password);
+	async function handleSignUp() {
+		try {
+			const res = await userCtx?.createUser(userName, userPassword);
+			console.log(res);
+			// toastMessage(, "success");
+		} catch (e) {
+			toastMessage("There was an error", "error");
+		}
 	}
 
 	return (
@@ -51,8 +58,16 @@ const UserControlScreen = () => {
 			}}
 		>
 			<Box sx={userInfoCSS}>
-				<TextField label="Username" />
-				<TextField label="Password" />
+				<TextField
+					label="Username"
+					value={userName}
+					onChange={(e) => setUserName(e.target.value)}
+				/>
+				<TextField
+					label="Password"
+					value={userPassword}
+					onChange={(e) => setUserPassword(e.target.value)}
+				/>
 				<Box
 					sx={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "32px" }}
 				>

@@ -1,6 +1,5 @@
 import { NextApiRequest, NextApiResponse } from "next";
-import { databaseConnect } from "../../../utilities/databaseConnect";
-import { Sentient } from "../../../utilities/interfaces/main";
+import { prisma } from "../../../prisma/prisma";
 
 export default async function apiHandler(
 	req: NextApiRequest,
@@ -12,7 +11,25 @@ export default async function apiHandler(
 			break;
 		case "POST":
 			// create user
-			res.status(500);
+			const { userName, userPassword } = req.body;
+			console.log(userName);
+			if (!userName) {
+				res.status(400);
+			}
+			try {
+				const user = await prisma.users.create({
+					data: {
+						user_name: userName,
+						user_password: userPassword,
+						user_role: "Player",
+					},
+				});
+
+				res.status(200).json({ text: "User created" });
+			} catch (e) {
+				res.status(400).json({ text: "There was an error" });
+			}
+
 			break;
 		case "PUT":
 			// login user
@@ -24,20 +41,5 @@ export default async function apiHandler(
 			break;
 	}
 
-	if (req.method === "GET") {
-		const connection = await databaseConnect();
-		try {
-			const [rows, fields] = await connection.execute(
-				"SELECT * FROM sentients"
-			);
-
-			console.log(rows);
-			if (req.method === "GET") {
-				return res.json(rows as Sentient[]);
-			}
-		} finally {
-			connection.end();
-		}
-		return res.status(400);
-	}
+	return res.status(500);
 }
