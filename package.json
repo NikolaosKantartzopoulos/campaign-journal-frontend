@@ -9,20 +9,25 @@
 		"start": "next start",
 		"lint": "next lint",
 		"tsc": "tsc",
-		"build:cp": "npm run build && sudo cp -r .next /var/www/dnd.rtlan.gr/ && sudo cp package.json /var/www/dnd.rtlan.gr/ && cd /var/www/dnd.rtlan.gr && sudo npm install --production && sudo pm2 start npm --name 'dnd-server' -- start -- --port 3500"
+		"prisma:pull": "dotenv -e .env.development -- npx prisma db pull",
+		"prisma:generate": "prisma generate",
+		"build:cp": "npm run build && sudo cp -r .next /var/www/dnd.rtlan.gr/ && sudo cp package.json .nvmrc /var/www/dnd.rtlan.gr/ && cd /var/www/dnd.rtlan.gr && sudo npm install --production && sudo pm2 start npm --name 'dnd-server' -- start -- --port 3500"
 	},
 	"dependencies": {
 		"@emotion/react": "^11.11.1",
 		"@emotion/styled": "^11.11.0",
-		"@mui/material": "^5.14.19",
+		"@mui/icons-material": "^5.15.0",
+		"@mui/material": "^5.15.0",
 		"@prisma/client": "^5.7.0",
+		"@types/toastify-js": "^1.12.3",
 		"axios": "^1.6.2",
 		"dotenv": "^16.3.1",
 		"mysql2": "^3.6.5",
 		"next": "14.0.3",
 		"prisma": "^5.7.0",
 		"react": "^18",
-		"react-dom": "^18"
+		"react-dom": "^18",
+		"toastify-js": "^1.12.0"
 	},
 	"devDependencies": {
 		"@types/node": "^20",

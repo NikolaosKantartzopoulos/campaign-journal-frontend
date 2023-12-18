@@ -8,8 +8,189 @@ datasource db {
 }
 
 model sentients {
-  id        Int       @id @default(autoincrement())
-  firstName String    @db.TinyText
-  lastName  String?   @db.TinyText
-  birthDate DateTime? @db.Date
+  sentient_id      Int               @id @default(autoincrement())
+  first_name       String            @db.VarChar(255)
+  last_name        String?           @db.TinyText
+  birth_date       DateTime?         @db.Date
+  heroes_team_name String?           @db.VarChar(255)
+  race_name        String            @db.VarChar(255)
+  short_title      String?           @db.VarChar(255)
+  status           sentients_status?
+}
+
+model attitudes {
+  attitude_description String @id @db.VarChar(255)
+}
+
+model continent_scale {
+  continent_id                Int     @id @default(autoincrement())
+  continent_name              String  @unique(map: "continent_name") @db.VarChar(255)
+  continent_type              String? @db.VarChar(255)
+  continent_short_description String? @db.VarChar(255)
+  world_id                    Int?
+}
+
+model descriptions {
+  description_id    Int                         @id @default(autoincrement())
+  description_title String                      @db.VarChar(255)
+  reference_type    descriptions_reference_type
+  order_number      Int
+  description_text  String?                     @db.Text
+}
+
+model event_descriptions {
+  location_type event_descriptions_location_type?
+  event_time    DateTime?                         @db.DateTime(0)
+  event_title   String                            @unique(map: "event_title") @db.VarChar(255)
+  event_text    String?                           @db.Text
+  triggered_by  Int?
+}
+
+model events {
+  event_id      Int                   @id @default(autoincrement())
+  location_id   Int?
+  location_type events_location_type?
+  event_time    DateTime?             @db.DateTime(0)
+  event_title   String                @unique(map: "event_title") @db.VarChar(255)
+  event_text    String?               @db.Text
+  triggered_by  Int?
+}
+
+model fact_awareness {
+  fact_id                 Int       @id @default(autoincrement())
+  sentient_id             Int?
+  disclosured_by_sentient Int?
+  disclosure_date         DateTime? @db.Date
+}
+
+model facts {
+  fact_id          Int     @id @default(autoincrement())
+  fact_title       String? @unique(map: "fact_title") @db.VarChar(255)
+  fact_description String? @db.Text
+}
+
+model heroes_teams {
+  heroes_team_id   Int     @id @default(autoincrement())
+  heroes_team_name String? @unique(map: "heroes_team_name") @db.VarChar(255)
+}
+
+model kingdom_scale {
+  kingdom_id                Int     @id @default(autoincrement())
+  kingdom_name              String  @unique(map: "kingdom_name") @db.VarChar(255)
+  kingdom_type              String? @db.VarChar(255)
+  continent_id              Int?
+  kingdom_short_description String? @db.VarChar(255)
+}
+
+model location_scale {
+  location_id                Int     @id @default(autoincrement())
+  location_name              String  @unique(map: "location_name") @db.VarChar(255)
+  location_type              String? @db.VarChar(255)
+  province_id                Int?
+  location_short_description String? @db.VarChar(255)
+}
+
+model organizations {
+  organization_id    Int     @id @default(autoincrement())
+  organization_name  String  @unique(map: "organization_name") @db.VarChar(255)
+  organization_goals String? @db.Text
+  oragnization_type  String? @db.VarChar(255)
+  leader             Int?
+  organization_title String? @db.VarChar(255)
+}
+
+/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
+model orginization_membership {
+  sentient_id     Int
+  organization_id Int
+
+  @@ignore
+}
+
+model province_scale {
+  province_id   Int     @id @default(autoincrement())
+  province_name String  @unique(map: "province_name") @db.VarChar(255)
+  province_type String? @db.VarChar(255)
+  kingdom_id    Int?
+}
+
+model quest_events {
+  quest_id       Int
+  description_id Int
+
+  @@id([quest_id, description_id])
+}
+
+model quests {
+  quest_id          Int       @id @default(autoincrement())
+  quest_name        String    @unique(map: "quest_name") @db.VarChar(255)
+  quest_description String?   @db.Text
+  bestowed_upon     Int?
+  start_date        DateTime? @db.Date
+  end_date          DateTime? @db.Date
+}
+
+model races {
+  race_name String @id @db.VarChar(255)
+}
+
+model sentient_relations {
+  sentient_id          Int
+  heroes_team_name     String  @db.VarChar(255)
+  attitude_description String? @db.VarChar(255)
+
+  @@id([sentient_id, heroes_team_name])
+}
+
+model sentients_selected {
+  players_selected_id Int  @id @default(autoincrement())
+  sentient_id         Int?
+  user_id             Int?
+}
+
+model users {
+  user_id       Int             @id @default(autoincrement())
+  user_name     String          @db.VarChar(31)
+  user_email    String?         @db.VarChar(31)
+  user_role     users_user_role
+  user_password String?         @db.VarChar(32)
+}
+
+model world {
+  world_id   Int    @id @default(autoincrement())
+  world_name String @unique(map: "world_name") @db.VarChar(255)
+}
+
+enum event_descriptions_location_type {
+  world
+  continent_scale
+  kingdom_scale
+  province_scale
+}
+
+enum descriptions_reference_type {
+  location
+  item
+  sentient
+  quest_step
+  fact
+}
+
+enum events_location_type {
+  world
+  continent_scale
+  kingdom_scale
+  province_scale
+}
+
+enum users_user_role {
+  Game_Master @map("Game Master")
+  Player
+}
+
+enum sentients_status {
+  alive
+  dead
+  undead
+  missing
 }
