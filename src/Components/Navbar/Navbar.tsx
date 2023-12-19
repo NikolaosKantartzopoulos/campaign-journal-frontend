@@ -1,11 +1,17 @@
-import { AppBar, Button, IconButton, Toolbar, Typography } from "@mui/material";
+import { AppBar, Box, IconButton, Toolbar } from "@mui/material";
 import MenuIcon from "@mui/icons-material/Menu";
 import LoginButton from "../Authentication/AccountButton";
+import { MyLink } from "../CustomComponents/Link";
 
 const Navbar = () => {
 	return (
 		<AppBar position="static">
-			<Toolbar>
+			<Toolbar
+				sx={{
+					display: "flex",
+					justifyContent: "space-between",
+				}}
+			>
 				<IconButton
 					size="large"
 					edge="start"
@@ -15,9 +21,19 @@ const Navbar = () => {
 				>
 					<MenuIcon />
 				</IconButton>
-				<Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
-					News
-				</Typography>
+				<Box
+					sx={{
+						display: "flex",
+						flexFlow: "row wrap",
+						alignItems: "center",
+						justifyContent: "center",
+					}}
+				>
+					<MyLink to="/">Home</MyLink>
+					<MyLink to="/character">Character</MyLink>
+					<MyLink to="/character">Character</MyLink>
+					<MyLink to="/character">Character</MyLink>
+				</Box>
 				<LoginButton color="inherit" />
 			</Toolbar>
 		</AppBar>
