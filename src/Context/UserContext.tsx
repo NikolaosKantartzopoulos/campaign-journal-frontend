@@ -1,4 +1,4 @@
-import axios from "axios";
+import axios, { AxiosResponse } from "axios";
 import {
 	Dispatch,
 	ReactNode,
@@ -6,11 +6,14 @@ import {
 	createContext,
 	useState,
 } from "react";
+import { UserManagementApiResponse } from "../../pages/api/user-management";
 
 export interface User {
 	userId: number;
 	userName: string;
-	userEmail: string;
+	userPassword: string;
+	userEmail?: string;
+	userRole?: string;
 }
 
 export interface UserContext {
@@ -18,9 +21,18 @@ export interface UserContext {
 	showUserControlScreen: boolean;
 	setShowUserControlScreen: Dispatch<SetStateAction<boolean>>;
 	logoutUser: () => void;
-	createUser: (userName: string, userPassword: string) => Promise<void>;
-	loginUser: (userName: string, userPassword: string) => Promise<void>;
-	editUser: (userId: number, userName: string) => Promise<void>;
+	createUser: (
+		userName: string,
+		userPassword: string
+	) => Promise<AxiosResponse<any, any>>;
+	loginUser: (
+		userName: string,
+		userPassword: string
+	) => Promise<AxiosResponse<any, any>>;
+	editUser: (
+		userId: number,
+		userName: string
+	) => Promise<AxiosResponse<any, any>>;
 }
 
 const UserContext = createContext<UserContext | null>(null);
@@ -34,48 +46,33 @@ export function UserContextProvider({ children }: { children: ReactNode }) {
 		setUser(null);
 	}
 
-	async function createUser(
-		userName: string,
-		userPassword: string
-	): Promise<void> {
-		try {
-			const response = await axios.post("/api/user-management", {
-				userName,
-				userPassword,
-			});
-			// Handle the response or any subsequent logic here
-		} catch (error) {
-			// Handle errors here
-			console.error("Error creating user:", error);
-		}
+	async function createUser(userName: string, userPassword: string) {
+		const res: AxiosResponse = await axios.post("/api/user-management", {
+			userName,
+			userPassword,
+		});
+		return res;
 	}
 
-	async function loginUser(
-		userName: string,
-		userPassword: string
-	): Promise<void> {
-		try {
-			const response = await axios.put("/api/user-management", {
+	async function loginUser(userName: string, userPassword: string) {
+		const res: AxiosResponse<UserManagementApiResponse> = await axios.put(
+			"/api/user-management",
+			{
 				userName,
 				userPassword,
-			});
-		} catch (error) {
-			// Handle errors here
-			console.error("Error creating user:", error);
-		}
+			}
+		);
+		setUser(res.data.user);
+		setShowUserControlScreen(false);
+		return res;
 	}
 
-	async function editUser(userId: number, userName: string): Promise<void> {
-		try {
-			const response = await axios.patch("/api/user-management", {
-				userId,
-				userName,
-			});
-			// Handle the response or any subsequent logic here
-		} catch (error) {
-			// Handle errors here
-			console.error("Error editing user:", error);
-		}
+	async function editUser(userId: number, userName: string) {
+		const res: AxiosResponse = await axios.patch("/api/user-management", {
+			userId,
+			userName,
+		});
+		return res;
 	}
 
 	return (

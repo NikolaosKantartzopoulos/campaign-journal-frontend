@@ -1,6 +1,6 @@
 import { NextApiRequest, NextApiResponse } from "next";
-import { databaseConnect } from "../../../utilities/databaseConnect";
-import { Sentient } from "../../../utilities/interfaces/main";
+import { databaseConnect } from "../../../src/utilities/databaseConnect";
+import { Sentient } from "../../../src/utilities/interfaces/main";
 
 export default async function apiHandler(
 	req: NextApiRequest,

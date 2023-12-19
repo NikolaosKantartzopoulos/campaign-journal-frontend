@@ -3,7 +3,7 @@
 import { Box, Button, Typography } from "@mui/material";
 import { prisma } from "../../prisma/prisma";
 import { useState } from "react";
-import { Sentient } from "../../utilities/interfaces/main";
+import { Sentient } from "../../src/utilities/interfaces/main";
 
 const Locations = async ({ character }: { character: Sentient }) => {
 	const [sentient, setSentient] = useState<Sentient>(character);

@@ -1,17 +1,10 @@
-import UserContext from "@/Context/UserContext";
-import {
-	Box,
-	Button,
-	Divider,
-	TextField,
-	Typography,
-	useMediaQuery,
-	useTheme,
-} from "@mui/material";
+import { Box, TextField, Button, useTheme } from "@mui/material";
+import { AxiosResponse } from "axios";
 import { GetServerSideProps } from "next";
 import { useContext, useState } from "react";
-import Toastify from "toastify-js";
 import { toastMessage } from "../CustomComponents/Toastify/Toast";
+import UserContext from "@/Context/UserContext";
+import { UserControlScreenBox } from "./AuthenticationCSS";
 
 const userInfoCSS = {
 	maxWidth: "375px",
@@ -21,42 +14,38 @@ const userInfoCSS = {
 	gap: "16px",
 };
 
-const UserControlScreen = () => {
+const LogInSignUpScreen = () => {
 	const userCtx = useContext(UserContext);
 	const theme = useTheme();
 
 	const [userName, setUserName] = useState<string>("");
 	const [userPassword, setUserPassword] = useState<string>("");
-	const [userEmail, setUserEmail] = useState<string>("");
 
 	async function handleLogin() {
-		await userCtx?.loginUser(userName, userPassword);
+		try {
+			const res = await userCtx?.loginUser(userName, userPassword);
+			console.log(res);
+			const text = res?.data?.text || "Logged in";
+			toastMessage(text, "success");
+		} catch (e) {
+			toastMessage("There was an error", "error");
+		}
 	}
 	async function handleSignUp() {
 		try {
-			const res = await userCtx?.createUser(userName, userPassword);
-			console.log(res);
-			// toastMessage(, "success");
+			const { data } = (await userCtx?.createUser(
+				userName,
+				userPassword
+			)) as AxiosResponse;
+			const text = data?.text || "Signed up";
+			toastMessage(text, "success");
 		} catch (e) {
 			toastMessage("There was an error", "error");
 		}
 	}
 
 	return (
-		<Box
-			sx={{
-				border: "1px solid black",
-				display: "flex",
-				flexFlow: "row wrap",
-				gap: "64px",
-				alignItems: "center",
-				justifyContent: "center",
-				maxWidth: "375px",
-				margin: "auto",
-				marginTop: "150px",
-				padding: "32px 0px",
-			}}
-		>
+		<UserControlScreenBox>
 			<Box sx={userInfoCSS}>
 				<TextField
 					label="Username"
@@ -79,7 +68,7 @@ const UserControlScreen = () => {
 					</Button>
 				</Box>
 			</Box>
-		</Box>
+		</UserControlScreenBox>
 	);
 };
 
@@ -89,4 +78,4 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
 	};
 };
 
-export default UserControlScreen;
+export default LogInSignUpScreen;
