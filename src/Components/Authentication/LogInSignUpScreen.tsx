@@ -1,4 +1,4 @@
-import { Box, TextField, Button, useTheme } from "@mui/material";
+import { Box, TextField, Button } from "@mui/material";
 import { AxiosResponse } from "axios";
 import { GetServerSideProps } from "next";
 import { useContext, useState } from "react";
@@ -17,7 +17,6 @@ const userInfoCSS = {
 
 const LogInSignUpScreen = () => {
 	const userCtx = useContext(UserContext);
-	const theme = useTheme();
 	const router = useRouter();
 	const [userName, setUserName] = useState<string>("");
 	const [userPassword, setUserPassword] = useState<string>("");

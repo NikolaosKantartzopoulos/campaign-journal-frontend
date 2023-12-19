@@ -7,6 +7,7 @@ import {
 	useState,
 } from "react";
 import { UserManagementApiResponse } from "../../pages/api/user-management";
+import { useRouter } from "next/router";
 
 export interface User {
 	userId: number;
@@ -40,12 +41,15 @@ export interface UserContext {
 const UserContext = createContext<UserContext | null>(null);
 
 export function UserContextProvider({ children }: { children: ReactNode }) {
+	const router = useRouter();
 	const [user, setUser] = useState<User | null>(null);
 	const [showUserControlScreen, setShowUserControlScreen] =
 		useState<boolean>(false);
 
 	async function logoutUser() {
 		setUser(null);
+		localStorage.removeItem("user");
+		router.replace("/account-access");
 	}
 
 	async function createUser(userName: string, userPassword: string) {
@@ -64,6 +68,7 @@ export function UserContextProvider({ children }: { children: ReactNode }) {
 				userPassword,
 			}
 		);
+		localStorage.setItem("user", JSON.stringify(res.data.user));
 		setUser(res.data.user);
 		setShowUserControlScreen(false);
 		return res;
@@ -84,6 +89,7 @@ export function UserContextProvider({ children }: { children: ReactNode }) {
 		console.log(res);
 		if (res.statusText === "OK") {
 			setUser(res.data.user);
+			localStorage.setItem("user", JSON.stringify(res.data.user));
 		}
 		return res;
 	}

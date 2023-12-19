@@ -1,15 +1,8 @@
 import UserContext from "@/Context/UserContext";
-import {
-	Box,
-	Button,
-	Checkbox,
-	FormControl,
-	TextField,
-	Typography,
-} from "@mui/material";
+import { Button, Divider, TextField, Typography } from "@mui/material";
 import { useContext, useState } from "react";
 import { FlexBox } from "../CustomComponents/FlexBox";
-import axios, { AxiosError } from "axios";
+import { AxiosError } from "axios";
 import { toastMessage } from "../CustomComponents/Toastify/Toast";
 
 const AccountEditScreen = () => {
@@ -56,6 +49,14 @@ const AccountEditScreen = () => {
 			}}
 		>
 			<Typography variant="h4">Account Control</Typography>
+			<Divider />
+			<Typography
+				variant="h5"
+				sx={{ margin: "1rem auto", textAlign: "center" }}
+			>
+				Welcome {userCtx?.user?.userName}
+			</Typography>
+			<Divider />
 			<FlexBox sx={{ justifyContent: "start" }}>
 				<input
 					type="checkbox"

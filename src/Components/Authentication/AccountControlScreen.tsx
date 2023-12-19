@@ -16,10 +16,7 @@ const AccountControlScreen = () => {
 				gap: "1rem",
 				alignItems: "center",
 			}}
-		>
-			{!userCtx?.user && <LogInSignUpScreen />}
-			{userCtx?.user && <AccountEditScreen />}
-		</Box>
+		></Box>
 	);
 };
 
