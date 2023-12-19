@@ -31,7 +31,9 @@ export interface UserContext {
 	) => Promise<AxiosResponse<any, any>>;
 	editUser: (
 		userId: number,
-		userName: string
+		userName: string,
+		newUserName: string,
+		newPasswordField: string
 	) => Promise<AxiosResponse<any, any>>;
 }
 
@@ -67,11 +69,22 @@ export function UserContextProvider({ children }: { children: ReactNode }) {
 		return res;
 	}
 
-	async function editUser(userId: number, userName: string) {
-		const res: AxiosResponse = await axios.patch("/api/user-management", {
+	async function editUser(
+		userId: number,
+		userName: string,
+		newUserName: string,
+		newPasswordField: string
+	) {
+		const res = await axios.post("/api/user-management/edit-profile", {
 			userId,
 			userName,
+			newUserName,
+			newPasswordField,
 		});
+		console.log(res);
+		if (res.statusText === "OK") {
+			setUser(res.data.user);
+		}
 		return res;
 	}
 

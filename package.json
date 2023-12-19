@@ -11,7 +11,8 @@
 		"tsc": "tsc",
 		"prisma:pull": "dotenv -e .env.development -- npx prisma db pull",
 		"prisma:generate": "prisma generate",
-		"build:cp": "npm run build && sudo cp -r .next /var/www/dnd.rtlan.gr/ && sudo cp package.json .nvmrc /var/www/dnd.rtlan.gr/ && cd /var/www/dnd.rtlan.gr && sudo npm install --production && sudo pm2 start npm --name 'dnd-server' -- start -- --port 3500"
+		"send": "sudo cp -r .next /var/www/dnd.rtlan.gr/ && sudo cp package.json .nvmrc /var/www/dnd.rtlan.gr/ && cd /var/www/dnd.rtlan.gr &&  sudo npm install --production && sudo m2 start npm --name 'dnd-server' -- start -- --port 3500",
+		"build:cp": "npm run build &&  npm run send"
 	},
 	"dependencies": {
 		"@emotion/react": "^11.11.1",
@@ -30,7 +31,7 @@
 		"toastify-js": "^1.12.0"
 	},
 	"devDependencies": {
-		"@types/node": "^20",
+		"@types/node": "^20.10.5",
 		"@types/react": "^18",
 		"@types/react-dom": "^18",
 		"eslint": "^8",

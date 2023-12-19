@@ -5,6 +5,7 @@ import { useContext, useState } from "react";
 import { toastMessage } from "../CustomComponents/Toastify/Toast";
 import UserContext from "@/Context/UserContext";
 import { UserControlScreenBox } from "./AuthenticationCSS";
+import { useRouter } from "next/router";
 
 const userInfoCSS = {
 	maxWidth: "375px",
@@ -17,16 +18,16 @@ const userInfoCSS = {
 const LogInSignUpScreen = () => {
 	const userCtx = useContext(UserContext);
 	const theme = useTheme();
-
+	const router = useRouter();
 	const [userName, setUserName] = useState<string>("");
 	const [userPassword, setUserPassword] = useState<string>("");
 
 	async function handleLogin() {
 		try {
 			const res = await userCtx?.loginUser(userName, userPassword);
-			console.log(res);
 			const text = res?.data?.text || "Logged in";
 			toastMessage(text, "success");
+			router.push("/");
 		} catch (e) {
 			toastMessage("There was an error", "error");
 		}
@@ -39,6 +40,7 @@ const LogInSignUpScreen = () => {
 			)) as AxiosResponse;
 			const text = data?.text || "Signed up";
 			toastMessage(text, "success");
+			router.push("/");
 		} catch (e) {
 			toastMessage("There was an error", "error");
 		}

@@ -1,8 +1,9 @@
-import { Button } from "@mui/material";
-import axios from "axios";
-import { useState } from "react";
-import { Sentient } from "../src/utilities/interfaces/main";
+import { Typography } from "@mui/material";
 
 export default function Home() {
-	return <main></main>;
+	return (
+		<main>
+			<Typography variant="h1">Homepage</Typography>
+		</main>
+	);
 }

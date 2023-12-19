@@ -1,4 +1,4 @@
-import Layout from "@/Components/Layouts/layout";
+import Layout from "@/Components/Layouts/Layout";
 import { UserContextProvider } from "@/Context/UserContext";
 import { CssBaseline } from "@mui/material";
 import type { AppProps } from "next/app";

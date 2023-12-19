@@ -5,7 +5,6 @@ export const UserControlScreenBox = ({ children }: { children: ReactNode }) => {
 	return (
 		<Box
 			sx={{
-				border: "1px solid black",
 				display: "flex",
 				flexFlow: "row wrap",
 				gap: "64px",
@@ -14,7 +13,7 @@ export const UserControlScreenBox = ({ children }: { children: ReactNode }) => {
 				maxWidth: "375px",
 				margin: "auto",
 				marginTop: "150px",
-				padding: "32px 0px",
+				padding: "32px",
 			}}
 		>
 			{children}
