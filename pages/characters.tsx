@@ -1,9 +1,9 @@
 import { useWithAuth } from "@/Components/Authentication/useWithAuth";
 import { GetServerSideProps } from "next";
 
-const Character = () => {
+const Characters = () => {
 	useWithAuth();
-	return <div>Character</div>;
+	return <h3>Characters</h3>;
 };
 
 export const getServerSideProps = (async (ctx) => {
@@ -12,4 +12,4 @@ export const getServerSideProps = (async (ctx) => {
 	return { props: {} };
 }) satisfies GetServerSideProps;
 
-export default Character;
+export default Characters;

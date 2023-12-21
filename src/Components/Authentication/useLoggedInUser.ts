@@ -14,7 +14,7 @@ export async function useLoggedInUser() {
 				localStorageUser.userPassword
 			);
 		}
-	}, []);
+	}, [userCtx]);
 
 	return userCtx;
 }
