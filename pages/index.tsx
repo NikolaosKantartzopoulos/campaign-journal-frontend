@@ -4,11 +4,11 @@ import { Typography } from "@mui/material";
 import { useContext, useEffect } from "react";
 
 export default function Home() {
-	const userCtx = useLoggedInUser();
+  // const userCtx = useLoggedInUser();
 
-	return (
-		<main>
-			<Typography variant="h3">Homepage</Typography>
-		</main>
-	);
+  return (
+    <main>
+      <Typography variant="h3">Homepage</Typography>
+    </main>
+  );
 }
