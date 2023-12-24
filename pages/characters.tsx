@@ -1,23 +1,31 @@
 import CharactersTable from "@/Components/Characters/CharactersTable";
-import { Box } from "@mui/material";
 import { GetServerSideProps } from "next";
-import { prisma } from "../prisma/prisma";
+import { QueryClient, dehydrate, useQuery } from "@tanstack/react-query";
+import { getAllSentients } from "@/services/data-fetching/getSentients";
 import { sentients } from "@prisma/client";
 
-const Characters = ({ sentients }: { sentients: sentients[] }) => {
-  return (
-    <Box>
-      <CharactersTable sentients={sentients} />
-    </Box>
-  );
+const Characters = () => {
+  const { data: sentients } = useQuery({
+    queryKey: ["allSentients"],
+    queryFn: getAllSentients,
+  });
+
+  return <CharactersTable sentients={sentients as sentients[]} />;
 };
 
 export const getServerSideProps = (async (ctx) => {
   // Fetch data from external API
   // Pass data to the page via props
-  const sentients = await prisma.sentients.findMany();
+  // const sentients = await prisma.sentients.findMany();
 
-  return { props: { sentients } };
+  const queryClient = new QueryClient();
+
+  await queryClient.prefetchQuery({
+    queryKey: ["allSentients"],
+    queryFn: getAllSentients,
+  });
+
+  return { props: { dehydratedState: dehydrate(queryClient) } };
 }) satisfies GetServerSideProps;
 
 export default Characters;

@@ -38,7 +38,6 @@ export default function useTableSort<GenericObject>(
           searchValue.toString().toLocaleLowerCase() ==
             word.toString().toLocaleLowerCase()
         ) {
-          console.log(word);
           setTableState((old) => [...old, item]);
         }
       }
@@ -64,7 +63,6 @@ export default function useTableSort<GenericObject>(
     setSelectedOrder(
       selectedOrder === "ascending" ? "descending" : "ascending"
     );
-    console.log(selectedOrder);
     setTableState((p) => ordered);
   }
 

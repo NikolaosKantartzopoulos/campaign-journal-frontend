@@ -1,0 +1,4 @@
+**/.next
+**/build
+**/dist
+**/codemods/**/__testfixtures__

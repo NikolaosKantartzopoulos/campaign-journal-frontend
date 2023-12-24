@@ -15,7 +15,6 @@ const Character = () => {
 };
 
 export const getServerSideProps = (async (ctx) => {
-  console.log(ctx.query);
   // Fetch data from external API
   // Pass data to the page via props
   return { props: {} };

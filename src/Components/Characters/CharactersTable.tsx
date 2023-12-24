@@ -31,8 +31,9 @@ export default function CharactersTable({
 
   function handleCharacterRowClick(e: React.MouseEvent, character: sentients) {
     console.log(character);
-    const characterFullName = formCharacterLink(character);
-    router.push(`character/${characterFullName}`);
+
+    // const characterFullName = formCharacterLink(character);
+    // router.push(`character/${characterFullName}`);
   }
 
   return (
@@ -78,9 +79,24 @@ export default function CharactersTable({
               >
                 Last Name
               </TableCell>
-              <TableCell align="left">Title</TableCell>
-              <TableCell align="left">Race</TableCell>
-              <TableCell align="left">State</TableCell>
+              <TableCell
+                align="left"
+                onClick={(e) => sortTableColumn(e, "short_title")}
+              >
+                Title
+              </TableCell>
+              <TableCell
+                align="left"
+                onClick={(e) => sortTableColumn(e, "race_name")}
+              >
+                Race
+              </TableCell>
+              <TableCell
+                align="left"
+                onClick={(e) => sortTableColumn(e, "state")}
+              >
+                State
+              </TableCell>
             </TableRow>
           </TableHead>
           <TableBody>

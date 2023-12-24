@@ -1,8 +1,5 @@
 echo 'rm -rf /home/nik/code/deployments/dnd.rtlan.gr/*'
 sudo rm -rf  /home/nik/code/deployments/dnd.rtlan.gr/*
-  
-
-
 
 cp -r ../* /home/nik/code/deployments/dnd.rtlan.gr/ 
 

@@ -1,6 +1,6 @@
 {
   "extends": "next/core-web-vitals",
-  "plugins": ["unused-imports"],
+  "plugins": ["unused-imports", "eslint-plugin-query"],
   "rules": {
     "no-unused-vars": "off",
     "sort-imports": [

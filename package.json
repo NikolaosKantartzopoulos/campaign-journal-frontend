@@ -3,8 +3,8 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "check-container": "sudo docker inspect -f '{{.State.Running}}' sq1 || exit 1",
-    "predev": "sudo npm run check-container || (cd ../campaign-journal-backend/ && npm run dbu)",
+    "check-container": "sudo docker inspect -f '{{.State.Running}}' 'mysql-dev' || exit 1",
+    "predev": "sudo npm run check-container || (cd ../campaign-journal-backend/ && npm run dbu:dev)",
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
@@ -13,7 +13,11 @@
     "prisma:pull": "dotenv -e .env.development -- npx prisma db pull",
     "prisma:generate": "prisma generate",
     "send": "sudo cp -r .next /var/www/dnd.rtlan.gr/ && sudo cp package.json .nvmrc /var/www/dnd.rtlan.gr/ && cd /var/www/dnd.rtlan.gr &&  sudo npm install --production && sudo m2 start npm --name 'dnd-server' -- start -- --port 3500",
-    "build:cp": "npm run build &&  npm run send"
+    "build:cp": "npm run build &&  npm run send",
+    "dbu:dev": "sudo docker compose -f /home/nik/code/campaign-journal/campaign-journal-backend/Docker/docker-compose-dev.yml up -d",
+    "dbd:dev": "sudo docker compose -f /home/nik/code/campaign-journal/campaign-journal-backend/Docker/docker-compose-dev.yml down",
+    "dbu:prod": "sudo docker compose -f /home/nik/code/campaign-journal/campaign-journal-backend/Docker/docker-compose-prod.yml up -d",
+    "dbd:prod": "sudo docker compose -f /home/nik/code/campaign-journal/campaign-journal-backend/Docker/docker-compose-prod.yml down"
   },
   "dependencies": {
     "@emotion/react": "^11.11.1",
@@ -21,6 +25,8 @@
     "@mui/icons-material": "^5.15.1",
     "@mui/material": "^5.15.1",
     "@prisma/client": "^5.7.0",
+    "@tanstack/react-query": "^5.14.6",
+    "@tanstack/react-query-devtools": "^5.14.6",
     "@types/toastify-js": "^1.12.3",
     "axios": "^1.6.2",
     "dotenv": "^16.3.1",
@@ -34,6 +40,7 @@
     "toastify-js": "^1.12.0"
   },
   "devDependencies": {
+    "@tanstack/eslint-plugin-query": "^5.14.6",
     "@types/node": "^20.10.5",
     "@types/react": "^18",
     "@types/react-dom": "^18",
