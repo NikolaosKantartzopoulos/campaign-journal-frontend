@@ -1,42 +1,44 @@
 {
-	"name": "campaign-journal",
-	"version": "0.1.0",
-	"private": true,
-	"scripts": {
-		"predev": "cd ../campaign-journal-backend/ && npm run dbu",
-		"dev": "next dev",
-		"build": "next build",
-		"start": "next start",
-		"lint": "next lint",
-		"tsc": "tsc",
-		"prisma:pull": "dotenv -e .env.development -- npx prisma db pull",
-		"prisma:generate": "prisma generate",
-		"send": "sudo cp -r .next /var/www/dnd.rtlan.gr/ && sudo cp package.json .nvmrc /var/www/dnd.rtlan.gr/ && cd /var/www/dnd.rtlan.gr &&  sudo npm install --production && sudo m2 start npm --name 'dnd-server' -- start -- --port 3500",
-		"build:cp": "npm run build &&  npm run send"
-	},
-	"dependencies": {
-		"@emotion/react": "^11.11.1",
-		"@emotion/styled": "^11.11.0",
-		"@mui/icons-material": "^5.15.1",
-		"@mui/material": "^5.15.1",
-		"@prisma/client": "^5.7.0",
-		"@types/toastify-js": "^1.12.3",
-		"axios": "^1.6.2",
-		"dotenv": "^16.3.1",
-		"mysql2": "^3.6.5",
-		"next": "14.0.3",
-		"prettier": "2",
-		"prisma": "^5.7.0",
-		"react": "^18",
-		"react-dom": "^18",
-		"toastify-js": "^1.12.0"
-	},
-	"devDependencies": {
-		"@types/node": "^20.10.5",
-		"@types/react": "^18",
-		"@types/react-dom": "^18",
-		"eslint": "^8",
-		"eslint-config-next": "14.0.3",
-		"typescript": "^5"
-	}
+  "name": "campaign-journal",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "check-container": "sudo docker inspect -f '{{.State.Running}}' sq1 || exit 1",
+    "predev": "sudo npm run check-container || (cd ../campaign-journal-backend/ && npm run dbu)",
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint",
+    "tsc": "tsc",
+    "prisma:pull": "dotenv -e .env.development -- npx prisma db pull",
+    "prisma:generate": "prisma generate",
+    "send": "sudo cp -r .next /var/www/dnd.rtlan.gr/ && sudo cp package.json .nvmrc /var/www/dnd.rtlan.gr/ && cd /var/www/dnd.rtlan.gr &&  sudo npm install --production && sudo m2 start npm --name 'dnd-server' -- start -- --port 3500",
+    "build:cp": "npm run build &&  npm run send"
+  },
+  "dependencies": {
+    "@emotion/react": "^11.11.1",
+    "@emotion/styled": "^11.11.0",
+    "@mui/icons-material": "^5.15.1",
+    "@mui/material": "^5.15.1",
+    "@prisma/client": "^5.7.0",
+    "@types/toastify-js": "^1.12.3",
+    "axios": "^1.6.2",
+    "dotenv": "^16.3.1",
+    "eslint-plugin-unused-imports": "^3.0.0",
+    "mysql2": "^3.6.5",
+    "next": "14.0.3",
+    "prettier": "2",
+    "prisma": "^5.7.0",
+    "react": "^18",
+    "react-dom": "^18",
+    "toastify-js": "^1.12.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.10.5",
+    "@types/react": "^18",
+    "@types/react-dom": "^18",
+    "eslint": "^8",
+    "eslint-config-next": "14.0.3",
+    "typescript": "^5"
+  }
 }

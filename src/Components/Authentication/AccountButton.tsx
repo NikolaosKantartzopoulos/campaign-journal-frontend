@@ -1,5 +1,5 @@
 import UserContext from "@/Context/UserContext";
-import { Box, Button, Typography } from "@mui/material";
+import { Box, Button } from "@mui/material";
 import { useContext } from "react";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import { useRouter } from "next/router";

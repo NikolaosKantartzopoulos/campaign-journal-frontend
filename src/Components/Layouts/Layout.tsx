@@ -1,7 +1,6 @@
 import { ReactNode, useContext, useState } from "react";
 import Navbar from "../Navbar/Navbar";
 import UserContext from "@/Context/UserContext";
-import UserControlScreen from "../Authentication/AccountControlScreen";
 import Drawer from "@mui/material/Drawer";
 import { Box, useMediaQuery, useTheme } from "@mui/material";
 import LinkSection from "../Navbar/LinkSection";
@@ -9,7 +8,7 @@ import LinkSection from "../Navbar/LinkSection";
 export default function Layout({ children }: { children: ReactNode }) {
   const userCtx = useContext(UserContext);
 
-  const [isDrawerOpen, setDrawerOpen] = useState(true);
+  const [isDrawerOpen, setDrawerOpen] = useState(false);
 
   const toggleDrawer =
     (open: boolean) => (event: React.KeyboardEvent | React.MouseEvent) => {
@@ -47,6 +46,7 @@ export default function Layout({ children }: { children: ReactNode }) {
           </Box>
         </Drawer>
       )}
+      {children}
     </>
   );
 }

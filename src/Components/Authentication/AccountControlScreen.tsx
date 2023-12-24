@@ -1,8 +1,6 @@
 import UserContext from "@/Context/UserContext";
 import { useContext } from "react";
-import LogInSignUpScreen from "./LogInSignUpScreen";
-import { Box, Button, Typography } from "@mui/material";
-import AccountEditScreen from "./AccountEditScreen";
+import { Box } from "@mui/material";
 
 const AccountControlScreen = () => {
 	const userCtx = useContext(UserContext);
