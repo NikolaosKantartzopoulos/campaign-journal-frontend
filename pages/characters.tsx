@@ -2,7 +2,7 @@ import CharactersTable from "@/Components/Characters/CharactersTable";
 import { GetServerSideProps } from "next";
 import { QueryClient, dehydrate, useQuery } from "@tanstack/react-query";
 import { getAllSentients } from "@/services/data-fetching/getSentients";
-import { sentients } from "@prisma/client";
+import { sentient } from "@prisma/client";
 
 const Characters = () => {
   const { data: sentients } = useQuery({
@@ -10,7 +10,7 @@ const Characters = () => {
     queryFn: getAllSentients,
   });
 
-  return <CharactersTable sentients={sentients as sentients[]} />;
+  return <CharactersTable sentients={sentients as sentient[]} />;
 };
 
 export const getServerSideProps = (async (ctx) => {

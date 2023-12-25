@@ -46,10 +46,10 @@ const LinkSection = () => {
         linkText="Items"
       />
       <LinkTo
-        href="/organizations"
+        href="/factions"
         svgDefault={Fist}
         svgHovered={FistWhite}
-        linkText="Organizations"
+        linkText="Factions"
       />
       <LinkTo
         href="/quests"

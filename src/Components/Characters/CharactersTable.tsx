@@ -5,22 +5,21 @@ import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
-import { sentients } from "@prisma/client";
 import { useRouter } from "next/router";
-import formCharacterLink from "@/utilities/functions/navigation/formCharacterLink";
 import React, { ChangeEvent } from "react";
 import useTableSort from "@/utilities/functions/hooks/useTableSort";
 import SearchIcon from "@mui/icons-material/Search";
 import { InputAdornment, TextField } from "@mui/material";
 import { FlexBox } from "../CustomComponents/FlexBox";
+import { sentient } from "@prisma/client";
 
 export default function CharactersTable({
   sentients,
 }: {
-  sentients: sentients[];
+  sentients: sentient[];
 }) {
   const router = useRouter();
-
+  console.log(sentients);
   const {
     tableState,
     searchFieldState,
@@ -29,7 +28,7 @@ export default function CharactersTable({
     handleSearch,
   } = useTableSort(sentients);
 
-  function handleCharacterRowClick(e: React.MouseEvent, character: sentients) {
+  function handleCharacterRowClick(e: React.MouseEvent, character: sentient) {
     console.log(character.sentient_id);
 
     router.push(`/character/${character.sentient_id}`);
@@ -111,7 +110,7 @@ export default function CharactersTable({
                 <TableCell align="left">{character.last_name}</TableCell>
                 <TableCell align="left">{character.short_title}</TableCell>
                 <TableCell align="left">{character.race_name}</TableCell>
-                <TableCell align="left">{character.status}</TableCell>
+                <TableCell align="left">{character.state}</TableCell>
               </TableRow>
             ))}
           </TableBody>

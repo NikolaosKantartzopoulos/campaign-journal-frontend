@@ -1,12 +1,12 @@
-import { sentients } from "@prisma/client";
+import { sentient } from "@prisma/client";
 import { prisma } from "../../../prisma/prisma";
 
 export async function getAllSentients() {
-  return prisma.sentients.findMany();
+  return prisma.sentient.findMany();
 }
 
 export async function getUniqueSentientById(sentient_id: number) {
-  return prisma.sentients.findUnique({
+  return prisma.sentient.findUnique({
     where: {
       sentient_id: sentient_id,
     },

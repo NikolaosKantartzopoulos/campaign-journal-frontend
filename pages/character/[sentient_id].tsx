@@ -1,7 +1,7 @@
 import { getUniqueSentientById } from "@/services/data-fetching/getSentients";
 import getSentientFullName from "@/utilities/helperFn/getSentientFullName";
 import { Box, Typography } from "@mui/material";
-import { sentients } from "@prisma/client";
+import { sentient } from "@prisma/client";
 import { QueryClient, dehydrate, useQuery } from "@tanstack/react-query";
 import { GetServerSideProps } from "next";
 import { useRouter } from "next/router";
@@ -18,7 +18,7 @@ const Character = () => {
     <Box>
       <Typography variant="h3">Character page </Typography>
       <Typography variant="h4">
-        {getSentientFullName(sentient as sentients)}
+        {getSentientFullName(sentient as sentient)}
       </Typography>
     </Box>
   );

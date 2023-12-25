@@ -1,5 +1,5 @@
-import { sentients } from "@prisma/client";
+import { sentient } from "@prisma/client";
 
-export default function formCharacterLink(sentient: sentients) {
+export default function formCharacterLink(sentient: sentient) {
   return sentient.first_name + " " + sentient.last_name;
 }

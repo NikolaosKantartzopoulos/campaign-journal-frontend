@@ -53,7 +53,7 @@ const AccountEditScreen = () => {
         variant="h5"
         sx={{ margin: "1rem auto", textAlign: "center" }}
       >
-        Welcome {userCtx?.user?.userName}
+        {userCtx?.user?.userName}
       </Typography>
       <Divider />
       <FlexBox sx={{ justifyContent: "start" }}>

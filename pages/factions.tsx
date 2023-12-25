@@ -1,13 +1,13 @@
 import { GetServerSideProps } from "next";
 
-const Organizations = () => {
-	return <h3>Organizations</h3>;
+const Factions = () => {
+  return <h3>Factions</h3>;
 };
 
 export const getServerSideProps: GetServerSideProps = async (ctx) => {
-	return {
-		props: {},
-	};
+  return {
+    props: {},
+  };
 };
 
-export default Organizations;
+export default Factions;
