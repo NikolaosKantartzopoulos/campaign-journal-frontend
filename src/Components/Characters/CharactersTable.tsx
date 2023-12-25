@@ -30,10 +30,9 @@ export default function CharactersTable({
   } = useTableSort(sentients);
 
   function handleCharacterRowClick(e: React.MouseEvent, character: sentients) {
-    console.log(character);
+    console.log(character.sentient_id);
 
-    // const characterFullName = formCharacterLink(character);
-    // router.push(`character/${characterFullName}`);
+    router.push(`/character/${character.sentient_id}`);
   }
 
   return (

@@ -14,10 +14,6 @@ const Characters = () => {
 };
 
 export const getServerSideProps = (async (ctx) => {
-  // Fetch data from external API
-  // Pass data to the page via props
-  // const sentients = await prisma.sentients.findMany();
-
   const queryClient = new QueryClient();
 
   await queryClient.prefetchQuery({
