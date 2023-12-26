@@ -1,4 +1,3 @@
-import { sentient } from "@prisma/client";
 import { prisma } from "../../../prisma/prisma";
 
 export async function getAllSentients() {

@@ -38,7 +38,9 @@ const LinkTo = ({
 }: {
   href: string;
   startIcon?: ReactNode;
+  // eslint-disable-next-line
   svgDefault?: any;
+  // eslint-disable-next-line
   svgHovered?: any;
   linkText: string;
 }) => {

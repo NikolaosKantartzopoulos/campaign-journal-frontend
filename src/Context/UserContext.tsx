@@ -8,6 +8,7 @@ import {
 } from "react";
 import { UserManagementApiResponse } from "../../pages/api/user-management";
 import { useRouter } from "next/router";
+import { user } from "@prisma/client";
 
 export interface User {
   userId: number;
@@ -25,17 +26,17 @@ export interface UserContext {
   createUser: (
     userName: string,
     userPassword: string
-  ) => Promise<AxiosResponse<any, any>>;
+  ) => Promise<AxiosResponse<user, null>>;
   loginUser: (
     userName: string,
     userPassword: string
-  ) => Promise<AxiosResponse<any, any>>;
+  ) => Promise<AxiosResponse<UserManagementApiResponse, null>>;
   editUser: (
     userId: number,
     userName: string,
     newUserName: string,
     newPasswordField: string
-  ) => Promise<AxiosResponse<any, any>>;
+  ) => Promise<AxiosResponse<null, null>>;
 }
 
 const UserContext = createContext<UserContext | null>(null);

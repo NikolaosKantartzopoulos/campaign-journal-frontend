@@ -1,11 +1,9 @@
-import { sentient } from "@prisma/client";
-import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
-import { ChangeEvent, useRef, useState } from "react";
+import { ChangeEvent, useState } from "react";
 
-interface GenericObject {
-  [key: string]: any;
-}
+// interface GenericObject {
+//   [key: string]: any;
+// }
 
 export default function useTableSort<GenericObject>(
   initialState: GenericObject[]
@@ -16,7 +14,6 @@ export default function useTableSort<GenericObject>(
   async function handleSearchFieldKeyStroke(
     e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) {
-    //@ts-ignore
     setSearchFieldState(e.currentTarget.value);
   }
 
@@ -24,7 +21,7 @@ export default function useTableSort<GenericObject>(
     if (searchFieldState === "") {
       await clearSearchBar();
     }
-    setTableState((old) => []);
+    setTableState([]);
     checkIfPropertyExists(searchFieldState, tableState);
   }
 
@@ -32,9 +29,9 @@ export default function useTableSort<GenericObject>(
     searchValue: string,
     targetArray: GenericObject[]
   ) {
-    for (let item of targetArray) {
-      let values = Object.values(item as GenericObject[]);
-      for (let word of values) {
+    for (const item of targetArray) {
+      const values = Object.values(item as GenericObject[]);
+      for (const word of values) {
         if (
           word &&
           searchValue.toString().toLocaleLowerCase() ==
@@ -58,21 +55,21 @@ export default function useTableSort<GenericObject>(
   >("ascending");
 
   function sortTableColumn(e: React.MouseEvent, columnName: string = "") {
-    let ordered = [...tableState].sort((a, b) => {
-      //@ts-ignore
+    const ordered = [...tableState].sort((a, b) => {
+      //@ts-expect-error Column name does not exist
       if (!a[columnName] || !b[columnName]) {
         return 0;
       }
       return selectedOrder === "ascending"
-        ? //@ts-ignore
+        ? //@ts-expect-error Column name does not exist
           a[columnName].localeCompare(b[columnName])
-        : //@ts-ignore
+        : //@ts-expect-error Column name does not exist
           b[columnName].localeCompare(a[columnName]);
     });
     setSelectedOrder(
       selectedOrder === "ascending" ? "descending" : "ascending"
     );
-    setTableState((p) => ordered);
+    setTableState(() => ordered);
   }
 
   return {

@@ -6,9 +6,9 @@ import "toastify-js/src/toastify.css";
 import "./globals.css";
 import { theme } from "@/styles/muiTheme";
 import {
-  QueryClientProvider,
-  QueryClient,
   HydrationBoundary,
+  QueryClient,
+  QueryClientProvider,
 } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { useState } from "react";

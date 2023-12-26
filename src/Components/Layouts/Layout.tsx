@@ -1,13 +1,10 @@
-import { ReactNode, useContext, useState } from "react";
+import { ReactNode, useState } from "react";
 import Navbar from "../Navbar/Navbar";
-import UserContext from "@/Context/UserContext";
 import Drawer from "@mui/material/Drawer";
 import { Box, useMediaQuery, useTheme } from "@mui/material";
 import LinkSection from "../Navbar/LinkSection";
 
 export default function Layout({ children }: { children: ReactNode }) {
-  const userCtx = useContext(UserContext);
-
   const [isDrawerOpen, setDrawerOpen] = useState(false);
 
   const toggleDrawer =

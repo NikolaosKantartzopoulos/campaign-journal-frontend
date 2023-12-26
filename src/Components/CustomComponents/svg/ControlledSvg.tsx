@@ -5,7 +5,8 @@ const ControlledSvg = ({
   svgHovered,
   hovered,
   isActiveLink,
-}: any) => {
+}: // eslint-disable-next-line
+any) => {
   return (
     <Image
       src={isActiveLink || hovered ? svgHovered : svgDefault}

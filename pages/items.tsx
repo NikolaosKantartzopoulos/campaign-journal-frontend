@@ -4,7 +4,7 @@ const Items = () => {
   return <h3>Items</h3>;
 };
 
-export const getServerSideProps: GetServerSideProps = async (ctx) => {
+export const getServerSideProps: GetServerSideProps = async () => {
   return {
     props: {},
   };

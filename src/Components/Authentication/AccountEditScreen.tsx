@@ -22,7 +22,7 @@ const AccountEditScreen = () => {
       if (!enablePasswordChange) {
         setNewPasswordField("");
       }
-      const res = await userCtx?.editUser(
+      await userCtx?.editUser(
         userCtx?.user?.userId as number,
         userCtx?.user?.userName as string,
         newUserName,
@@ -32,7 +32,7 @@ const AccountEditScreen = () => {
       toastMessage("Changed password successfully", "success");
     } catch (err) {
       const e: AxiosError = err as AxiosError;
-      // @ts-ignore
+      // @ts-expect-error Error while changing user password
       const errorText: string = e?.response?.data?.text as string;
       toastMessage(errorText, "error");
     }

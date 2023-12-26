@@ -14,7 +14,7 @@ export default async function apiHandler(
   if (req.method === "POST") {
     // edit user password
 
-    const { userId, userName, newUserName, newPasswordField } = req.body;
+    const { userId, newUserName, newPasswordField } = req.body;
     let userRetrieved;
 
     const allUsers = await prisma.user.findMany({

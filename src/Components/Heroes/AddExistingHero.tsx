@@ -1,5 +1,3 @@
-import { getAllSentients } from "@/services/data-fetching/getSentients";
-import { useQuery } from "@tanstack/react-query";
 import { FlexBox } from "../CustomComponents/FlexBox";
 import { Chip } from "@mui/material";
 import getSentientFullName from "@/utilities/helperFn/getSentientFullName";

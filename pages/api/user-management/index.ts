@@ -22,7 +22,7 @@ export default async function apiHandler(
       res.status(400);
     }
     try {
-      const user = await prisma.user.create({
+      await prisma.user.create({
         data: {
           user_name: userName,
           user_password: userPassword,
@@ -74,7 +74,7 @@ export default async function apiHandler(
   if (req.method === "PATCH") {
     // edit user password
 
-    const { userId, userName, newUserName, newPasswordField } = req.body;
+    const { userId, newUserName, newPasswordField } = req.body;
     let userRetrieved;
     try {
       if (newUserName === "") {

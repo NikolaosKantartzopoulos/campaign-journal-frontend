@@ -1,6 +1,8 @@
 {
-  "extends": "next/core-web-vitals",
-  "plugins": ["unused-imports", "eslint-plugin-query"],
+  "extends": ["next/core-web-vitals", "plugin:@typescript-eslint/recommended"],
+  "parser": "@typescript-eslint/parser",
+  "plugins": ["unused-imports", "query", "@typescript-eslint"],
+  "root": true,
   "rules": {
     "no-unused-vars": "off",
     "sort-imports": [
@@ -11,7 +13,7 @@
     ],
     "unused-imports/no-unused-imports": "error",
     "unused-imports/no-unused-vars": [
-      "warn",
+      "error",
       {
         "vars": "all",
         "varsIgnorePattern": "^_",

@@ -17,7 +17,7 @@ const Characters = () => {
   return <CharactersTable sentients={sentients as sentient[]} />;
 };
 
-export const getServerSideProps = (async (ctx) => {
+export const getServerSideProps = (async () => {
   const queryClient = new QueryClient();
 
   await queryClient.prefetchQuery({
