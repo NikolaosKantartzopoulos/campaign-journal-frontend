@@ -3,8 +3,8 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "check-container": "sudo docker inspect -f '{{.State.Running}}' 'mysql-dev' || exit 1",
-    "predev": "sudo npm run check-container || (cd ../campaign-journal-backend/ && npm run dbu:dev)",
+    "check-container": "docker inspect -f '{{.State.Running}}' 'mysql-dev' || exit 1",
+    "predev": "npm run check-container || (cd ../campaign-journal-backend/ && npm run dbu:dev)",
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
@@ -14,10 +14,13 @@
     "prisma:generate": "prisma generate",
     "send": "sudo cp -r .next /var/www/dnd.rtlan.gr/ && sudo cp package.json .nvmrc /var/www/dnd.rtlan.gr/ && cd /var/www/dnd.rtlan.gr &&  sudo npm install --production && sudo m2 start npm --name 'dnd-server' -- start -- --port 3500",
     "build:cp": "npm run build &&  npm run send",
-    "dbu:dev": "sudo docker compose -f /home/nik/code/campaign-journal/campaign-journal-backend/Docker/docker-compose-dev.yml up -d",
-    "dbd:dev": "sudo docker compose -f /home/nik/code/campaign-journal/campaign-journal-backend/Docker/docker-compose-dev.yml down",
-    "dbu:prod": "sudo docker compose -f /home/nik/code/campaign-journal/campaign-journal-backend/Docker/docker-compose-prod.yml up -d",
-    "dbd:prod": "sudo docker compose -f /home/nik/code/campaign-journal/campaign-journal-backend/Docker/docker-compose-prod.yml down"
+    "dbu:dev": "docker compose -f /home/nik/code/campaign-journal/campaign-journal-backend/Docker/docker-compose-dev.yml up -d",
+    "dbd:dev": "docker compose -f /home/nik/code/campaign-journal/campaign-journal-backend/Docker/docker-compose-dev.yml down",
+    "dbu:prod": "docker compose -f /home/nik/code/campaign-journal/campaign-journal-backend/Docker/docker-compose-prod.yml up -d",
+    "dbd:prod": "docker compose -f /home/nik/code/campaign-journal/campaign-journal-backend/Docker/docker-compose-prod.yml down",
+    "db:dev:backup": "docker exec mysql-dev /usr/bin/mysqldump -u root --password=rpwd campaign_journal > /home/nik/code/databases/mysql/backups/$(date +'%y%m%d').sql",
+    "db:prod:restore": "infra/scripts/restoreProductionDatabase.sh",
+    "db:prod:drop": "infra/scripts/dropProductionDatabase.sh"
   },
   "dependencies": {
     "@emotion/react": "^11.11.1",
