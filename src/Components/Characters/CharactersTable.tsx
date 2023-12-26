@@ -7,7 +7,7 @@ import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
 import { useRouter } from "next/router";
 import React from "react";
-import useTableSort from "@/utilities/functions/hooks/useTableSort";
+import useFilterContent from "@/utilities/functions/hooks/useFilterContent";
 import { Typography } from "@mui/material";
 import { FlexBox } from "../CustomComponents/FlexBox";
 import { sentient } from "@prisma/client";
@@ -20,13 +20,13 @@ export default function CharactersTable({
 }) {
   const router = useRouter();
   const {
-    tableState,
+    filterContentState,
     searchFieldState,
     sortTableColumn,
     handleSearchFieldKeyStroke,
     handleSearch,
-    resetTable,
-  } = useTableSort(sentients);
+    resetFilterContent,
+  } = useFilterContent(sentients);
 
   function handleCharacterRowClick(e: React.MouseEvent, character: sentient) {
     router.push(`/character/${character.sentient_id}`);
@@ -42,7 +42,7 @@ export default function CharactersTable({
         handleSearchFieldKeyStroke={handleSearchFieldKeyStroke}
         handleSearch={handleSearch}
         searchFieldState={searchFieldState}
-        resetTable={resetTable}
+        clearSearchField={resetFilterContent}
       />
       <TableContainer component={Paper}>
         <Table sx={{ minWidth: 650 }} aria-label="simple table" size="small">
@@ -83,7 +83,7 @@ export default function CharactersTable({
             </TableRow>
           </TableHead>
           <TableBody>
-            {tableState.map((character) => (
+            {filterContentState.map((character) => (
               <TableRow
                 key={character.sentient_id}
                 hover

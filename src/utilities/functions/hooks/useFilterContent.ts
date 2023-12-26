@@ -4,11 +4,14 @@ import { ChangeEvent, useState } from "react";
 //   [key: string]: any;
 // }
 
-export default function useTableSort<GenericObject>(
+export default function useFilterContent<GenericObject>(
   initialState: GenericObject[]
 ) {
-  const [tableState, setTableState] = useState(initialState);
+  const [filterContentState, setFilterContentState] = useState(initialState);
   const [searchFieldState, setSearchFieldState] = useState<string>("");
+  const [selectedOrder, setSelectedOrder] = useState<
+    "ascending" | "descending"
+  >("ascending");
 
   function handleSearchFieldKeyStroke(
     e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -18,9 +21,9 @@ export default function useTableSort<GenericObject>(
 
   function handleSearch() {
     if (searchFieldState === "") {
-      resetTable();
+      resetFilterContent();
     }
-    setTableState(() => []);
+    setFilterContentState(() => []);
     checkIfPropertyExists(searchFieldState, initialState);
   }
 
@@ -29,6 +32,7 @@ export default function useTableSort<GenericObject>(
     targetArray: GenericObject[]
   ) {
     for (const item of targetArray) {
+      let itemAdded = false;
       const values: (string | number | Date)[] = Object.values(
         item as GenericObject[]
       ) as (string | number | Date)[];
@@ -42,6 +46,7 @@ export default function useTableSort<GenericObject>(
       }
       // example: separatedValues = [ "2","Bryan","Oldcastle","Mighty","three","Human"]
       for (const word of separatedValues) {
+        if (itemAdded) break;
         const normalizedWord = word.toLocaleLowerCase();
         const normalizedSearchString = searchValue
           .toString()
@@ -50,7 +55,8 @@ export default function useTableSort<GenericObject>(
         for (let i = 0; i < normalizedSearchString.length; i++) {
           if (normalizedWord[i] === normalizedSearchString[i]) {
             if (i === normalizedSearchString.length - 1) {
-              setTableState((old) => [...old, item]);
+              setFilterContentState((old) => [...old, item]);
+              itemAdded = true;
             }
           } else break;
         }
@@ -58,18 +64,18 @@ export default function useTableSort<GenericObject>(
     }
   }
 
-  const resetTable = () => {
+  const resetFilterContent = () => {
     setSearchFieldState("");
-    setTableState(initialState);
+    setFilterContentState(initialState);
     return;
   };
 
-  const [selectedOrder, setSelectedOrder] = useState<
-    "ascending" | "descending"
-  >("ascending");
-
   function sortTableColumn(e: React.MouseEvent, columnName: string = "") {
-    const ordered = [...tableState].sort((a, b) => {
+    const ordered = [...filterContentState].sort((a, b) => {
+      //@ts-expect-error Column name does not exist
+      if (!a[columnName] && b[columnName]) {
+        return -1;
+      }
       //@ts-expect-error Column name does not exist
       if (!a[columnName] || !b[columnName]) {
         return 0;
@@ -83,17 +89,17 @@ export default function useTableSort<GenericObject>(
     setSelectedOrder(
       selectedOrder === "ascending" ? "descending" : "ascending"
     );
-    setTableState(() => ordered);
+    setFilterContentState(() => ordered);
   }
 
   return {
-    tableState,
+    filterContentState,
     sortTableColumn,
     searchFieldState,
-    setTableState,
+    setFilterContentState,
     setSearchFieldState,
     handleSearch,
-    resetTable,
+    resetFilterContent,
     handleSearchFieldKeyStroke,
   };
 }

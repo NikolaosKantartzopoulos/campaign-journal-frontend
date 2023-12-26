@@ -9,13 +9,13 @@ interface SearchBoxProps {
   ) => void;
   handleSearch: () => void;
   searchFieldState: string;
-  resetTable: () => void;
+  clearSearchField: () => void;
 }
 
 const SearchBox = ({
   handleSearchFieldKeyStroke,
   searchFieldState,
-  resetTable,
+  clearSearchField,
   handleSearch,
 }: SearchBoxProps) => {
   return (
@@ -28,7 +28,7 @@ const SearchBox = ({
         onKeyDown={(e) => {
           if (e.key === "Enter") {
             if (searchFieldState === "") {
-              resetTable();
+              clearSearchField();
               return;
             }
             handleSearch();
@@ -40,7 +40,7 @@ const SearchBox = ({
           endAdornment: (
             <InputAdornment
               position="end"
-              onClick={resetTable}
+              onClick={clearSearchField}
               sx={{
                 "&:hover": {
                   cursor: "pointer",
