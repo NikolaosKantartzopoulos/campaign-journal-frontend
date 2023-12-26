@@ -1,4 +1,3 @@
-import axios from "axios";
 import { ChangeEvent, useState } from "react";
 
 // interface GenericObject {
@@ -11,19 +10,18 @@ export default function useTableSort<GenericObject>(
   const [tableState, setTableState] = useState(initialState);
   const [searchFieldState, setSearchFieldState] = useState<string>("");
 
-  async function handleSearchFieldKeyStroke(
+  function handleSearchFieldKeyStroke(
     e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) {
     setSearchFieldState(e.currentTarget.value);
   }
 
-  async function handleSearch() {
+  function handleSearch() {
     if (searchFieldState === "") {
-      await clearSearchBar();
+      resetTable();
     }
     setTableState(() => []);
-    const { data: sentients } = await axios("/api/sentients/");
-    checkIfPropertyExists(searchFieldState, sentients);
+    checkIfPropertyExists(searchFieldState, initialState);
   }
 
   function checkIfPropertyExists(
@@ -60,10 +58,9 @@ export default function useTableSort<GenericObject>(
     }
   }
 
-  const clearSearchBar = async () => {
+  const resetTable = () => {
     setSearchFieldState("");
-    const { data: sentients } = await axios("/api/sentients/");
-    setTableState(sentients);
+    setTableState(initialState);
     return;
   };
 
@@ -96,7 +93,7 @@ export default function useTableSort<GenericObject>(
     setTableState,
     setSearchFieldState,
     handleSearch,
-    clearSearchBar,
+    resetTable,
     handleSearchFieldKeyStroke,
   };
 }
