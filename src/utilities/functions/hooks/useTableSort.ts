@@ -21,8 +21,9 @@ export default function useTableSort<GenericObject>(
     if (searchFieldState === "") {
       await clearSearchBar();
     }
-    setTableState([]);
-    checkIfPropertyExists(searchFieldState, tableState);
+    setTableState(() => []);
+    const { data: sentients } = await axios("/api/sentients/");
+    checkIfPropertyExists(searchFieldState, sentients);
   }
 
   function checkIfPropertyExists(
@@ -30,14 +31,30 @@ export default function useTableSort<GenericObject>(
     targetArray: GenericObject[]
   ) {
     for (const item of targetArray) {
-      const values = Object.values(item as GenericObject[]);
-      for (const word of values) {
-        if (
-          word &&
-          searchValue.toString().toLocaleLowerCase() ==
-            word.toString().toLocaleLowerCase()
-        ) {
-          setTableState((old) => [...old, item]);
+      const values: (string | number | Date)[] = Object.values(
+        item as GenericObject[]
+      ) as (string | number | Date)[];
+      const separatedValues = [];
+      for (let i = 0; i < values.length; i++) {
+        if (values[i]) {
+          const wordStr = values[i].toString() as string;
+          const splittedArray: string[] = wordStr.split(" ");
+          separatedValues.push(...splittedArray);
+        }
+      }
+      // example: separatedValues = [ "2","Bryan","Oldcastle","Mighty","three","Human"]
+      for (const word of separatedValues) {
+        const normalizedWord = word.toLocaleLowerCase();
+        const normalizedSearchString = searchValue
+          .toString()
+          .trim()
+          .toLocaleLowerCase();
+        for (let i = 0; i < normalizedSearchString.length; i++) {
+          if (normalizedWord[i] === normalizedSearchString[i]) {
+            if (i === normalizedSearchString.length - 1) {
+              setTableState((old) => [...old, item]);
+            }
+          } else break;
         }
       }
     }

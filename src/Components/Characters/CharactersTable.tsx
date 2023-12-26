@@ -51,6 +51,12 @@ export default function CharactersTable({
           onChange={(e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) =>
             handleSearchFieldKeyStroke(e)
           }
+          onKeyDown={(e) => {
+            if (e.key === "Enter") {
+              console.log("here");
+              handleSearch();
+            }
+          }}
           value={searchFieldState}
           InputProps={{
             autoComplete: "off",
