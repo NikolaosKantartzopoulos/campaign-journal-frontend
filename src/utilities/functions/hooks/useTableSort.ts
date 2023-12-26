@@ -1,4 +1,7 @@
-import { ChangeEvent, useState } from "react";
+import { sentient } from "@prisma/client";
+import { useQuery } from "@tanstack/react-query";
+import axios from "axios";
+import { ChangeEvent, useRef, useState } from "react";
 
 interface GenericObject {
   [key: string]: any;
@@ -10,18 +13,17 @@ export default function useTableSort<GenericObject>(
   const [tableState, setTableState] = useState(initialState);
   const [searchFieldState, setSearchFieldState] = useState<string>("");
 
-  function handleSearchFieldKeyStroke(
+  async function handleSearchFieldKeyStroke(
     e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) {
     //@ts-ignore
-    if (e.key === "Enter") {
-      handleSearch();
-      return;
-    }
     setSearchFieldState(e.currentTarget.value);
   }
 
-  function handleSearch() {
+  async function handleSearch() {
+    if (searchFieldState === "") {
+      await clearSearchBar();
+    }
     setTableState((old) => []);
     checkIfPropertyExists(searchFieldState, tableState);
   }
@@ -43,6 +45,13 @@ export default function useTableSort<GenericObject>(
       }
     }
   }
+
+  const clearSearchBar = async () => {
+    setSearchFieldState("");
+    const { data: sentients } = await axios("/api/sentients/");
+    setTableState(sentients);
+    return;
+  };
 
   const [selectedOrder, setSelectedOrder] = useState<
     "ascending" | "descending"
@@ -70,8 +79,10 @@ export default function useTableSort<GenericObject>(
     tableState,
     sortTableColumn,
     searchFieldState,
+    setTableState,
     setSearchFieldState,
     handleSearch,
+    clearSearchBar,
     handleSearchFieldKeyStroke,
   };
 }

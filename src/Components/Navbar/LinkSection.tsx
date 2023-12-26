@@ -63,7 +63,7 @@ const LinkSection = () => {
         svgHovered={QuillWhite}
         linkText="Journal"
       />
-      <LinkTo href="/my-hero" startIcon={<SecurityIcon />} linkText="My hero" />
+      <LinkTo href="/heroes" startIcon={<SecurityIcon />} linkText="Heroes" />
     </Box>
   );
 };

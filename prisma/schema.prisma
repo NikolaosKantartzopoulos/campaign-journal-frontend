@@ -12,13 +12,16 @@ model attitudes {
 }
 
 model faction {
-  faction_id         Int                  @id @default(autoincrement())
-  faction_name       String               @db.VarChar(255)
-  faction_goals      String?              @db.Text
-  faction_type       String?              @db.VarChar(255)
-  leader             Int?
-  sentient           sentient?            @relation(fields: [leader], references: [sentient_id], onDelete: NoAction, onUpdate: NoAction, map: "faction_ibfk_1")
-  faction_membership faction_membership[]
+  faction_id                             Int                  @id @default(autoincrement())
+  faction_name                           String               @db.VarChar(255)
+  faction_goals                          String?              @db.Text
+  faction_type                           String?              @db.VarChar(255)
+  leader                                 Int?
+  event_event_faction_initiatorTofaction event[]              @relation("event_faction_initiatorTofaction")
+  event_event_faction_targetTofaction    event[]              @relation("event_faction_targetTofaction")
+  event_faction                          event_faction[]
+  sentient                               sentient?            @relation(fields: [leader], references: [sentient_id], onDelete: NoAction, onUpdate: NoAction, map: "faction_ibfk_1")
+  faction_membership                     faction_membership[]
 
   @@index([leader], map: "leader")
 }
@@ -39,6 +42,8 @@ model location {
   location_scale       location_location_scale?
   part_of              Int?
   location_description String?                  @db.Text
+  event_location       event_location[]
+  item                 item[]
   location             location?                @relation("locationTolocation", fields: [part_of], references: [location_id], onDelete: NoAction, onUpdate: NoAction, map: "location_ibfk_1")
   other_location       location[]               @relation("locationTolocation")
 
@@ -55,8 +60,10 @@ model sentient {
   short_title        String?              @db.VarChar(255)
   state              sentient_state?
   property_of        Int?                 @default(0)
+  event_sentient     event_sentient[]
   faction            faction[]
   faction_membership faction_membership[]
+  item               item[]
   user               user?                @relation(fields: [property_of], references: [user_id], onDelete: NoAction, onUpdate: NoAction, map: "fk_property_of_user")
 
   @@index([property_of], map: "fk_property_of_user")
@@ -68,6 +75,93 @@ model user {
   user_role     user_user_role
   user_password String?        @db.VarChar(32)
   sentient      sentient[]
+}
+
+model event {
+  event_id                                       Int              @id @default(autoincrement())
+  event_title                                    String           @unique(map: "event_title") @db.VarChar(32)
+  event_text                                     String?          @db.Text
+  faction_initiator                              Int?
+  faction_target                                 Int?
+  date_start                                     DateTime         @db.Date
+  date_end                                       DateTime?        @db.Date
+  faction_event_faction_initiatorTofaction       faction?         @relation("event_faction_initiatorTofaction", fields: [faction_initiator], references: [faction_id], onDelete: NoAction, onUpdate: NoAction, map: "event_ibfk_1")
+  faction_event_faction_targetTofaction          faction?         @relation("event_faction_targetTofaction", fields: [faction_target], references: [faction_id], onDelete: NoAction, onUpdate: NoAction, map: "event_ibfk_2")
+  event_chain_event_chain_event_precedentToevent event_chain[]    @relation("event_chain_event_precedentToevent")
+  event_chain_event_chain_event_resultingToevent event_chain[]    @relation("event_chain_event_resultingToevent")
+  event_faction                                  event_faction[]
+  event_item                                     event_item[]
+  event_location                                 event_location[]
+  event_sentient                                 event_sentient[]
+
+  @@index([faction_initiator], map: "faction_initiator")
+  @@index([faction_target], map: "faction_target")
+}
+
+model event_chain {
+  event_chain_id                           Int    @id @default(autoincrement())
+  event_precedent                          Int?
+  event_resulting                          Int?
+  event_event_chain_event_precedentToevent event? @relation("event_chain_event_precedentToevent", fields: [event_precedent], references: [event_id], onDelete: NoAction, onUpdate: NoAction, map: "event_chain_ibfk_1")
+  event_event_chain_event_resultingToevent event? @relation("event_chain_event_resultingToevent", fields: [event_resulting], references: [event_id], onDelete: NoAction, onUpdate: NoAction, map: "event_chain_ibfk_2")
+
+  @@index([event_precedent], map: "event_precedent")
+  @@index([event_resulting], map: "event_resulting")
+}
+
+model event_faction {
+  event_id   Int
+  faction_id Int
+  event      event   @relation(fields: [event_id], references: [event_id], onDelete: NoAction, onUpdate: NoAction, map: "event_faction_ibfk_1")
+  faction    faction @relation(fields: [faction_id], references: [faction_id], onDelete: NoAction, onUpdate: NoAction, map: "event_faction_ibfk_2")
+
+  @@id([event_id, faction_id])
+  @@index([faction_id], map: "faction_id")
+}
+
+model event_item {
+  event_id Int
+  item_id  Int
+  event    event @relation(fields: [event_id], references: [event_id], onDelete: NoAction, onUpdate: NoAction, map: "event_item_ibfk_1")
+  item     item  @relation(fields: [item_id], references: [item_id], onDelete: NoAction, onUpdate: NoAction, map: "event_item_ibfk_2")
+
+  @@id([event_id, item_id])
+  @@index([item_id], map: "item_id")
+}
+
+model event_location {
+  event_id    Int
+  location_id Int
+  event       event    @relation(fields: [event_id], references: [event_id], onDelete: NoAction, onUpdate: NoAction, map: "event_location_ibfk_1")
+  location    location @relation(fields: [location_id], references: [location_id], onDelete: NoAction, onUpdate: NoAction, map: "event_location_ibfk_2")
+
+  @@id([event_id, location_id])
+  @@index([location_id], map: "location_id")
+}
+
+model event_sentient {
+  event_id    Int
+  sentient_id Int
+  event       event    @relation(fields: [event_id], references: [event_id], onDelete: NoAction, onUpdate: NoAction, map: "event_sentient_ibfk_1")
+  sentient    sentient @relation(fields: [sentient_id], references: [sentient_id], onDelete: NoAction, onUpdate: NoAction, map: "event_sentient_ibfk_2")
+
+  @@id([event_id, sentient_id])
+  @@index([sentient_id], map: "sentient_id")
+}
+
+model item {
+  item_id          Int              @id @default(autoincrement())
+  item_name        String           @db.VarChar(64)
+  item_description String?          @db.Text
+  item_owner       Int?
+  item_state       item_item_state?
+  item_location    Int?
+  event_item       event_item[]
+  sentient         sentient?        @relation(fields: [item_owner], references: [sentient_id], onDelete: NoAction, onUpdate: NoAction, map: "item_ibfk_1")
+  location         location?        @relation(fields: [item_location], references: [location_id], onDelete: NoAction, onUpdate: NoAction, map: "item_ibfk_2")
+
+  @@index([item_location], map: "item_location")
+  @@index([item_owner], map: "item_owner")
 }
 
 enum location_location_scale {
@@ -88,4 +182,10 @@ enum sentient_state {
   dead
   undead
   missing
+}
+
+enum item_item_state {
+  on_person @map("on person")
+  missing
+  in_place  @map("in place")
 }

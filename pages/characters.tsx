@@ -3,11 +3,15 @@ import { GetServerSideProps } from "next";
 import { QueryClient, dehydrate, useQuery } from "@tanstack/react-query";
 import { getAllSentients } from "@/services/data-fetching/getSentients";
 import { sentient } from "@prisma/client";
+import axios from "axios";
 
 const Characters = () => {
   const { data: sentients } = useQuery({
     queryKey: ["allSentients"],
-    queryFn: getAllSentients,
+    queryFn: async () => {
+      const { data: sentient } = await axios("/api/sentients/");
+      return sentient;
+    },
   });
 
   return <CharactersTable sentients={sentients as sentient[]} />;

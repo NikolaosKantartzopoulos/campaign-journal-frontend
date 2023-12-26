@@ -9,9 +9,16 @@ import { useRouter } from "next/router";
 import React, { ChangeEvent } from "react";
 import useTableSort from "@/utilities/functions/hooks/useTableSort";
 import SearchIcon from "@mui/icons-material/Search";
-import { InputAdornment, TextField } from "@mui/material";
+import {
+  Box,
+  Button,
+  InputAdornment,
+  TextField,
+  Typography,
+} from "@mui/material";
 import { FlexBox } from "../CustomComponents/FlexBox";
 import { sentient } from "@prisma/client";
+import ClearIcon from "@mui/icons-material/Clear";
 
 export default function CharactersTable({
   sentients,
@@ -19,46 +26,55 @@ export default function CharactersTable({
   sentients: sentient[];
 }) {
   const router = useRouter();
-  console.log(sentients);
   const {
     tableState,
     searchFieldState,
     sortTableColumn,
     handleSearchFieldKeyStroke,
     handleSearch,
+    clearSearchBar,
   } = useTableSort(sentients);
 
   function handleCharacterRowClick(e: React.MouseEvent, character: sentient) {
-    console.log(character.sentient_id);
-
     router.push(`/character/${character.sentient_id}`);
+  }
+
+  if (!sentients) {
+    return <Typography variant="h5">No characters added!</Typography>;
   }
 
   return (
     <FlexBox sx={{ flexDirection: "column", paddingTop: "1rem" }}>
-      <TextField
-        size="small"
-        onChange={(e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) =>
-          handleSearchFieldKeyStroke(e)
-        }
-        value={searchFieldState}
-        InputProps={{
-          endAdornment: (
-            <InputAdornment
-              position="end"
-              onClick={handleSearch}
-              sx={{
-                "&:hover": {
-                  cursor: "pointer",
-                },
-              }}
-            >
-              <SearchIcon />
-            </InputAdornment>
-          ),
-        }}
-        sx={{ margin: "auto" }}
-      />
+      <Box sx={{ display: "flex", gap: "0px" }}>
+        <TextField
+          size="small"
+          onChange={(e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) =>
+            handleSearchFieldKeyStroke(e)
+          }
+          value={searchFieldState}
+          InputProps={{
+            autoComplete: "off",
+            endAdornment: (
+              <InputAdornment
+                position="end"
+                onClick={clearSearchBar}
+                sx={{
+                  "&:hover": {
+                    cursor: "pointer",
+                  },
+                }}
+              >
+                <ClearIcon />
+              </InputAdornment>
+            ),
+          }}
+          sx={{ margin: "auto" }}
+        />
+        <Button variant="contained" onClick={handleSearch}>
+          <SearchIcon />
+        </Button>
+      </Box>
+
       <TableContainer component={Paper}>
         <Table sx={{ minWidth: 650 }} aria-label="simple table" size="small">
           <TableHead>
