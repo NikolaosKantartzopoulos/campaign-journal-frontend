@@ -1,10 +1,12 @@
-import NextAuth from "next-auth";
+import NextAuth, { NextAuthOptions } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import { prisma } from "../../../prisma/prisma";
 import { PrismaAdapter } from "@auth/prisma-adapter";
+import { user } from "@prisma/client";
+import { Adapter } from "next-auth/adapters";
 
-export const authOptions = {
-  adapter: PrismaAdapter(prisma),
+export const authOptions: NextAuthOptions = {
+  adapter: PrismaAdapter(prisma) as Adapter,
   callbacks: {
     async jwt({ token, user }) {
       // Persist the OAuth access_token and or the user id to the token right after signin
@@ -16,7 +18,7 @@ export const authOptions = {
     session: async ({ session, token }) => {
       // session callback is called whenever a session for that particular user is checked
       // in above function we created token.user=user
-      session.user = token.user;
+      session.user = token.user as user;
       // you might return this in new version
       return session;
     },
@@ -41,6 +43,7 @@ export const authOptions = {
       //   user_name: { label: "Username", type: "text", placeholder: "jsmith" },
       //   user_password: { label: "Password", type: "password" },
       // },
+      // @ts-expect-error authorize nextauth
       async authorize(credentials, req) {
         // You need to provide your own logic here that takes the credentials
         // submitted and returns either a object representing a user or value
@@ -48,7 +51,7 @@ export const authOptions = {
         // e.g. return { id: 1, name: 'J Smith', email: 'jsmith@example.com' }
         // You can also use the `req` object to obtain additional parameters
         // (i.e., the request IP address)
-        const { user_name, user_password } = req.query;
+        const { user_name, user_password } = req.query as user;
         try {
           const validUserArray = await prisma.user.findMany({
             where: {

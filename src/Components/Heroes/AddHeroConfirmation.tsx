@@ -8,21 +8,25 @@ import DialogContentText from "@mui/material/DialogContentText";
 import DialogTitle from "@mui/material/DialogTitle";
 import AddHeroContext, { AddHeroContextInterface } from "./AddHeroContext";
 import getSentientFullName from "@/utilities/helperFn/getSentientFullName";
-import UserContext, { UserContextInterface } from "@/Context/UserContext";
 import { toastMessage } from "../CustomComponents/Toastify/Toast";
 import { useRouter } from "next/router";
+import { useSession } from "next-auth/react";
 
 const AddHeroConfirmation = () => {
   const { selectedHero, handleClose, submitHeroSelection, open } =
     React.useContext(AddHeroContext) as AddHeroContextInterface;
-  const { user } = React.useContext(UserContext) as UserContextInterface;
+  // const { user } = React.useContext(UserContext) as UserContextInterface;
+  const { data: session } = useSession();
+  const user = session?.user;
+
   const router = useRouter();
   async function handleAddButtonClick() {
     if (!user) {
       toastMessage("Please login to add a hero to your Vanguard", "warning");
       router.replace("/");
     } else {
-      await submitHeroSelection(user);
+      const { data } = await submitHeroSelection(user);
+      toastMessage(data.text, "warning");
     }
   }
 

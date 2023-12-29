@@ -24,19 +24,24 @@ const LoginButton = ({ ...rest }) => {
         alignItems: "center",
         flexFlow: "row wrap",
         border: user ? "1px solid white" : "1px solid rgba(0,0,0,0)",
+        mx: 1,
       }}
     >
       <Button
         {...rest}
         onClick={handleAccountButtonClick}
         sx={{
+          px: 1,
+          py: 0,
           display: "flex",
-          flexFlow: "row wrap",
+          flexFlow: "row",
           justifyContent: "center",
           alignItems: "center",
+          height: "36px",
+          gap: 1,
         }}
       >
-        <AccountCircleIcon sx={{ height: "48px", width: "48px" }} />
+        <AccountCircleIcon sx={{ height: "32px", width: "32px" }} />
         {user && (
           <Typography variant="body1">
             {userCtx?.user?.user_name

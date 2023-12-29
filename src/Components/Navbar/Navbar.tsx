@@ -2,7 +2,6 @@ import {
   AppBar,
   Box,
   IconButton,
-  Toolbar,
   useMediaQuery,
   useTheme,
 } from "@mui/material";
@@ -24,10 +23,11 @@ const Navbar = ({
 
   return (
     <AppBar position="static" sx={{ marginBottom: "2rem" }}>
-      <Toolbar
+      <Box
         sx={{
           display: "flex",
           justifyContent: "space-between",
+          padding: 1,
         }}
       >
         {under600px && (
@@ -46,19 +46,25 @@ const Navbar = ({
 
         {!under600px && (
           <Box
-            sx={{
-              display: "flex",
+            sx={() => ({
+              display: {
+                xs: "none",
+                sm: "flex",
+                md: "flex",
+                lg: "flex",
+                xl: "flex",
+              },
               flexFlow: "row wrap",
               alignItems: "center",
               justifyContent: "center",
               alignContent: "stretch",
-            }}
+            })}
           >
             <LinkSection />
           </Box>
         )}
         <LoginButton color="inherit" />
-      </Toolbar>
+      </Box>
     </AppBar>
   );
 };

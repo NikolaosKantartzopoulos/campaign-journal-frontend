@@ -23,7 +23,6 @@ const LinkSection = () => {
       sx={{
         display: "flex",
         flexFlow: "row wrap",
-        gap: "0.5rem",
         justifyContent: under600px ? "flex-start" : "center",
       }}
     >

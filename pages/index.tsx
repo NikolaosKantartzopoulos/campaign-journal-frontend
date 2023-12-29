@@ -1,3 +1,5 @@
+import { GetServerSideProps } from "next";
+
 import { Typography } from "@mui/material";
 import { useSession } from "next-auth/react";
 
@@ -14,3 +16,9 @@ export default function Home() {
     </main>
   );
 }
+
+export const getServerSideProps: GetServerSideProps = async () => {
+  return {
+    props: {},
+  };
+};

@@ -1,24 +1,34 @@
+import * as React from "react";
+import { AppProps } from "next/app";
+import { ThemeProvider } from "@mui/material/styles";
+import CssBaseline from "@mui/material/CssBaseline";
+import { EmotionCache } from "@emotion/react";
+import { theme } from "../src/styles/muiTheme";
 import Layout from "@/Components/Layouts/Layout";
 import { UserContextProvider } from "@/Context/UserContext";
-import { CssBaseline, ThemeProvider } from "@mui/material";
-import type { AppProps } from "next/app";
-import "toastify-js/src/toastify.css";
-import "./globals.css";
-import { theme } from "@/styles/muiTheme";
 import {
   HydrationBoundary,
   QueryClient,
   QueryClientProvider,
 } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
-import { useState } from "react";
 import { SessionProvider } from "next-auth/react";
+import "toastify-js/src/toastify.css";
+import "./globals.css";
 
-export default function MyApp({
-  Component,
-  pageProps: { session, ...pageProps },
-}: AppProps) {
-  const [queryClient] = useState(
+// Client-side cache, shared for the whole session of the user in the browser.
+
+export interface MyAppProps extends AppProps {
+  emotionCache?: EmotionCache;
+}
+
+export default function MyApp(props: MyAppProps) {
+  const {
+    Component,
+    pageProps: { session, ...pageProps },
+  } = props;
+
+  const [queryClient] = React.useState(
     () =>
       new QueryClient({
         defaultOptions: {
@@ -32,20 +42,20 @@ export default function MyApp({
   );
 
   return (
-    <SessionProvider session={session}>
-      <QueryClientProvider client={queryClient}>
-        <HydrationBoundary state={pageProps.dehydratedState}>
-          <ThemeProvider theme={theme}>
+    <ThemeProvider theme={theme}>
+      <SessionProvider session={session}>
+        <QueryClientProvider client={queryClient}>
+          <HydrationBoundary state={pageProps.dehydratedState}>
             <UserContextProvider>
               <CssBaseline />
               <Layout>
                 <Component {...pageProps} />
               </Layout>
             </UserContextProvider>
-          </ThemeProvider>
-        </HydrationBoundary>
-        <ReactQueryDevtools initialIsOpen={false} />
-      </QueryClientProvider>
-    </SessionProvider>
+          </HydrationBoundary>
+          <ReactQueryDevtools initialIsOpen={false} />
+        </QueryClientProvider>
+      </SessionProvider>
+    </ThemeProvider>
   );
 }

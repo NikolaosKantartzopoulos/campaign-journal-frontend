@@ -18,7 +18,6 @@ export default async function apiHandler(
   if (req.method === "PUT") {
     // addExistingSentientToUsersVanguard
     const { sentient, user }: { sentient: sentient; user: user } = req.body;
-    console.log(sentient, user);
     try {
       await addExistingSentientToUsersVanguard(sentient, user);
       res.status(200).json({

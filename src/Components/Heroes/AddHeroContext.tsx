@@ -1,5 +1,5 @@
 import { sentient, user } from "@prisma/client";
-import axios from "axios";
+import axios, { AxiosResponse } from "axios";
 import {
   Dispatch,
   MouseEvent,
@@ -18,7 +18,9 @@ export interface AddHeroContextInterface {
   handleClose: () => void;
   selectedHero: sentient | null;
   setSelectedHero: Dispatch<SetStateAction<sentient | null>>;
-  submitHeroSelection: (user: user) => Promise<void>;
+  submitHeroSelection: (
+    user: user
+  ) => Promise<AxiosResponse<{ text: string }, null>>;
 }
 
 const AddHeroContext = createContext<AddHeroContextInterface | null>(null);
@@ -46,10 +48,16 @@ export function AddHeroContextProvider({ children }: { children: ReactNode }) {
   async function submitHeroSelection(user: user) {
     if (!addHeroOption) return;
     if (addHeroOption === "new") {
-      await axios.post("/api/heroes", { sentient: selectedHero, user });
+      return await axios.post("/api/heroes", {
+        sentient: selectedHero,
+        user,
+      });
     }
     if (addHeroOption === "existing") {
-      await axios.put("/api/heroes", { sentient: selectedHero, user });
+      return await axios.put("/api/heroes", {
+        sentient: selectedHero,
+        user,
+      });
     }
   }
 
@@ -64,6 +72,7 @@ export function AddHeroContextProvider({ children }: { children: ReactNode }) {
         handleClose,
         selectedHero,
         setSelectedHero,
+        // @ts-expect-error submitHeroSelection
         submitHeroSelection,
       }}
     >
