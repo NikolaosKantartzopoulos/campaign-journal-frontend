@@ -1,10 +1,10 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import { prisma } from "../../../prisma/prisma";
-import { User } from "@/Context/UserContext";
+import { user } from "@prisma/client";
 
 export interface UserManagementApiResponse {
   text: string;
-  user: User;
+  user: user;
 }
 
 export default async function apiHandler(
@@ -17,15 +17,15 @@ export default async function apiHandler(
 
   if (req.method === "POST") {
     // create user
-    const { userName, userPassword } = req.body;
-    if (!userName) {
+    const { user_name, user_password } = req.body;
+    if (!user_name) {
       res.status(400);
     }
     try {
       await prisma.user.create({
         data: {
-          user_name: userName,
-          user_password: userPassword,
+          user_name: user_name,
+          user_password: user_password,
           user_role: "Player",
         },
       });
@@ -38,30 +38,35 @@ export default async function apiHandler(
 
   if (req.method === "PUT") {
     // login user
-    const { userName, userPassword } = req.body;
-    if (!userName) {
+    const { user_name, user_password } = req.body;
+    if (!user_name) {
       res.status(400);
     }
     try {
       const usersRetrieved = await prisma.user.findMany({
         where: {
-          user_name: userName,
+          user_name: user_name,
         },
       });
 
       if (!usersRetrieved) {
         res.status(400).json({ text: "This user does not exist" });
+        return;
       }
 
-      if (usersRetrieved && usersRetrieved[0].user_password !== userPassword) {
+      if (
+        usersRetrieved &&
+        usersRetrieved[0].user_password &&
+        usersRetrieved[0].user_password !== user_password
+      ) {
         res.status(400).json({ text: "Wrong password" });
+        return;
       }
-
-      const user: User = {
-        userName: usersRetrieved[0].user_name,
-        userId: usersRetrieved[0].user_id,
-        userPassword: usersRetrieved[0].user_password || "",
-        userRole: usersRetrieved[0].user_role || "Player",
+      const user: user = {
+        user_name: usersRetrieved[0].user_name,
+        user_id: usersRetrieved[0].user_id,
+        user_password: usersRetrieved[0].user_password || "",
+        user_role: usersRetrieved[0].user_role || "Player",
       };
 
       res.status(200).json({ text: "Logged in successfully", user });
@@ -74,13 +79,13 @@ export default async function apiHandler(
   if (req.method === "PATCH") {
     // edit user password
 
-    const { userId, newUserName, newPasswordField } = req.body;
+    const { user_id, newUserName, newPasswordField } = req.body;
     let userRetrieved;
     try {
       if (newUserName === "") {
         userRetrieved = await prisma.user.update({
           where: {
-            user_id: userId,
+            user_id: user_id,
           },
           data: {
             user_password: newPasswordField,
@@ -89,7 +94,7 @@ export default async function apiHandler(
       } else if (newPasswordField === "") {
         userRetrieved = await prisma.user.update({
           where: {
-            user_id: userId,
+            user_id: user_id,
           },
           data: {
             user_name: newUserName,
@@ -98,7 +103,7 @@ export default async function apiHandler(
       } else {
         userRetrieved = await prisma.user.update({
           where: {
-            user_id: userId,
+            user_id: user_id,
           },
           data: {
             user_name: newUserName,
@@ -107,11 +112,11 @@ export default async function apiHandler(
         });
       }
 
-      const user: User = {
-        userName: userRetrieved.user_name,
-        userId: userRetrieved.user_id,
-        userPassword: userRetrieved.user_password || "",
-        userRole: userRetrieved.user_role || "Player",
+      const user: user = {
+        user_name: userRetrieved.user_name,
+        user_id: userRetrieved.user_id,
+        user_password: userRetrieved.user_password || "",
+        user_role: userRetrieved.user_role || "Player",
       };
 
       res.status(200).json({ text: "Logged in successfully", user });

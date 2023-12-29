@@ -23,7 +23,7 @@ const Navbar = ({
   const under600px = useMediaQuery(theme.breakpoints.down("sm"));
 
   return (
-    <AppBar position="static">
+    <AppBar position="static" sx={{ marginBottom: "2rem" }}>
       <Toolbar
         sx={{
           display: "flex",

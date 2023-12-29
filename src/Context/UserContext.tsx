@@ -6,90 +6,85 @@ import {
   createContext,
   useState,
 } from "react";
-import { UserManagementApiResponse } from "../../pages/api/user-management";
-import { useRouter } from "next/router";
 import { user } from "@prisma/client";
 
-export interface User {
-  userId: number;
-  userName: string;
-  userPassword: string;
-  userEmail?: string;
-  userRole?: string;
-}
-
-export interface UserContext {
-  user: User | null;
+export interface UserContextInterface {
+  user: user | null;
   showUserControlScreen: boolean;
   setShowUserControlScreen: Dispatch<SetStateAction<boolean>>;
-  logoutUser: () => void;
+  // logoutUser: () => void;
   createUser: (
-    userName: string,
-    userPassword: string
+    user_name: string,
+    user_password: string
   ) => Promise<AxiosResponse<user, null>>;
-  loginUser: (
-    userName: string,
-    userPassword: string
-  ) => Promise<AxiosResponse<UserManagementApiResponse, null>>;
+  // loginUser: (
+  //   user_name: string,
+  //   user_password: string
+  // ) => Promise<AxiosResponse<UserManagementApiResponse, null>>;
   editUser: (
-    userId: number,
-    userName: string,
-    newUserName: string,
-    newPasswordField: string
+    user_id: number,
+    user_name: string,
+    newUser_name: string,
+    newUser_passwordField: string,
+    enableEditUserName: boolean,
+    enablePasswordChange: boolean
   ) => Promise<AxiosResponse<null, null>>;
+  setUser: Dispatch<SetStateAction<user | null>>;
 }
 
-const UserContext = createContext<UserContext | null>(null);
+const UserContext = createContext<UserContextInterface | null>(null);
 
 export function UserContextProvider({ children }: { children: ReactNode }) {
-  const router = useRouter();
-  const [user, setUser] = useState<User | null>(null);
+  const [user, setUser] = useState<user | null>(null);
   const [showUserControlScreen, setShowUserControlScreen] =
     useState<boolean>(false);
 
-  async function logoutUser() {
-    setUser(null);
-    localStorage.removeItem("user");
-    router.replace("/account-access");
-  }
+  // async function logoutUser() {
+  //   setUser(null);
+  //   localStorage.removeItem("user");
+  //   router.replace("/account-access");
+  // }
 
-  async function createUser(userName: string, userPassword: string) {
+  async function createUser(user_name: string, user_password: string) {
     const res: AxiosResponse = await axios.post("/api/user-management", {
-      userName,
-      userPassword,
+      user_name,
+      user_password,
     });
     return res;
   }
 
-  async function loginUser(userName: string, userPassword: string) {
-    const res: AxiosResponse<UserManagementApiResponse> = await axios.put(
-      "/api/user-management",
-      {
-        userName,
-        userPassword,
-      }
-    );
-    localStorage.setItem("user", JSON.stringify(res.data.user));
-    setUser(res.data.user);
-    setShowUserControlScreen(false);
-    return res;
-  }
+  // async function loginUser(user_name: string, user_password: string) {
+  //   const res: AxiosResponse<UserManagementApiResponse> = await axios.put(
+  //     "/api/user-management",
+  //     {
+  //       user_name,
+  //       user_password,
+  //     }
+  //   );
+  //   localStorage.setItem("user", JSON.stringify(res.data.user));
+  //   setUser(res.data.user);
+  //   setShowUserControlScreen(false);
+  //   return res;
+  // }
 
   async function editUser(
-    userId: number,
-    userName: string,
-    newUserName: string,
-    newPasswordField: string
+    user_id: number,
+    user_name: string,
+    newUser_name: string,
+    newUser_passwordField: string,
+    enableEditUserName: boolean,
+    enablePasswordChange: boolean
   ) {
     const res = await axios.post("/api/user-management/edit-profile", {
-      userId,
-      userName,
-      newUserName,
-      newPasswordField,
+      user_id,
+      user_name,
+      newUser_name,
+      newUser_passwordField,
+      enableEditUserName,
+      enablePasswordChange,
     });
     if (res.statusText === "OK") {
       setUser(res.data.user);
-      localStorage.setItem("user", JSON.stringify(res.data.user));
     }
     return res;
   }
@@ -100,10 +95,11 @@ export function UserContextProvider({ children }: { children: ReactNode }) {
         user,
         showUserControlScreen,
         setShowUserControlScreen,
-        logoutUser,
+        // logoutUser,
         createUser,
         editUser,
-        loginUser,
+        // loginUser,
+        setUser,
       }}
     >
       {children}

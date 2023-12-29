@@ -42,6 +42,7 @@ model location {
   location_scale       location_location_scale?
   part_of              Int?
   location_description String?                  @db.Text
+  game_master          Int?
   event_location       event_location[]
   item                 item[]
   location             location?                @relation("locationTolocation", fields: [part_of], references: [location_id], onDelete: NoAction, onUpdate: NoAction, map: "location_ibfk_1")
@@ -162,6 +163,13 @@ model item {
 
   @@index([item_location], map: "item_location")
   @@index([item_owner], map: "item_owner")
+}
+
+model user_sentient {
+  user_id     Int
+  sentient_id Int
+
+  @@id([user_id, sentient_id])
 }
 
 enum location_location_scale {

@@ -1,10 +1,10 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import { prisma } from "../../../prisma/prisma";
-import { User } from "@/Context/UserContext";
+import { user } from "@prisma/client";
 
 export interface UserManagementApiResponse {
   text: string;
-  user: User;
+  user: user;
 }
 
 export default async function apiHandler(
@@ -14,12 +14,18 @@ export default async function apiHandler(
   if (req.method === "POST") {
     // edit user password
 
-    const { userId, newUserName, newPasswordField } = req.body;
+    const {
+      user_id,
+      newUser_name,
+      newUser_passwordField,
+      enableEditUserName,
+      enablePasswordChange,
+    } = req.body;
     let userRetrieved;
 
     const allUsers = await prisma.user.findMany({
       where: {
-        user_name: newUserName,
+        user_name: newUser_name,
       },
     });
 
@@ -27,41 +33,41 @@ export default async function apiHandler(
       res.status(400).json({ text: "Username exists" });
     } else {
       try {
-        if (newUserName === "") {
+        if (enablePasswordChange) {
           userRetrieved = await prisma.user.update({
             where: {
-              user_id: userId,
+              user_id: user_id,
             },
             data: {
-              user_password: newPasswordField,
+              user_password: newUser_passwordField,
             },
           });
-        } else if (newPasswordField === "") {
+        } else if (enableEditUserName) {
           userRetrieved = await prisma.user.update({
             where: {
-              user_id: userId,
+              user_id: user_id,
             },
             data: {
-              user_name: newUserName,
+              user_name: newUser_name,
             },
           });
         } else {
           userRetrieved = await prisma.user.update({
             where: {
-              user_id: userId,
+              user_id: user_id,
             },
             data: {
-              user_name: newUserName,
-              user_password: newPasswordField,
+              user_name: newUser_name,
+              user_password: newUser_passwordField,
             },
           });
         }
 
-        const user: User = {
-          userName: userRetrieved.user_name,
-          userId: userRetrieved.user_id,
-          userPassword: userRetrieved.user_password || "",
-          userRole: userRetrieved.user_role || "Player",
+        const user: user = {
+          user_name: userRetrieved.user_name,
+          user_id: userRetrieved.user_id,
+          user_password: userRetrieved.user_password || "",
+          user_role: userRetrieved.user_role || "Player",
         };
 
         res.status(200).json({ text: "Logged in successfully", user });

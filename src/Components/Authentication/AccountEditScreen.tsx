@@ -4,9 +4,14 @@ import { useContext, useState } from "react";
 import { FlexBox } from "../CustomComponents/FlexBox";
 import { AxiosError } from "axios";
 import { toastMessage } from "../CustomComponents/Toastify/Toast";
+import { useRouter } from "next/router";
+import { signOut, useSession } from "next-auth/react";
 
 const AccountEditScreen = () => {
   const userCtx = useContext(UserContext);
+  const { data: session } = useSession();
+  const user = session?.user;
+  const router = useRouter();
 
   const [newPasswordField, setNewPasswordField] = useState<string>("");
   const [newUserName, setNewUserName] = useState<string>("");
@@ -15,6 +20,9 @@ const AccountEditScreen = () => {
     useState<boolean>(false);
 
   async function handleChangeInformation() {
+    if (enableEditUserName && newUserName === "") {
+      toastMessage("The username field can not be empty", "error");
+    }
     try {
       if (!enableEditUserName) {
         setNewUserName("");
@@ -22,14 +30,24 @@ const AccountEditScreen = () => {
       if (!enablePasswordChange) {
         setNewPasswordField("");
       }
-      await userCtx?.editUser(
-        userCtx?.user?.userId as number,
-        userCtx?.user?.userName as string,
-        newUserName,
-        newPasswordField
-      );
 
-      toastMessage("Changed password successfully", "success");
+      const [newUser_name, newUser_passwordField] = [
+        newUserName,
+        newPasswordField,
+      ];
+      await userCtx?.editUser(
+        user?.user_id as number,
+        user?.user_name as string,
+        newUser_name,
+        newUser_passwordField,
+        enableEditUserName,
+        enablePasswordChange
+      );
+      // userCtx?.setUser({ ...user, user_name: newUser_name });
+      toastMessage(
+        "User updated successfully. Next time please log in with your new credentials.",
+        "success"
+      );
     } catch (err) {
       const e: AxiosError = err as AxiosError;
       // @ts-expect-error Error while changing user password
@@ -53,9 +71,8 @@ const AccountEditScreen = () => {
         variant="h5"
         sx={{ margin: "1rem auto", textAlign: "center" }}
       >
-        {userCtx?.user?.userName}
+        {userCtx?.user?.user_name ? userCtx?.user?.user_name : user?.user_name}
       </Typography>
-      <Divider />
       <FlexBox sx={{ justifyContent: "start" }}>
         <input
           type="checkbox"
@@ -96,9 +113,16 @@ const AccountEditScreen = () => {
       )}
       <Button
         variant="contained"
+        onClick={() => router.push(`/worlds/${user?.user_id}`)}
+      >
+        Worlds
+      </Button>
+      <Divider />
+      <Button
+        variant="contained"
         size="small"
         sx={{ height: "32px", color: "white", marginTop: "3rem" }}
-        onClick={userCtx?.logoutUser}
+        onClick={() => signOut({ callbackUrl: "/" })}
       >
         Logout
       </Button>
