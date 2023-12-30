@@ -28,7 +28,9 @@
     "**/*.ts",
     "**/*.tsx",
     ".next/types/**/*.ts",
-    "pages/api/auth/[...nextauth].ts"
+    "pages/api/auth/[...nextauth].ts",
+    "jest.config.js",
+    "tests/homepage.test.js"
   ],
   "exclude": ["node_modules"]
 }

@@ -1,18 +1,18 @@
 import * as React from "react";
 import { AppProps } from "next/app";
-import { ThemeProvider } from "@mui/material/styles";
-import CssBaseline from "@mui/material/CssBaseline";
-import { EmotionCache } from "@emotion/react";
-import { theme } from "../src/styles/muiTheme";
-import Layout from "@/Components/Layouts/Layout";
-import { UserContextProvider } from "@/Context/UserContext";
 import {
   HydrationBoundary,
   QueryClient,
   QueryClientProvider,
 } from "@tanstack/react-query";
-import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
+import { ThemeProvider } from "@mui/material/styles";
 import { SessionProvider } from "next-auth/react";
+import { UserContextProvider } from "@/Context/UserContext";
+import CssBaseline from "@mui/material/CssBaseline";
+import { EmotionCache } from "@emotion/react";
+import { theme } from "../src/styles/muiTheme";
+import Layout from "@/Components/Layouts/Layout";
+import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import "toastify-js/src/toastify.css";
 import "./globals.css";
 
