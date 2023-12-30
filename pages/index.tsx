@@ -10,6 +10,7 @@ export default function Home() {
   return (
     <main>
       <Typography variant="h3">Homepage</Typography>
+      <Typography variant="h3">With tests</Typography>
       {session && (
         <Typography variant="h5">Welcome {session?.user?.user_name}</Typography>
       )}
