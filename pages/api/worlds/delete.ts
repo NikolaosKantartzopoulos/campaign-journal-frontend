@@ -36,17 +36,7 @@ export default async function apiHandler(
         },
       });
 
-      await prisma.location.delete({
-        where: { location_id: locationObject.location_id },
-      });
-
-      const databaseUser = await prisma.user.findUnique({
-        where: {
-          user_id: user.user_id,
-        },
-      });
-
-      if (databaseUser?.location_id === locationObject.location_id) {
+      if (user.location_id === locationObject.location_id) {
         await prisma.user.update({
           where: {
             user_id: user.user_id,
@@ -57,8 +47,12 @@ export default async function apiHandler(
         });
       }
 
+      await prisma.location.delete({
+        where: { location_id: locationObject.location_id },
+      });
+
       res.status(200).json({
-        message: `World ${location_name} created successfully`,
+        message: `World ${location_name} deleted`,
         deletedWorldId: locationObject.location_id,
       });
     } catch (err) {

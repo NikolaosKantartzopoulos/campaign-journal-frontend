@@ -18,7 +18,6 @@ const WorldManagement = ({
 }) => {
   const { data: session, update } = useSession();
   const user = session?.user;
-
   const queryClient = useQueryClient();
 
   const [newWorldName, setNewWorldName] = useState("");
@@ -27,7 +26,7 @@ const WorldManagement = ({
   const [deleteWorldInput, setDeleteWorldInput] = useState("");
   const [createWorldToolsVisible, setCreateWorldToolsVisible] = useState(false);
   const [addUserToWorldVisible, setAddUserToWorldVisible] = useState(false);
-  const [deleteWorldMenuVisible, setDeleteWorldMenuVisible] = useState(true);
+  const [deleteWorldMenuVisible, setDeleteWorldMenuVisible] = useState(false);
 
   const handleCreateWorld = async () => {
     try {
@@ -40,16 +39,14 @@ const WorldManagement = ({
       );
 
       const { location_id } = createdWorld;
-
-      queryClient.invalidateQueries({
-        queryKey: [`getAllWorldsThatUserHasAccess-${user?.user_id}`],
-      });
-      setCreateWorldToolsVisible(false);
-
       update({
         location_id: location_id,
         selectedWorld: createdWorld,
       });
+      await queryClient.invalidateQueries({
+        queryKey: [`getAllWorldsThatUserHasAccess-${user?.user_id}`],
+      });
+      setCreateWorldToolsVisible(false);
 
       toastMessage("World successfully created", "success");
     } catch (err: any) {
@@ -58,7 +55,6 @@ const WorldManagement = ({
   };
 
   const handleDeleteWorld = async () => {
-    console.log(deleteWorldInput);
     if (!deleteWorldInput) {
       toastMessage("Input is empty", "error");
       return;
@@ -68,11 +64,19 @@ const WorldManagement = ({
         location_name: deleteWorldInput,
       });
       toastMessage(data.message, "success");
-      queryClient.invalidateQueries({
+      await queryClient.invalidateQueries({
         queryKey: [`getAllWorldsThatUserHasAccess-${user?.user_id}`],
       });
 
       console.log(user?.selectedWorld?.location_id, data.location_id);
+
+      if (playerLocations.length === 1) {
+        update({
+          location_id: null,
+          selectedWorld: null,
+        });
+        return;
+      }
 
       if (user?.selectedWorld?.location_id === data.deletedWorldId) {
         console.log(playerLocations);
@@ -81,6 +85,9 @@ const WorldManagement = ({
           selectedWorld: playerLocations.length ? playerLocations[0] : null,
         });
       }
+
+      setDeleteWorldInput("");
+      setDeleteWorldMenuVisible(false);
     } catch (err: any) {
       console.log(err);
       toastMessage(err.response.data.message, "error");
@@ -161,15 +168,8 @@ const WorldManagement = ({
         </Box>
       )}
       <Button
-        variant={!createWorldToolsVisible ? "outlined" : "contained"}
+        variant={!deleteWorldMenuVisible ? "outlined" : "contained"}
         onClick={() => setDeleteWorldMenuVisible((p) => !p)}
-        sx={(theme) => ({
-          bgcolor: theme.palette.error.main,
-          color: "white",
-          "&:hover": {
-            bgcolor: theme.palette.error.main,
-          },
-        })}
       >
         Delete a world
       </Button>

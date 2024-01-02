@@ -39,5 +39,5 @@ export async function getAllWorldsThatUserHasAccess(
   });
   const locationsData = data?.world_user || [];
   const locations = locationsData.map((el) => el.location);
-  return locations || [];
+  return locations;
 }
