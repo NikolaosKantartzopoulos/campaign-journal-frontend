@@ -12,6 +12,7 @@ import AddHeroConfirmation from "./AddHeroConfirmation";
 const AddHeroPage = ({ sentients }: { sentients: sentient[] }) => {
   const { setAddHeroOption, addHeroOption }: AddHeroContextInterface =
     useContext(AddHeroContext) as AddHeroContextInterface;
+
   return (
     <FlexBox sx={{ flexDirection: "column" }}>
       <Typography variant="h4">Your Heroes</Typography>
@@ -25,7 +26,7 @@ const AddHeroPage = ({ sentients }: { sentients: sentient[] }) => {
         }}
       >
         <AddNewHeroButton setAddHeroOption={setAddHeroOption} />
-        <AddExistingHeroButton setAddHeroOption={setAddHeroOption} />
+        <AddExistingHeroButton setAddHeroOption={setAddHeroOption} />C
       </FlexBox>
 
       {addHeroOption && (

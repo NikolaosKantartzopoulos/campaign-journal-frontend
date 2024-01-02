@@ -4,6 +4,7 @@
   "plugins": ["unused-imports", "query", "@typescript-eslint"],
   "root": true,
   "rules": {
+    "@typescript-eslint/no-explicit-any": ["off"],
     "no-unused-vars": "off",
     "sort-imports": [
       "error",

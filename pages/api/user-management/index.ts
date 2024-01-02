@@ -26,7 +26,6 @@ export default async function apiHandler(
         data: {
           user_name: user_name,
           user_password: user_password,
-          user_role: "Player",
         },
       });
 
@@ -36,48 +35,8 @@ export default async function apiHandler(
     }
   }
 
-  if (req.method === "PUT") {
-    // login user
-    const { user_name, user_password } = req.body;
-    if (!user_name) {
-      res.status(400);
-    }
-    try {
-      const usersRetrieved = await prisma.user.findMany({
-        where: {
-          user_name: user_name,
-        },
-      });
-
-      if (!usersRetrieved) {
-        res.status(400).json({ text: "This user does not exist" });
-        return;
-      }
-
-      if (
-        usersRetrieved &&
-        usersRetrieved[0].user_password &&
-        usersRetrieved[0].user_password !== user_password
-      ) {
-        res.status(400).json({ text: "Wrong password" });
-        return;
-      }
-      const user: user = {
-        user_name: usersRetrieved[0].user_name,
-        user_id: usersRetrieved[0].user_id,
-        user_password: usersRetrieved[0].user_password || "",
-        user_role: usersRetrieved[0].user_role || "Player",
-      };
-
-      res.status(200).json({ text: "Logged in successfully", user });
-    } catch (e) {
-      res.status(400).json(e);
-    }
-    res.status(500);
-  }
-
   if (req.method === "PATCH") {
-    // edit user password
+    // edit user username and/or password
 
     const { user_id, newUserName, newPasswordField } = req.body;
     let userRetrieved;
@@ -116,7 +75,8 @@ export default async function apiHandler(
         user_name: userRetrieved.user_name,
         user_id: userRetrieved.user_id,
         user_password: userRetrieved.user_password || "",
-        user_role: userRetrieved.user_role || "Player",
+        location_id: userRetrieved.location_id,
+        sentient_id: userRetrieved.sentient_id,
       };
 
       res.status(200).json({ text: "Logged in successfully", user });

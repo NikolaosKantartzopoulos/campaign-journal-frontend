@@ -1,25 +1,58 @@
-import NextAuth, { NextAuthOptions } from "next-auth";
+import NextAuth, { NextAuthOptions, User } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import { prisma } from "../../../prisma/prisma";
-import { PrismaAdapter } from "@auth/prisma-adapter";
-import { user } from "@prisma/client";
-import { Adapter } from "next-auth/adapters";
+import { location, sentient, user } from "@prisma/client";
 
 export const authOptions: NextAuthOptions = {
-  adapter: PrismaAdapter(prisma) as Adapter,
+  // adapter: PrismaAdapter(prisma) as Adapter,
   callbacks: {
-    async jwt({ token, user }) {
+    signIn: async ({ user }) => {
+      if (user) return true;
+      return false;
+    },
+    async jwt({ token, user, session, trigger }) {
       // Persist the OAuth access_token and or the user id to the token right after signin
-      if (user) {
-        token.user = user;
+
+      if (trigger === "update") {
+        // Note, that `session` can be any arbitrary object, remember to validate it!
+        token.user.selectedWorld = session.selectedWorld;
+        token.user.location_id = session.location_id;
+
+        return token;
       }
+
+      if (user) {
+        if (user?.location_id) {
+          const selectedWorld = (await prisma.location.findUnique({
+            where: {
+              location_id: user.location_id,
+            },
+          })) as location;
+
+          user.selectedWorld = selectedWorld;
+        }
+        if (user.sentient_id) {
+          const selectedHero = (await prisma.sentient.findUnique({
+            where: {
+              sentient_id: user.sentient_id,
+            },
+          })) as sentient;
+          user.selectedHero = selectedHero;
+        }
+
+        token.user = user;
+        console.log(token.user);
+        return token;
+      }
+
       return token;
     },
     session: async ({ session, token }) => {
       // session callback is called whenever a session for that particular user is checked
       // in above function we created token.user=user
-      session.user = token.user as user;
+      session.user = token.user as User;
       // you might return this in new version
+
       return session;
     },
   },

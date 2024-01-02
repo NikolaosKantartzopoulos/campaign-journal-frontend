@@ -39,12 +39,6 @@ export function UserContextProvider({ children }: { children: ReactNode }) {
   const [showUserControlScreen, setShowUserControlScreen] =
     useState<boolean>(false);
 
-  // async function logoutUser() {
-  //   setUser(null);
-  //   localStorage.removeItem("user");
-  //   router.replace("/account-access");
-  // }
-
   async function createUser(user_name: string, user_password: string) {
     const res: AxiosResponse = await axios.post("/api/user-management", {
       user_name,
@@ -52,20 +46,6 @@ export function UserContextProvider({ children }: { children: ReactNode }) {
     });
     return res;
   }
-
-  // async function loginUser(user_name: string, user_password: string) {
-  //   const res: AxiosResponse<UserManagementApiResponse> = await axios.put(
-  //     "/api/user-management",
-  //     {
-  //       user_name,
-  //       user_password,
-  //     }
-  //   );
-  //   localStorage.setItem("user", JSON.stringify(res.data.user));
-  //   setUser(res.data.user);
-  //   setShowUserControlScreen(false);
-  //   return res;
-  // }
 
   async function editUser(
     user_id: number,
@@ -95,10 +75,8 @@ export function UserContextProvider({ children }: { children: ReactNode }) {
         user,
         showUserControlScreen,
         setShowUserControlScreen,
-        // logoutUser,
         createUser,
         editUser,
-        // loginUser,
         setUser,
       }}
     >

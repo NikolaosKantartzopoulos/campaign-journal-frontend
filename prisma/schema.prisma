@@ -19,6 +19,7 @@ model event {
   faction_target                                 Int?
   date_start                                     DateTime         @db.Date
   date_end                                       DateTime?        @db.Date
+  world_id                                       Int
   faction_event_faction_initiatorTofaction       faction?         @relation("event_faction_initiatorTofaction", fields: [faction_initiator], references: [faction_id], onDelete: NoAction, onUpdate: NoAction, map: "event_ibfk_1")
   faction_event_faction_targetTofaction          faction?         @relation("event_faction_targetTofaction", fields: [faction_target], references: [faction_id], onDelete: NoAction, onUpdate: NoAction, map: "event_ibfk_2")
   event_chain_event_chain_event_precedentToevent event_chain[]    @relation("event_chain_event_precedentToevent")
@@ -36,6 +37,7 @@ model event_chain {
   event_chain_id                           Int    @id @default(autoincrement())
   event_precedent                          Int?
   event_resulting                          Int?
+  world_id                                 Int
   event_event_chain_event_precedentToevent event? @relation("event_chain_event_precedentToevent", fields: [event_precedent], references: [event_id], onDelete: NoAction, onUpdate: NoAction, map: "event_chain_ibfk_1")
   event_event_chain_event_resultingToevent event? @relation("event_chain_event_resultingToevent", fields: [event_resulting], references: [event_id], onDelete: NoAction, onUpdate: NoAction, map: "event_chain_ibfk_2")
 
@@ -89,6 +91,7 @@ model faction {
   faction_goals                          String?              @db.Text
   faction_type                           String?              @db.VarChar(255)
   leader                                 Int?
+  world_id                               Int
   event_event_faction_initiatorTofaction event[]              @relation("event_faction_initiatorTofaction")
   event_event_faction_targetTofaction    event[]              @relation("event_faction_targetTofaction")
   event_faction                          event_faction[]
@@ -116,6 +119,7 @@ model item {
   item_owner       Int?
   item_state       item_item_state?
   item_location    Int?
+  world_id         Int
   event_item       event_item[]
   sentient         sentient?        @relation(fields: [item_owner], references: [sentient_id], onDelete: NoAction, onUpdate: NoAction, map: "item_ibfk_1")
   location         location?        @relation(fields: [item_location], references: [location_id], onDelete: NoAction, onUpdate: NoAction, map: "item_ibfk_2")
@@ -130,10 +134,13 @@ model location {
   part_of              Int?
   location_description String?                  @db.Text
   game_master          Int?
+  location_name        String                   @db.VarChar(255)
   event_location       event_location[]
   item                 item[]
   location             location?                @relation("locationTolocation", fields: [part_of], references: [location_id], onDelete: NoAction, onUpdate: NoAction, map: "location_ibfk_1")
   other_location       location[]               @relation("locationTolocation")
+  user                 user[]
+  world_user           world_user[]
 
   @@index([part_of], map: "part_of")
 }
@@ -147,24 +154,25 @@ model sentient {
   race_name          String               @db.VarChar(255)
   short_title        String?              @db.VarChar(255)
   state              sentient_state?
-  property_of        Int?                 @default(0)
+  world_id           Int
   event_sentient     event_sentient[]
   faction            faction[]
   faction_membership faction_membership[]
   item               item[]
-  user               user?                @relation(fields: [property_of], references: [user_id], onDelete: NoAction, onUpdate: NoAction, map: "fk_property_of_user")
   user_sentient      user_sentient[]
-
-  @@index([property_of], map: "fk_property_of_user")
 }
 
 model user {
   user_id       Int             @id @default(autoincrement())
   user_name     String          @db.VarChar(31)
-  user_role     user_user_role
   user_password String?         @db.VarChar(32)
-  sentient      sentient[]
+  location_id   Int?
+  sentient_id   Int?
+  location      location?       @relation(fields: [location_id], references: [location_id], onDelete: NoAction, onUpdate: NoAction, map: "fk_user_location")
   user_sentient user_sentient[]
+  world_user    world_user[]
+
+  @@index([location_id], map: "fk_user_location")
 }
 
 model user_sentient {
@@ -178,17 +186,23 @@ model user_sentient {
   @@index([user_id], map: "user_id")
 }
 
+model world_user {
+  user_world_id Int      @id @default(autoincrement())
+  user_id       Int
+  location_id   Int
+  user          user     @relation(fields: [user_id], references: [user_id], onDelete: NoAction, onUpdate: NoAction, map: "world_user_ibfk_1")
+  location      location @relation(fields: [location_id], references: [location_id], onDelete: NoAction, onUpdate: NoAction, map: "world_user_ibfk_2")
+
+  @@unique([user_id, location_id], map: "user_id")
+  @@index([location_id], map: "location_id")
+}
+
 enum location_location_scale {
   World
   Continent
   Kingdom
   Province
   Area
-}
-
-enum user_user_role {
-  Game_Master @map("Game Master")
-  Player
 }
 
 enum item_item_state {

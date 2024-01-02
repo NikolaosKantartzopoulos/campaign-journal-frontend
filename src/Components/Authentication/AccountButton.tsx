@@ -23,7 +23,6 @@ const LoginButton = ({ ...rest }) => {
         justifyContent: "center",
         alignItems: "center",
         flexFlow: "row wrap",
-        border: user ? "1px solid white" : "1px solid rgba(0,0,0,0)",
         mx: 1,
       }}
     >

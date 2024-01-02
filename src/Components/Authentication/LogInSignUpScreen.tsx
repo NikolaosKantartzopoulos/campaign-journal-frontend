@@ -25,22 +25,35 @@ const LogInSignUpScreen = () => {
   async function handleLogin() {
     try {
       const [user_name, user_password] = [userName, userPassword];
-      signIn("credentials", { callbackUrl: "/" }, { user_name, user_password });
-      // const text = res?.data?.text || "Logged in";
+      signIn(
+        "credentials",
+        { redirect: false },
+        { user_name, user_password }
+      ).then((res) => {
+        if (res?.ok) {
+          router.push("/");
+        } else {
+          toastMessage("Wrong username or password", "error");
+        }
+      });
     } catch (e) {
       toastMessage("There was an error", "error");
     }
   }
   async function handleSignUp() {
+    if (userName === "" || userPassword === "") {
+      toastMessage("Username and/or Password fields empty", "success");
+      return;
+    }
     try {
       const [user_name, user_password] = [userName, userPassword];
-      const { data } = (await userCtx?.createUser(
-        user_name,
-        user_password
-      )) as AxiosResponse;
-      const text = data?.text || "Signed up";
-      toastMessage(text, "success");
-      router.push("/");
+      (await userCtx?.createUser(user_name, user_password)) as AxiosResponse;
+      toastMessage(
+        "AccountCreated! Please log in with your new account",
+        "success"
+      );
+      setUserName("");
+      setUserPassword("");
     } catch (e) {
       toastMessage("There was an error", "error");
     }

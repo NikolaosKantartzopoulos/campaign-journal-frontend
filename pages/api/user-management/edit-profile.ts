@@ -67,7 +67,8 @@ export default async function apiHandler(
           user_name: userRetrieved.user_name,
           user_id: userRetrieved.user_id,
           user_password: userRetrieved.user_password || "",
-          user_role: userRetrieved.user_role || "Player",
+          location_id: userRetrieved.location_id,
+          sentient_id: userRetrieved.sentient_id,
         };
 
         res.status(200).json({ text: "Logged in successfully", user });
