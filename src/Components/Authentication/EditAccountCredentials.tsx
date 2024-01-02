@@ -47,6 +47,10 @@ const EditAccountCredentials = () => {
         "User updated successfully. Next time please log in with your new credentials.",
         "success"
       );
+      setNewUserName("");
+      setNewPasswordField("");
+      setEnableEditUserName(false);
+      setEnablePasswordChange(false);
     } catch (err) {
       const e: AxiosError = err as AxiosError;
       // @ts-expect-error Error while changing user password
@@ -60,7 +64,6 @@ const EditAccountCredentials = () => {
       <FlexBox
         sx={{
           flexDirection: "column",
-          minHeight: "180px",
           justifyContent: "flex-start",
           alignItems: "center",
         }}
@@ -69,7 +72,6 @@ const EditAccountCredentials = () => {
           sx={{
             flexFlow: "row wrap",
             gap: "1rem",
-            minHeight: "90px",
             alignItems: "flex-start",
             justifyContent: "center",
           }}

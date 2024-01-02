@@ -31,7 +31,7 @@ const AccountEditScreen = ({
         })}
       >
         <Button
-          variant="contained"
+          variant={selectedTab === "account" ? "contained" : "outlined"}
           endIcon={<SettingsIcon />}
           onClick={() => setSelectedTab("account")}
           sx={{ maxWidth: "250px", marginBottom: "1rem" }}
@@ -39,7 +39,7 @@ const AccountEditScreen = ({
           Account
         </Button>
         <Button
-          variant="contained"
+          variant={selectedTab === "worlds" ? "contained" : "outlined"}
           endIcon={<LandscapeIcon />}
           onClick={() => setSelectedTab("worlds")}
           sx={{ maxWidth: "250px", marginBottom: "1rem" }}
@@ -47,7 +47,6 @@ const AccountEditScreen = ({
           Worlds
         </Button>
         <Button
-          variant="contained"
           endIcon={<Logout />}
           onClick={() => signOut({ callbackUrl: "/" })}
           sx={{

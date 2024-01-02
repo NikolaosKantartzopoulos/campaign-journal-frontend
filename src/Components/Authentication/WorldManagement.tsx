@@ -116,14 +116,40 @@ const WorldManagement = ({
   return (
     <OptionsCard title="Worlds">
       {playerLocations.length ? <SelectWorld /> : null}
-      <Button
-        variant={!(visibleOption === "inviteUser") ? "outlined" : "contained"}
-        onClick={() =>
-          setVisibleOption((p) => (p === "inviteUser" ? null : "inviteUser"))
-        }
-      >
-        Add player
-      </Button>
+      <FlexBox sx={{ gap: "2px" }}>
+        <Button
+          variant={
+            !(visibleOption === "createWorld") ? "outlined" : "contained"
+          }
+          onClick={() =>
+            setVisibleOption((p) =>
+              p === "createWorld" ? null : "createWorld"
+            )
+          }
+        >
+          Create
+        </Button>
+        <Button
+          variant={
+            !(visibleOption === "deleteWorld") ? "outlined" : "contained"
+          }
+          onClick={() =>
+            setVisibleOption((p) =>
+              p === "deleteWorld" ? null : "deleteWorld"
+            )
+          }
+        >
+          Delete
+        </Button>
+        <Button
+          variant={!(visibleOption === "inviteUser") ? "outlined" : "contained"}
+          onClick={() =>
+            setVisibleOption((p) => (p === "inviteUser" ? null : "inviteUser"))
+          }
+        >
+          Add player
+        </Button>
+      </FlexBox>
       {visibleOption === "inviteUser" && (
         <FlexBox>
           <TextField
@@ -137,14 +163,7 @@ const WorldManagement = ({
           </Button>
         </FlexBox>
       )}
-      <Button
-        variant={!(visibleOption === "createWorld") ? "outlined" : "contained"}
-        onClick={() =>
-          setVisibleOption((p) => (p === "createWorld" ? null : "createWorld"))
-        }
-      >
-        Create a new world
-      </Button>
+
       {visibleOption === "createWorld" && (
         <Box
           sx={{
@@ -156,30 +175,26 @@ const WorldManagement = ({
             width: "100%",
           }}
         >
-          <TextField
-            label="New World name"
-            value={newWorldName}
-            onChange={(e) => setNewWorldName(e.target.value)}
-          />
+          <FlexBox>
+            <TextField
+              label="New World name"
+              value={newWorldName}
+              onChange={(e) => setNewWorldName(e.target.value)}
+              size="small"
+            />
+            <Button variant="contained" onClick={handleCreateWorld}>
+              Create
+            </Button>
+          </FlexBox>
           <Typography variant="h6">Description</Typography>
           <TextareaAutosize
-            style={{ width: "100%", minHeight: "4rem" }}
+            style={{ width: "100%", minHeight: "4rem", padding: "1rem" }}
             value={newWorldDescription}
             onChange={(e) => setNewWorldDescription(e.target.value)}
           />
-          <Button variant="contained" onClick={handleCreateWorld}>
-            Create
-          </Button>
         </Box>
       )}
-      <Button
-        variant={!(visibleOption === "deleteWorld") ? "outlined" : "contained"}
-        onClick={() =>
-          setVisibleOption((p) => (p === "deleteWorld" ? null : "deleteWorld"))
-        }
-      >
-        Delete a world
-      </Button>
+
       {visibleOption === "deleteWorld" && (
         <FlexBox>
           <TextField
