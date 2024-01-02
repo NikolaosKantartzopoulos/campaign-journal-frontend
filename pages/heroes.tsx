@@ -15,8 +15,13 @@ const Heroes = () => {
   const user = session?.user;
   const { data: sentients } = useQuery<sentient[], Error>({
     queryKey: ["getAllSentientsNotInUsersVanguard"],
-    queryFn: () =>
-      axios.get(`/api/getAllSentientsNotInUsersVanguard/${user?.user_id}`),
+
+    queryFn: async () => {
+      const { data: sentient } = await axios.get(
+        `/api/getAllSentientsNotInUsersVanguard/${user?.user_id}`
+      );
+      return sentient;
+    },
   });
 
   if (!sentients) {

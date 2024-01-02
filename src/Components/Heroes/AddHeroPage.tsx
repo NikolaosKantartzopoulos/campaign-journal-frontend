@@ -26,7 +26,7 @@ const AddHeroPage = ({ sentients }: { sentients: sentient[] }) => {
         }}
       >
         <AddNewHeroButton setAddHeroOption={setAddHeroOption} />
-        <AddExistingHeroButton setAddHeroOption={setAddHeroOption} />C
+        <AddExistingHeroButton setAddHeroOption={setAddHeroOption} />
       </FlexBox>
 
       {addHeroOption && (

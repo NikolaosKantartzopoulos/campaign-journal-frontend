@@ -24,9 +24,9 @@ const WorldManagement = ({
   const [newWorldDescription, setNewWorldDescription] = useState("");
   const [newUsername, setNewUsername] = useState("");
   const [deleteWorldInput, setDeleteWorldInput] = useState("");
-  const [createWorldToolsVisible, setCreateWorldToolsVisible] = useState(false);
-  const [addUserToWorldVisible, setAddUserToWorldVisible] = useState(false);
-  const [deleteWorldMenuVisible, setDeleteWorldMenuVisible] = useState(false);
+  const [visibleOption, setVisibleOption] = useState<
+    "createWorld" | "deleteWorld" | "inviteUser" | null
+  >(null);
 
   const handleCreateWorld = async () => {
     try {
@@ -46,9 +46,9 @@ const WorldManagement = ({
       await queryClient.invalidateQueries({
         queryKey: [`getAllWorldsThatUserHasAccess-${user?.user_id}`],
       });
-      setCreateWorldToolsVisible(false);
-
+      setVisibleOption(null);
       toastMessage("World successfully created", "success");
+      console.log(playerLocations);
     } catch (err: any) {
       toastMessage(err?.response?.data?.error, "error");
     }
@@ -87,7 +87,7 @@ const WorldManagement = ({
       }
 
       setDeleteWorldInput("");
-      setDeleteWorldMenuVisible(false);
+      setVisibleOption(null);
     } catch (err: any) {
       console.log(err);
       toastMessage(err.response.data.message, "error");
@@ -101,6 +101,7 @@ const WorldManagement = ({
         location_id: user?.location_id,
       });
       toastMessage("User successfully added", "success");
+      setVisibleOption(null);
     } catch (err: any) {
       console.log(err);
       if (err.response.status === 406)
@@ -116,12 +117,14 @@ const WorldManagement = ({
     <OptionsCard title="Worlds">
       {playerLocations.length ? <SelectWorld /> : null}
       <Button
-        variant={!addUserToWorldVisible ? "outlined" : "contained"}
-        onClick={() => setAddUserToWorldVisible((p) => !p)}
+        variant={!(visibleOption === "inviteUser") ? "outlined" : "contained"}
+        onClick={() =>
+          setVisibleOption((p) => (p === "inviteUser" ? null : "inviteUser"))
+        }
       >
         Add player
       </Button>
-      {addUserToWorldVisible && (
+      {visibleOption === "inviteUser" && (
         <FlexBox>
           <TextField
             label="Player's Name"
@@ -135,12 +138,14 @@ const WorldManagement = ({
         </FlexBox>
       )}
       <Button
-        variant={!createWorldToolsVisible ? "outlined" : "contained"}
-        onClick={() => setCreateWorldToolsVisible((p) => !p)}
+        variant={!(visibleOption === "createWorld") ? "outlined" : "contained"}
+        onClick={() =>
+          setVisibleOption((p) => (p === "createWorld" ? null : "createWorld"))
+        }
       >
         Create a new world
       </Button>
-      {createWorldToolsVisible && (
+      {visibleOption === "createWorld" && (
         <Box
           sx={{
             display: "flex",
@@ -168,12 +173,14 @@ const WorldManagement = ({
         </Box>
       )}
       <Button
-        variant={!deleteWorldMenuVisible ? "outlined" : "contained"}
-        onClick={() => setDeleteWorldMenuVisible((p) => !p)}
+        variant={!(visibleOption === "deleteWorld") ? "outlined" : "contained"}
+        onClick={() =>
+          setVisibleOption((p) => (p === "deleteWorld" ? null : "deleteWorld"))
+        }
       >
         Delete a world
       </Button>
-      {deleteWorldMenuVisible && (
+      {visibleOption === "deleteWorld" && (
         <FlexBox>
           <TextField
             label="World's name"

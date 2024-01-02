@@ -13,14 +13,13 @@ import { location } from "@prisma/client";
 const AccountControl = () => {
   const { data: session, status } = useSession();
   const user = session?.user;
-
   const { data: playerLocations, isLoading } = useQuery<location[]>({
     queryKey: [`getAllWorldsThatUserHasAccess-${user?.user_id}`],
-    queryFn: () => {
-      // @ts-expect-error axios vs query
-      const { data } = axios(
+    queryFn: async () => {
+      const { data } = await axios(
         `/api/worlds/get-all-worlds-that-user-has-access/${user?.user_id}`
       );
+      console.log("control query", data);
       return data;
     },
   });

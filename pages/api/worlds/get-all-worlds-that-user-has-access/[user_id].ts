@@ -7,12 +7,10 @@ export default async function apiHandler(
 ) {
   if (req.method === "GET") {
     try {
-      console.log("api---->", req.query.user_id);
       const data = await getAllWorldsThatUserHasAccess(
         Number(req.query.user_id)
       );
-      console.log("targetAPI +++++", data);
-
+      console.log("inside API", data);
       res.status(200).json(data);
     } catch (err) {
       console.log(err);
