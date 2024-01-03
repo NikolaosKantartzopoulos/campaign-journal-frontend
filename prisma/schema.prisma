@@ -20,17 +20,12 @@ model event {
   date_start                                     DateTime         @db.Date
   date_end                                       DateTime?        @db.Date
   world_id                                       Int
-  faction_event_faction_initiatorTofaction       faction?         @relation("event_faction_initiatorTofaction", fields: [faction_initiator], references: [faction_id], onDelete: NoAction, onUpdate: NoAction, map: "event_ibfk_1")
-  faction_event_faction_targetTofaction          faction?         @relation("event_faction_targetTofaction", fields: [faction_target], references: [faction_id], onDelete: NoAction, onUpdate: NoAction, map: "event_ibfk_2")
   event_chain_event_chain_event_precedentToevent event_chain[]    @relation("event_chain_event_precedentToevent")
   event_chain_event_chain_event_resultingToevent event_chain[]    @relation("event_chain_event_resultingToevent")
   event_faction                                  event_faction[]
   event_item                                     event_item[]
   event_location                                 event_location[]
   event_sentient                                 event_sentient[]
-
-  @@index([faction_initiator], map: "faction_initiator")
-  @@index([faction_target], map: "faction_target")
 }
 
 model event_chain {
@@ -86,17 +81,16 @@ model event_sentient {
 }
 
 model faction {
-  faction_id                             Int                  @id @default(autoincrement())
-  faction_name                           String               @db.VarChar(255)
-  faction_goals                          String?              @db.Text
-  faction_type                           String?              @db.VarChar(255)
-  leader                                 Int?
-  world_id                               Int
-  event_event_faction_initiatorTofaction event[]              @relation("event_faction_initiatorTofaction")
-  event_event_faction_targetTofaction    event[]              @relation("event_faction_targetTofaction")
-  event_faction                          event_faction[]
-  sentient                               sentient?            @relation(fields: [leader], references: [sentient_id], onDelete: NoAction, onUpdate: NoAction, map: "faction_ibfk_1")
-  faction_membership                     faction_membership[]
+  faction_id         Int                  @id @default(autoincrement())
+  faction_name       String               @db.VarChar(255)
+  faction_goals      String?              @db.Text
+  faction_type       String?              @db.VarChar(255)
+  leader             Int?
+  world_id           Int
+  is_hero_faction    Boolean?
+  event_faction      event_faction[]
+  sentient           sentient?            @relation(fields: [leader], references: [sentient_id], onDelete: NoAction, onUpdate: NoAction, map: "faction_ibfk_1")
+  faction_membership faction_membership[]
 
   @@index([leader], map: "leader")
 }

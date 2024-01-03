@@ -9,9 +9,9 @@ import { MouseEvent, useContext } from "react";
 import AddHeroContext, { AddHeroContextInterface } from "./AddHeroContext";
 
 const AddExistingHero = ({
-  existingHeroes,
+  sentientsNOTInUsersVanguard,
 }: {
-  existingHeroes: sentient[];
+  sentientsNOTInUsersVanguard: sentient[];
 }) => {
   const {
     filterContentState,
@@ -19,13 +19,13 @@ const AddExistingHero = ({
     handleSearch,
     resetFilterContent,
     handleSearchFieldKeyStroke,
-  } = useFilterContent(existingHeroes);
+  } = useFilterContent(sentientsNOTInUsersVanguard);
 
   const { handleProceedToHeroConfirmation } = useContext(
     AddHeroContext
   ) as AddHeroContextInterface;
 
-  if (!existingHeroes) {
+  if (!sentientsNOTInUsersVanguard) {
     return <EmptyDataMessage data="heroes" />;
   }
 

@@ -9,10 +9,16 @@ import AddNewHeroButton from "./AddNewHeroButton";
 import { sentient } from "@prisma/client";
 import AddHeroConfirmation from "./AddHeroConfirmation";
 
-const AddHeroPage = ({ sentients }: { sentients: sentient[] }) => {
+const AddHeroPage = ({
+  sentientsNOTInUsersVanguard,
+  heroesInUsersVanguard,
+}: {
+  sentientsNOTInUsersVanguard: sentient[];
+  heroesInUsersVanguard: sentient[];
+}) => {
   const { setAddHeroOption, addHeroOption }: AddHeroContextInterface =
     useContext(AddHeroContext) as AddHeroContextInterface;
-
+  console.log(heroesInUsersVanguard);
   return (
     <FlexBox sx={{ flexDirection: "column" }}>
       <Typography variant="h4">Your Heroes</Typography>
@@ -33,7 +39,9 @@ const AddHeroPage = ({ sentients }: { sentients: sentient[] }) => {
         <Box>
           {addHeroOption === "new" && <AddNewHero />}
           {addHeroOption === "existing" && (
-            <AddExistingHero existingHeroes={sentients} />
+            <AddExistingHero
+              sentientsNOTInUsersVanguard={sentientsNOTInUsersVanguard}
+            />
           )}
         </Box>
       )}

@@ -5,7 +5,7 @@ const OptionsCard = ({
   title,
   children,
 }: {
-  title: string;
+  title: string | null;
   children: React.ReactNode;
 }) => {
   return (
@@ -23,9 +23,11 @@ const OptionsCard = ({
         },
       })}
     >
-      <Typography variant="h4" sx={{ m: "auto", textAlign: "center" }}>
-        {title}
-      </Typography>
+      {title && (
+        <Typography variant="h4" sx={{ m: "auto", textAlign: "center" }}>
+          {title}
+        </Typography>
+      )}
       {children}
     </Card>
   );

@@ -70,7 +70,7 @@ export default function SelectWorld() {
   }
   if (status === "authenticated") {
     return (
-      <Box sx={{ width: "100%" }}>
+      <Box sx={{ width: "100%", mb: "1rem" }}>
         <FlexBox>
           <Typography
             variant="h6"
@@ -78,10 +78,10 @@ export default function SelectWorld() {
             sx={{
               display: "inline-block",
               overflow: "hidden",
-              minWidth: "115px",
+              minWidth: "65px",
             }}
           >
-            Active World
+            Active
           </Typography>
           <select
             defaultValue={session.user.selectedWorld?.location_name}

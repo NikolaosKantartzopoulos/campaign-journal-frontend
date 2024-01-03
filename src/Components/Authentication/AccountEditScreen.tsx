@@ -1,7 +1,7 @@
 import { Button } from "@mui/material";
 import { signOut } from "next-auth/react";
 import EditAccountCredentials from "./EditAccountCredentials";
-import WorldManagement from "./WorldManagement";
+import WorldManagement from "../World/WorldManagement";
 import { FlexBox } from "../CustomComponents/FlexBox";
 import { useState } from "react";
 import SettingsIcon from "@mui/icons-material/Settings";

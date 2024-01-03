@@ -1,4 +1,4 @@
-import { Box, Button, TextField, Typography } from "@mui/material";
+import { Box, Button, Divider, TextField, Typography } from "@mui/material";
 import { useSession } from "next-auth/react";
 import SelectWorld from "./SelectWorld";
 import { useState } from "react";
@@ -27,6 +27,7 @@ const WorldManagement = ({
   const [visibleOption, setVisibleOption] = useState<
     "createWorld" | "deleteWorld" | "inviteUser" | null
   >(null);
+  const [factionInputValue, setFactionInputValue] = useState<string>("");
 
   const handleCreateWorld = async () => {
     try {
@@ -96,12 +97,13 @@ const WorldManagement = ({
 
   const handleAddPlayerToWorld = async () => {
     try {
-      await axios.post(`/api/worlds/add-user`, {
+      const { data } = await axios.post(`/api/worlds/add-user`, {
         user_name: newUsername,
         location_id: user?.location_id,
       });
-      toastMessage("User successfully added", "success");
+      toastMessage(data.message, "success");
       setVisibleOption(null);
+      setNewUsername("");
     } catch (err: any) {
       console.log(err);
       if (err.response.status === 406)
@@ -109,13 +111,32 @@ const WorldManagement = ({
     }
   };
 
+  //################################################################################################################//################################################################################################################//################################################################################################################//################################################################################################################//################################################################################################################//################################################################################################################
+
+  const handleCreateHeroFaction = async () => {
+    console.log("handleCreateHeroFaction");
+    try {
+      const { data } = await axios.post("/api/heroes/create-hero-faction/", {
+        selectedWorld: user?.selectedWorld,
+        newFactionName: factionInputValue,
+      });
+      toastMessage(data.message, "success");
+    } catch (err: any) {
+      toastMessage(err.message, "error");
+    }
+  };
+
+  const handleGetPlayersSubscribedToWorld = async () => {
+    const { data } = await axios("/api/worlds/get-players-subscribed-to-world");
+    console.log(data);
+  };
+
   if (!playerLocations || !user) {
     return <LoadingSpinner />;
   }
 
   return (
-    <OptionsCard title="Worlds">
-      {playerLocations.length ? <SelectWorld /> : null}
+    <OptionsCard title={null}>
       <FlexBox sx={{ gap: "2px" }}>
         <Button
           variant={
@@ -141,28 +162,7 @@ const WorldManagement = ({
         >
           Delete
         </Button>
-        <Button
-          variant={!(visibleOption === "inviteUser") ? "outlined" : "contained"}
-          onClick={() =>
-            setVisibleOption((p) => (p === "inviteUser" ? null : "inviteUser"))
-          }
-        >
-          Add player
-        </Button>
       </FlexBox>
-      {visibleOption === "inviteUser" && (
-        <FlexBox>
-          <TextField
-            label="Player's Name"
-            value={newUsername}
-            onChange={(e) => setNewUsername(e.target.value)}
-            size="small"
-          />
-          <Button variant="contained" onClick={handleAddPlayerToWorld}>
-            Invite
-          </Button>
-        </FlexBox>
-      )}
 
       {visibleOption === "createWorld" && (
         <Box
@@ -218,6 +218,70 @@ const WorldManagement = ({
           </Button>
         </FlexBox>
       )}
+      {playerLocations.length ? (
+        <>
+          <Divider />
+          <Box>
+            <SelectWorld />
+
+            <Box sx={{ my: "1rem" }}>
+              <Button variant="outlined">Hero Factions</Button>
+              <Box sx={{ marginTop: 2 }}>
+                <TextField
+                  label="Company name"
+                  value={factionInputValue}
+                  onChange={(e) => setFactionInputValue(e.target.value)}
+                  size="small"
+                />
+                <Button
+                  onClick={handleCreateHeroFaction}
+                  disabled={!factionInputValue}
+                >
+                  Create Hero Faction
+                </Button>
+              </Box>
+              <Divider sx={{ my: "1rem" }} />
+            </Box>
+            {user.selectedWorld && (
+              <Box sx={{ my: "1rem" }}>
+                <Button
+                  variant={
+                    !(visibleOption === "inviteUser") ? "outlined" : "contained"
+                  }
+                  onClick={() =>
+                    setVisibleOption((p) =>
+                      p === "inviteUser" ? null : "inviteUser"
+                    )
+                  }
+                >
+                  Players
+                </Button>
+                {/* {visibleOption === "inviteUser" && ( */}
+                <Box sx={{ my: "1rem" }}>
+                  <FlexBox>
+                    <TextField
+                      label="Player's Name"
+                      value={newUsername}
+                      onChange={(e) => setNewUsername(e.target.value)}
+                      size="small"
+                    />
+                    <Button
+                      variant="contained"
+                      onClick={handleAddPlayerToWorld}
+                    >
+                      Invite
+                    </Button>
+                  </FlexBox>
+                </Box>
+                {/* )} */}
+
+                {/* <HeroesTable /> */}
+              </Box>
+            )}
+          </Box>
+        </>
+      ) : null}
+      <button onClick={handleGetPlayersSubscribedToWorld}>asdf</button>
     </OptionsCard>
   );
 };

@@ -27,7 +27,7 @@ export default async function apiHandler(
           location_id: location_id,
         },
       });
-      res.status(200);
+      res.status(200).json({ message: `${user_name} added` });
     } catch (err) {
       console.log(err);
     }

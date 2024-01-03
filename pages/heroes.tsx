@@ -5,32 +5,51 @@ import axios from "axios";
 import { GetServerSideProps, GetServerSidePropsContext } from "next";
 import { authOptions } from "./api/auth/[...nextauth]";
 import { Session, getServerSession } from "next-auth";
-import { getAllSentientsNotInUsersVanguard } from "@/services/heroes/handleHeroes";
+import {
+  getAllSentientsInUsersVanguard,
+  getAllSentientsNotInUsersVanguard,
+} from "@/services/heroes/handleHeroes";
 import { useSession } from "next-auth/react";
 import { sentient } from "@prisma/client";
 import LoadingSpinner from "@/Components/CustomComponents/LoadingSpinner";
+import getSentientFullName from "@/utilities/helperFn/getSentientFullName";
 
 const Heroes = () => {
   const { data: session } = useSession();
   const user = session?.user;
-  const { data: sentients } = useQuery<sentient[], Error>({
-    queryKey: ["getAllSentientsNotInUsersVanguard"],
+  const { data: sentientsNOTInUsersVanguard } = useQuery<sentient[], Error>({
+    queryKey: [`getAllSentientsNotInUsersVanguard-${user?.user_id}`],
+    queryFn: async () => {
+      const { data: sentientsNOTInUsersVanguard } = await axios.get(
+        `/api/heroes/getAllSentientsNotInUsersVanguard/${user?.user_id}`
+      );
+      return sentientsNOTInUsersVanguard;
+    },
+  });
+  const { data: heroesInUsersVanguard } = useQuery<sentient[], Error>({
+    queryKey: [`getAllSentientsInUsersVanguard-${user?.user_id}`],
 
     queryFn: async () => {
-      const { data: sentient } = await axios.get(
-        `/api/getAllSentientsNotInUsersVanguard/${user?.user_id}`
+      const { data: heroesInUsersVanguard } = await axios.get(
+        `/api/heroes/getAllSentientsInUsersVanguard/${user?.user_id}`
       );
-      return sentient;
+      return heroesInUsersVanguard;
     },
   });
 
-  if (!sentients) {
+  if (!sentientsNOTInUsersVanguard || !heroesInUsersVanguard) {
     return <LoadingSpinner />;
   }
 
   return (
     <AddHeroContextProvider>
-      <AddHeroPage sentients={sentients} />
+      {heroesInUsersVanguard.map((el) => (
+        <p key={el.sentient_id}>{getSentientFullName(el)}</p>
+      ))}
+      <AddHeroPage
+        sentientsNOTInUsersVanguard={sentientsNOTInUsersVanguard}
+        heroesInUsersVanguard={heroesInUsersVanguard}
+      />
     </AddHeroContextProvider>
   );
 };
@@ -56,8 +75,12 @@ export const getServerSideProps: GetServerSideProps = async (
   const queryClient = new QueryClient();
 
   await queryClient.prefetchQuery({
-    queryKey: ["getAllSentientsNotInUsersVanguard"],
+    queryKey: [`getAllSentientsNotInUsersVanguard-${user.user_id}`],
     queryFn: () => getAllSentientsNotInUsersVanguard(Number(user.user_id)),
+  });
+  await queryClient.prefetchQuery({
+    queryKey: [`getAllSentientsInUsersVanguard-${user.user_id}`],
+    queryFn: () => getAllSentientsInUsersVanguard(Number(user.user_id)),
   });
 
   return {
