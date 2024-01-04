@@ -1,7 +1,7 @@
 import { location, user } from "@prisma/client";
 import { prisma } from "../../../prisma/prisma";
 
-interface getPlayersSubscribedToWorldReturnType {
+export interface getPlayersSubscribedToWorldReturnType {
   user_name: string;
   user_id: number;
 }

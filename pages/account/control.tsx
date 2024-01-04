@@ -9,6 +9,8 @@ import { useSession } from "next-auth/react";
 import LoadingSpinner from "@/Components/CustomComponents/LoadingSpinner";
 import axios from "axios";
 import { location } from "@prisma/client";
+import { getPlayersSubscribedToWorld } from "@/services/data-fetching/getPlayers";
+import { getWorldsHeroFactions } from "@/services/data-fetching/getFactions";
 
 const AccountControl = () => {
   const { data: session, status } = useSession();
@@ -69,10 +71,34 @@ export const getServerSideProps: GetServerSideProps = async (
     queryFn: () => getAllWorldsThatUserHasAccess(Number(user.user_id)),
   });
 
+  console.log(user?.selectedWorld as location, Number(user.user_id));
+
+  await queryClient.prefetchQuery({
+    queryKey: [
+      "playersSubscribedToWorld",
+      session?.selectedWorld?.location_id,
+      user?.user_id,
+    ],
+    queryFn: () =>
+      getPlayersSubscribedToWorld(
+        user?.selectedWorld as location,
+        Number(user.user_id)
+      ),
+  });
+
+  await queryClient.prefetchQuery({
+    queryKey: [
+      "worldsHeroFactions",
+      session?.selectedWorld?.location_id,
+      user?.user_id,
+    ],
+    queryFn: () => getWorldsHeroFactions(user?.selectedWorld as location),
+  });
+
   return {
     props: {
       session,
-      dehydratedState: dehydrate(queryClient),
+      dehydratedState: JSON.parse(JSON.stringify(dehydrate(queryClient))),
     },
   };
 };

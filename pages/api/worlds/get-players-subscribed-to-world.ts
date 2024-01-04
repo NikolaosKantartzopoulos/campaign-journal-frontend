@@ -18,7 +18,6 @@ export default async function apiHandler(
         user?.selectedWorld as location,
         user.user_id
       );
-      console.log(players);
       res.status(200).json(players);
     } catch (err) {
       console.log(err);

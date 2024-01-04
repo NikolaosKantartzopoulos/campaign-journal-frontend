@@ -6,24 +6,25 @@ export async function createHeroFaction(
   newFactionName: string
 ) {
   try {
-    const isFactionUnique = await prisma.faction.findFirst({
+    const factionExistsWithThatName = await prisma.faction.findFirst({
       where: {
         faction_name: newFactionName,
         world_id: selectedWorld.location_id,
       },
     });
-    if (!isFactionUnique) {
+    if (factionExistsWithThatName) {
       throw new Error("Faction name exists");
     }
-    const createdFaction = await prisma.faction.create({
+    const createdHeroFaction = await prisma.faction.create({
       data: {
         faction_name: newFactionName,
         is_hero_faction: true,
         world_id: selectedWorld.location_id,
       },
     });
-    return createdFaction;
+    return createdHeroFaction;
   } catch (error) {
+    console.log(error);
     throw error;
   }
 }

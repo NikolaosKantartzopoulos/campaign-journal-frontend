@@ -99,6 +99,7 @@ model faction_membership {
   sentient_id           Int
   faction_id            Int
   faction_membership_id Int      @id @default(autoincrement())
+  user_id               Int?
   sentient              sentient @relation(fields: [sentient_id], references: [sentient_id], onDelete: NoAction, onUpdate: NoAction, map: "faction_membership_ibfk_1")
   faction               faction  @relation(fields: [faction_id], references: [faction_id], onDelete: NoAction, onUpdate: NoAction, map: "faction_membership_ibfk_2")
 
