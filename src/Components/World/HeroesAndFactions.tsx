@@ -12,9 +12,6 @@ import SideBySideBox from "./SideBySideBox";
 import { heroFactionTypes } from "@/utilities/types/heroFactionTypes";
 
 const HeroesAndFactions = () => {
-  const [factionInputValue, setFactionInputValue] = useState<string>("");
-  const [newUsername, setNewUsername] = useState("");
-
   const { data: session } = useSession();
 
   const user = session?.user;
@@ -33,11 +30,9 @@ const HeroesAndFactions = () => {
         const { data } = await axios(
           "/api/worlds/get-players-subscribed-to-world"
         );
-        console.log(data);
+
         return data;
-      } catch (err) {
-        console.log(err);
-      }
+      } catch (err) {}
     },
   });
 
@@ -47,9 +42,7 @@ const HeroesAndFactions = () => {
       try {
         const { data } = await axios("/api/worlds/get-worlds-hero-factions");
         return data.worldsHeroFactions;
-      } catch (err) {
-        console.log(err);
-      }
+      } catch (err) {}
     },
   });
 
@@ -60,15 +53,19 @@ const HeroesAndFactions = () => {
     },
   });
 
+  const [factionInputValue, setFactionInputValue] = useState<string>();
+  const [newUsername, setNewUsername] = useState("");
+  const [selectedFactionName, setSelectedFactionName] = useState<string | null>(
+    null
+  );
+
   async function handleCreateHeroFaction() {
-    console.log("handleCreateHeroFaction");
     try {
       const { data } = await axios.post("/api/heroes/create-hero-faction/", {
         newFactionName: factionInputValue,
       });
       const { createdHeroFaction, message } = data;
       toastMessage(message, "success");
-      console.log(createdHeroFaction);
       queryClient.invalidateQueries({ queryKey: ["worldsHeroFactions"] });
       return createdHeroFaction;
     } catch (err: any) {
@@ -85,24 +82,49 @@ const HeroesAndFactions = () => {
       toastMessage(data.message, "success");
       setNewUsername("");
     } catch (err: any) {
-      console.log(err);
       if (err.response.status === 406)
         toastMessage(err?.response?.data?.message, "error");
     }
   };
 
-  function handlePlayerRowClick(e: MouseEvent, itemId: string) {
-    console.log(itemId);
+  async function handlePlayerRowClick(e: MouseEvent, user_id: string) {
+    if (!worldsHeroFactions) return;
+    if (!selectedFactionName) {
+      toastMessage("Select a User Faction", "warning");
+      return;
+    }
+    const selectedFactionEntry = worldsHeroFactions?.find(
+      (entry) => entry.faction.faction_name === selectedFactionName
+    );
+
+    try {
+      const { data } = await axios.put(
+        "/api/user-management/add-user-to-faction",
+        {
+          faction_id: selectedFactionEntry?.faction.faction_id,
+          user_id: user_id,
+        }
+      );
+
+      toastMessage(data.message, "success");
+      queryClient.invalidateQueries({ queryKey: ["worldsHeroFactions"] });
+    } catch (err: any) {
+      toastMessage(err.message || "Error", "error");
+    }
   }
 
-  function handleFactionUserRowClick(e: MouseEvent, itemId: string) {
-    console.log(itemId);
+  async function handleFactionUserRowClick(
+    e: MouseEvent,
+    itemId: string,
+    boxTitle: string
+  ) {
+    console.log(e, itemId, boxTitle);
   }
-  function handlePlayersBoxTitleClick(e: MouseEvent, title: string) {
-    console.log(title);
+  async function handlePlayersBoxTitleClick(e: MouseEvent, title: string) {
+    console.log(e, title);
   }
-  function handleHeroFactionsBoxTitleClick(e: MouseEvent, title: string) {
-    console.log(title);
+  async function handleHeroFactionsBoxTitleClick(e: MouseEvent, title: string) {
+    console.log(e, title);
   }
 
   if (!user) {
@@ -159,6 +181,7 @@ const HeroesAndFactions = () => {
                   sx={{ flexBasis: "150px" }}
                   onItemClick={handlePlayerRowClick}
                   onTitleClick={handlePlayersBoxTitleClick}
+                  visibleOptions={true}
                 />
               )}
 
@@ -174,6 +197,8 @@ const HeroesAndFactions = () => {
                       sx={{ flex: "1 1 0" }}
                       onItemClick={handleFactionUserRowClick}
                       onTitleClick={handleHeroFactionsBoxTitleClick}
+                      visibleOptions={selectedFactionName}
+                      setVisibleOptions={setSelectedFactionName}
                     />
                   ))}
               </Box>

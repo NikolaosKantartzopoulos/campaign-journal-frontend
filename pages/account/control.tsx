@@ -21,7 +21,6 @@ const AccountControl = () => {
       const { data } = await axios(
         `/api/worlds/get-all-worlds-that-user-has-access/${user?.user_id}`
       );
-      console.log("control query", data);
       return data;
     },
   });
@@ -70,8 +69,6 @@ export const getServerSideProps: GetServerSideProps = async (
     queryKey: [`getAllWorldsThatUserHasAccess-${user.user_id}`],
     queryFn: () => getAllWorldsThatUserHasAccess(Number(user.user_id)),
   });
-
-  console.log(user?.selectedWorld as location, Number(user.user_id));
 
   await queryClient.prefetchQuery({
     queryKey: [

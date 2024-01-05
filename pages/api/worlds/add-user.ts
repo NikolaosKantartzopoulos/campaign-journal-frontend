@@ -28,8 +28,6 @@ export default async function apiHandler(
         },
       });
       res.status(200).json({ message: `${user_name} added` });
-    } catch (err) {
-      console.log(err);
-    }
+    } catch (err) {}
   }
 }

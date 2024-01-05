@@ -1,6 +1,6 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import { createHeroFaction } from "@/services/modifyData/createHeroFaction";
-import { getAPISession } from "@/utilities/functions/getServerSideSesion";
+import { getAPISession } from "@/utilities/functions/getServerSideSession";
 
 export default async function apiHandler(
   req: NextApiRequest,
@@ -17,13 +17,11 @@ export default async function apiHandler(
       res.status(401).json({ message: "Not signed in" });
       return;
     }
-    console.log("Before Created Faction in API");
 
     const createdHeroFaction = await createHeroFaction(
       user?.selectedWorld,
       req.body.newFactionName
     );
-    console.log("Created Faction in API", createdHeroFaction);
 
     res
       .status(200)

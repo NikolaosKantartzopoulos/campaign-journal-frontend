@@ -11,7 +11,6 @@ export default async function apiHandler(
       const data = await addWorldToUsersAvailableWorlds(location_id, user_id);
       res.status(200).json(data);
     } catch (err) {
-      console.log(err);
       res.status(400);
     }
   }

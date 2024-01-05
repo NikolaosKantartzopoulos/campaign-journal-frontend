@@ -96,12 +96,12 @@ model faction {
 }
 
 model faction_membership {
-  sentient_id           Int
+  sentient_id           Int?
   faction_id            Int
-  faction_membership_id Int      @id @default(autoincrement())
+  faction_membership_id Int       @id @default(autoincrement())
   user_id               Int?
-  sentient              sentient @relation(fields: [sentient_id], references: [sentient_id], onDelete: NoAction, onUpdate: NoAction, map: "faction_membership_ibfk_1")
-  faction               faction  @relation(fields: [faction_id], references: [faction_id], onDelete: NoAction, onUpdate: NoAction, map: "faction_membership_ibfk_2")
+  sentient              sentient? @relation(fields: [sentient_id], references: [sentient_id], onDelete: NoAction, onUpdate: NoAction, map: "faction_membership_ibfk_1")
+  faction               faction   @relation(fields: [faction_id], references: [faction_id], onDelete: NoAction, onUpdate: NoAction, map: "faction_membership_ibfk_2")
 
   @@index([faction_id], map: "faction_id")
   @@index([sentient_id], map: "sentient_id")

@@ -41,7 +41,7 @@ export const authOptions: NextAuthOptions = {
         }
 
         token.user = user;
-        console.log(token.user);
+
         return token;
       }
 
@@ -98,7 +98,6 @@ export const authOptions: NextAuthOptions = {
 
           return user;
         } catch (err) {
-          console.log(err);
           return null;
         }
 

@@ -47,7 +47,7 @@ export async function getAllUsernames() {
 //       JOIN location l USING (location_id)
 //       WHERE user_id = ${userId};
 //     `;
-//     console.log(location);
+//
 //     return location;
 //   } catch (error) {
 //     console.error("Error:", error);

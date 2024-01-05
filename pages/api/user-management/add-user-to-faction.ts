@@ -1,12 +1,12 @@
-import { NextApiRequest, NextApiResponse } from "next";
+import { addUserToFaction } from "@/services/modifyData/addUserToFaction";
 import { getAPISession } from "@/utilities/functions/getServerSideSession";
-import { getWorldsHeroFactions } from "@/services/data-fetching/getFactions";
+import { NextApiRequest, NextApiResponse } from "next";
 
 export default async function apiHandler(
   req: NextApiRequest,
   res: NextApiResponse
 ) {
-  if (req.method === "GET") {
+  if (req.method === "PUT") {
     try {
       const { user } = await getAPISession(req, res);
 
@@ -15,16 +15,19 @@ export default async function apiHandler(
         return;
       }
 
-      const worldsHeroFactions = await getWorldsHeroFactions(
-        user.selectedWorld
+      const data = await addUserToFaction(
+        req.body.faction_id,
+        req.body.user_id
       );
 
       res.status(200).json({
-        worldsHeroFactions,
-        message: "Worlds hero factions retrieved",
+        data,
+        message: `User added to Faction`,
       });
+      return;
     } catch (err) {
       res.status(400);
     }
   }
+  res.status(400);
 }

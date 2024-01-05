@@ -12,16 +12,14 @@ export async function addExistingSentientToUsersVanguard(
         sentient_id: sentient.sentient_id,
       },
     });
-  } catch (err) {
-    console.log(err);
-  }
+  } catch (err) {}
 }
 
 export async function createAndAddSentientToUsersVanguard(
   sentient: sentient,
   user: user
 ) {
-  console.log(sentient, user);
+  console.log(sentient,user)
 }
 
 export async function getAllSentientsNotInUsersVanguard(user_id: number) {

@@ -4,7 +4,7 @@ import {
   addWorldToUsersAvailableWorlds,
   createWorld,
 } from "@/services/modifyData/modifyWorlds";
-import { getAPISession } from "@/utilities/functions/getServerSideSesion";
+import { getAPISession } from "@/utilities/functions/getServerSideSession";
 
 export default async function apiHandler(
   req: NextApiRequest,
@@ -34,8 +34,6 @@ export default async function apiHandler(
 
       await addWorldToUsersAvailableWorlds(data.location_id, user?.user_id);
       res.status(200).json(data);
-    } catch (err) {
-      console.log(err);
-    }
+    } catch (err) {}
   }
 }

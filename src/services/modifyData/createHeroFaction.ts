@@ -24,7 +24,6 @@ export async function createHeroFaction(
     });
     return createdHeroFaction;
   } catch (error) {
-    console.log(error);
     throw error;
   }
 }

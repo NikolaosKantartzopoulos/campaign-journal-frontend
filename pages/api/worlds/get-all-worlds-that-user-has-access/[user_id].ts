@@ -11,8 +11,6 @@ export default async function apiHandler(
         Number(req.query.user_id)
       );
       res.status(200).json(data);
-    } catch (err) {
-      console.log(err);
-    }
+    } catch (err) {}
   }
 }

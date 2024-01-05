@@ -42,8 +42,6 @@ export default function SelectWorld() {
       (world) => world.location_name === event.target.value
     );
 
-    console.log("worldToSend ===>", worldToSend);
-
     try {
       const { status } = await axios.put(
         "/api/user-management/change-active-world",
@@ -65,7 +63,6 @@ export default function SelectWorld() {
       }
     } catch (err) {
       toastMessage("Action Failed, please try again", "error");
-      console.log(err);
     }
   }
   if (status === "authenticated") {

@@ -1,6 +1,6 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import { getPlayersSubscribedToWorld } from "@/services/data-fetching/getPlayers";
-import { getAPISession } from "@/utilities/functions/getServerSideSesion";
+import { getAPISession } from "@/utilities/functions/getServerSideSession";
 import { location } from "@prisma/client";
 
 export default async function apiHandler(
@@ -19,8 +19,6 @@ export default async function apiHandler(
         user.user_id
       );
       res.status(200).json(players);
-    } catch (err) {
-      console.log(err);
-    }
+    } catch (err) {}
   }
 }

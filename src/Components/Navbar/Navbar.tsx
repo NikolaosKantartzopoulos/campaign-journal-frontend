@@ -10,7 +10,6 @@ import LoginButton from "../Authentication/AccountButton";
 import LinkSection from "./LinkSection";
 
 import * as React from "react";
-import { useSession } from "next-auth/react";
 
 const Navbar = ({
   toggleDrawer,
@@ -21,9 +20,6 @@ const Navbar = ({
 }) => {
   const theme = useTheme();
   const under600px = useMediaQuery(theme.breakpoints.down("sm"));
-
-  const { data: session } = useSession();
-  const user = session?.user;
 
   return (
     <AppBar position="static" sx={{ marginBottom: "2rem" }}>
@@ -67,7 +63,6 @@ const Navbar = ({
             <LinkSection />
           </Box>
         )}
-        <button onClick={() => console.log(user)}>user</button>
         <LoginButton color="inherit" />
       </Box>
     </AppBar>

@@ -26,7 +26,7 @@ export async function getWorldsHeroFactions(selectedWorld: location) {
   const worldsHeroFactionsAndPlayers = await Promise.all(
     worldsHeroFactions.map(async (heroFaction) => {
       const usersSubscribed = await getHeroesSubscribedToFaction(heroFaction);
-      console.log(usersSubscribed);
+
       const toRet = {
         faction: heroFaction,
         usersSubscribed,
@@ -34,6 +34,6 @@ export async function getWorldsHeroFactions(selectedWorld: location) {
       return toRet;
     })
   );
-  console.log(worldsHeroFactionsAndPlayers);
+
   return worldsHeroFactionsAndPlayers;
 }

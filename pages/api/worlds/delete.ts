@@ -1,4 +1,4 @@
-import { getAPISession } from "@/utilities/functions/getServerSideSesion";
+import { getAPISession } from "@/utilities/functions/getServerSideSession";
 import { NextApiRequest, NextApiResponse } from "next";
 import { prisma } from "../../../prisma/prisma";
 

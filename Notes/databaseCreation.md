@@ -84,3 +84,20 @@ sentient_id INT,
 alter table heroes
 add
 heroes_team_id int references heroes_team
+
+DELIMITER //
+
+CREATE TRIGGER before_insert_faction_membership
+BEFORE INSERT ON faction_membership
+FOR EACH ROW
+BEGIN
+IF NEW.faction_id IS NULL THEN
+SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Faction ID must be provided';
+END IF;
+
+IF NEW.user_id IS NULL AND NEW.sentient_id IS NULL THEN
+SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Either user ID or sentient ID must be provided';
+END IF;
+END//
+
+DELIMITER ;

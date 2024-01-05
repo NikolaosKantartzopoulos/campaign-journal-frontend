@@ -18,7 +18,7 @@ const AddHeroPage = ({
 }) => {
   const { setAddHeroOption, addHeroOption }: AddHeroContextInterface =
     useContext(AddHeroContext) as AddHeroContextInterface;
-  console.log(heroesInUsersVanguard);
+
   return (
     <FlexBox sx={{ flexDirection: "column" }}>
       <Typography variant="h4">Your Heroes</Typography>
@@ -37,6 +37,7 @@ const AddHeroPage = ({
 
       {addHeroOption && (
         <Box>
+          {heroesInUsersVanguard && null}
           {addHeroOption === "new" && <AddNewHero />}
           {addHeroOption === "existing" && (
             <AddExistingHero

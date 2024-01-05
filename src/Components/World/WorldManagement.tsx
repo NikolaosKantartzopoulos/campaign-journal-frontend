@@ -47,7 +47,6 @@ const WorldManagement = ({
       });
       setVisibleOption(null);
       toastMessage("World successfully created", "success");
-      console.log(playerLocations);
     } catch (err: any) {
       toastMessage(err?.response?.data?.error, "error");
     }
@@ -67,8 +66,6 @@ const WorldManagement = ({
         queryKey: [`getAllWorldsThatUserHasAccess-${user?.user_id}`],
       });
 
-      console.log(user?.selectedWorld?.location_id, data.location_id);
-
       if (playerLocations.length === 1) {
         update({
           location_id: null,
@@ -78,7 +75,6 @@ const WorldManagement = ({
       }
 
       if (user?.selectedWorld?.location_id === data.deletedWorldId) {
-        console.log(playerLocations);
         update({
           location_id: playerLocations[0].location_id,
           selectedWorld: playerLocations.length ? playerLocations[0] : null,
@@ -88,7 +84,6 @@ const WorldManagement = ({
       setDeleteWorldInput("");
       setVisibleOption(null);
     } catch (err: any) {
-      console.log(err);
       toastMessage(err.response.data.message, "error");
     }
   };

@@ -9,10 +9,10 @@ export default async function apiHandler(
 ) {
   if (req.method === "POST") {
     //createAndAddSentientToUsersVanguard
-    const { sentient, user }: { sentient: sentient; user: user } = req.body;
-    console.log(user);
+    // const { sentient, user }: { sentient: sentient; user: user } = req.body;
+
     // const sentients = await createAndAddSentientToUsersVanguard(sentient, user);
-    res.status(200).json(sentient);
+    res.status(200);
   }
 
   if (req.method === "PUT") {
