@@ -2,7 +2,7 @@ import { Box, Button, Divider, TextField } from "@mui/material";
 import { FlexBox } from "../CustomComponents/FlexBox";
 import SelectWorld from "./SelectWorld";
 import { getPlayersSubscribedToWorldReturnType } from "@/services/data-fetching/getPlayers";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import axios from "axios";
 import { MouseEvent, useState } from "react";
 import { useSession } from "next-auth/react";
@@ -46,14 +46,7 @@ const HeroesAndFactions = () => {
     },
   });
 
-  const createWorldHeroFactionMutation = useMutation({
-    mutationFn: handleCreateHeroFaction,
-    onSuccess: (data) => {
-      queryClient.setQueryData(["worldsHeroFactions"], data);
-    },
-  });
-
-  const [factionInputValue, setFactionInputValue] = useState<string>();
+  const [factionInputValue, setFactionInputValue] = useState<string>("");
   const [newUsername, setNewUsername] = useState("");
   const [selectedFactionName, setSelectedFactionName] = useState<string | null>(
     null
@@ -64,10 +57,9 @@ const HeroesAndFactions = () => {
       const { data } = await axios.post("/api/heroes/create-hero-faction/", {
         newFactionName: factionInputValue,
       });
-      const { createdHeroFaction, message } = data;
+      const { message } = data;
       toastMessage(message, "success");
       queryClient.invalidateQueries({ queryKey: ["worldsHeroFactions"] });
-      return createdHeroFaction;
     } catch (err: any) {
       toastMessage(err.message, "error");
     }
@@ -81,6 +73,7 @@ const HeroesAndFactions = () => {
       });
       toastMessage(data.message, "success");
       setNewUsername("");
+      queryClient.invalidateQueries({ queryKey: ["playersSubscribedToWorld"] });
     } catch (err: any) {
       if (err.response.status === 406)
         toastMessage(err?.response?.data?.message, "error");
@@ -113,19 +106,30 @@ const HeroesAndFactions = () => {
     }
   }
 
-  async function handleFactionUserRowClick(
-    e: MouseEvent,
-    itemId: string,
-    boxTitle: string
-  ) {
-    console.log(e, itemId, boxTitle);
+  async function handleDeleteUserFromFaction(e: MouseEvent, itemId: string) {
+    const selectedFactionEntry = worldsHeroFactions?.find(
+      (entry) => entry.faction.faction_name === selectedFactionName
+    ) as heroFactionTypes;
+
+    const selectedFaction = selectedFactionEntry?.faction;
+
+    console.log(itemId, selectedFaction);
+    try {
+      const { data } = await axios.put(
+        "/api/user-management/delete-user-from-faction",
+        { faction_id: selectedFaction.faction_id, user_id: itemId }
+      );
+      console.log(data);
+      toastMessage(data.message, "success");
+      queryClient.invalidateQueries({ queryKey: ["worldsHeroFactions"] });
+    } catch (err: any) {
+      toastMessage(err.message, "error");
+    }
   }
-  async function handlePlayersBoxTitleClick(e: MouseEvent, title: string) {
-    console.log(e, title);
-  }
-  async function handleHeroFactionsBoxTitleClick(e: MouseEvent, title: string) {
-    console.log(e, title);
-  }
+
+  async function handlePlayersBoxTitleClick() {}
+
+  async function handleHeroFactionsBoxTitleClick() {}
 
   if (!user) {
     return <LoadingSpinner />;
@@ -137,9 +141,32 @@ const HeroesAndFactions = () => {
       <Box>
         <SelectWorld />
 
-        <Box sx={{ my: "1rem" }}>
-          <Button variant="outlined">Hero Factions</Button>
-          <Box sx={{ marginTop: 2 }}>
+        <FlexBox
+          sx={{
+            my: "1rem",
+            justifyContent: "center",
+            alignItems: "center",
+            flexFlow: "row wrap",
+          }}
+        >
+          <FlexBox sx={{ gap: 0, alignItems: "stretch", width: "320px" }}>
+            <TextField
+              label="Player's Name"
+              value={newUsername}
+              onChange={(e) => setNewUsername(e.target.value)}
+              size="small"
+            />
+            <Button
+              onClick={handleAddPlayerToWorld}
+              variant="outlined"
+              disabled={!newUsername}
+              sx={{ width: "85px" }}
+            >
+              Invite
+            </Button>
+          </FlexBox>
+
+          <FlexBox sx={{ gap: 0, alignItems: "stretch", width: "320px" }}>
             <TextField
               label="Faction name"
               value={factionInputValue}
@@ -147,64 +174,62 @@ const HeroesAndFactions = () => {
               size="small"
             />
             <Button
-              onClick={() => createWorldHeroFactionMutation.mutate}
+              onClick={handleCreateHeroFaction}
               disabled={!factionInputValue}
               variant="outlined"
+              sx={{ width: "85px" }}
             >
-              Create Hero Faction
+              Create
             </Button>
-          </Box>
-          <Divider sx={{ my: "1rem" }} />
-        </Box>
-        {user.selectedWorld && (
-          <Box sx={{ my: "1rem" }}>
-            <Box sx={{ my: "1rem" }}>
-              <FlexBox>
-                <TextField
-                  label="Player's Name"
-                  value={newUsername}
-                  onChange={(e) => setNewUsername(e.target.value)}
-                  size="small"
-                />
-                <Button variant="contained" onClick={handleAddPlayerToWorld}>
-                  Invite
-                </Button>
-              </FlexBox>
-            </Box>
-            <FlexBox sx={{ gap: 0, alignItems: "stretch" }}>
-              {playersSubscribedToWorld && (
-                <SideBySideBox
-                  visibleValue="user_name"
-                  boxTitle={"Players"}
-                  itemsArray={playersSubscribedToWorld}
-                  idUsed="user_id"
-                  sx={{ flexBasis: "150px" }}
-                  onItemClick={handlePlayerRowClick}
-                  onTitleClick={handlePlayersBoxTitleClick}
-                  visibleOptions={true}
-                />
-              )}
+          </FlexBox>
+        </FlexBox>
+        <Box
+          sx={{
+            my: "1rem",
+            mx: "auto",
+          }}
+        >
+          <FlexBox sx={{ gap: 0, alignItems: "stretch" }}>
+            {playersSubscribedToWorld && (
+              <SideBySideBox
+                visibleValue="user_name"
+                boxTitle={"Players"}
+                itemsArray={playersSubscribedToWorld}
+                idUsed="user_id"
+                sx={{ flexBasis: "150px" }}
+                onItemClick={handlePlayerRowClick}
+                onTitleClick={handlePlayersBoxTitleClick}
+                visibleOptions={true}
+              />
+            )}
 
-              <Box sx={{ flex: "1 1 0" }}>
-                {worldsHeroFactions &&
-                  worldsHeroFactions.map((heroFactionAndUsersArray) => (
-                    <SideBySideBox
-                      key={heroFactionAndUsersArray.faction.faction_id}
-                      visibleValue="user_name"
-                      boxTitle={heroFactionAndUsersArray.faction.faction_name}
-                      itemsArray={heroFactionAndUsersArray.usersSubscribed}
-                      idUsed={"user_id"}
-                      sx={{ flex: "1 1 0" }}
-                      onItemClick={handleFactionUserRowClick}
-                      onTitleClick={handleHeroFactionsBoxTitleClick}
-                      visibleOptions={selectedFactionName}
-                      setVisibleOptions={setSelectedFactionName}
-                    />
-                  ))}
-              </Box>
+            <FlexBox
+              sx={{
+                flex: "1 1 0",
+                height: "100%",
+                alignItems: "stretch",
+                flexDirection: "column",
+                gap: 0,
+              }}
+            >
+              {worldsHeroFactions &&
+                worldsHeroFactions.map((heroFactionAndUsersArray) => (
+                  <SideBySideBox
+                    key={heroFactionAndUsersArray.faction.faction_id}
+                    visibleValue="user_name"
+                    boxTitle={heroFactionAndUsersArray.faction.faction_name}
+                    itemsArray={heroFactionAndUsersArray.usersSubscribed}
+                    idUsed={"user_id"}
+                    sx={{ flex: "1 1 0", height: "100%" }}
+                    onItemClick={handleDeleteUserFromFaction}
+                    onTitleClick={handleHeroFactionsBoxTitleClick}
+                    visibleOptions={selectedFactionName}
+                    setVisibleOptions={setSelectedFactionName}
+                  />
+                ))}
             </FlexBox>
-          </Box>
-        )}
+          </FlexBox>
+        </Box>
       </Box>
     </>
   );

@@ -1,4 +1,4 @@
-import { addUserToFaction } from "@/services/modifyData/manageHeroFactions";
+import { deleteUserFromFaction } from "@/services/modifyData/manageHeroFactions";
 import { getAPISession } from "@/utilities/functions/getServerSideSession";
 import { NextApiRequest, NextApiResponse } from "next";
 
@@ -15,14 +15,14 @@ export default async function apiHandler(
         return;
       }
 
-      const data = await addUserToFaction(
+      const data = await deleteUserFromFaction(
         req.body.faction_id,
         req.body.user_id
       );
-      console.log(data);
+
       res.status(200).json({
         data,
-        message: `User added to Faction`,
+        message: `User removed from Faction`,
       });
       return;
     } catch (err) {

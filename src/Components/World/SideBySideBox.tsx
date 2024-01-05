@@ -33,7 +33,7 @@ const SideBySideBox = ({
         display: "flex",
         flexDirection: "column",
         userSelect: "none",
-        border: "1px solid black",
+        // border: "1px solid black",
         ...sx,
       }}
     >
