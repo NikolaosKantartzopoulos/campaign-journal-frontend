@@ -1,6 +1,7 @@
 import { location } from "@prisma/client";
 import { prisma } from "../../../prisma/prisma";
 import { getAllWorlds } from "../data-fetching/getWorlds";
+import logger from "../../../logger";
 
 export function addWorldToUsersAvailableWorlds(
   location_id: number,
@@ -37,36 +38,45 @@ export async function renameWorld(
   newLocationName: string,
   selectedWorld: location
 ) {
-  if (selectedWorld.location_scale !== "World")
-    throw Error("Location's scale is not world");
+  try {
+    if (!newLocationName || !selectedWorld) {
+      throw new Error("missing arguments in renameWorld");
+    }
+    if (selectedWorld.location_scale !== "World")
+      throw Error("Location's scale is not world");
 
-  // check if world to be updated exists and is up to date
-  const existingWorld = await prisma.location.findFirst({
-    where: {
-      location_name: selectedWorld.location_name,
-    },
-  });
+    // check if world to be updated exists and is up to date
+    const existingWorld = await prisma.location.findFirst({
+      where: {
+        location_name: selectedWorld.location_name,
+      },
+    });
 
-  if (!existingWorld) {
-    throw Error(`No world named ${newLocationName} exists`);
+    if (!existingWorld) {
+      throw Error(`No world named ${newLocationName} exists`);
+    }
+
+    // check if new world name exists
+    const newNameIsAvailable = await checkThatNewNameIsAvailable(
+      newLocationName
+    );
+
+    if (!newNameIsAvailable) {
+      throw Error("Name submitted is not available");
+    }
+    // update the entry
+
+    const data = await prisma.location.update({
+      where: { location_id: selectedWorld.location_id },
+      data: {
+        location_name: newLocationName,
+      },
+    });
+
+    return data;
+  } catch (err) {
+    logger.error(err);
   }
-
-  // check if new world name exists
-  const newNameIsAvailable = await checkThatNewNameIsAvailable(newLocationName);
-
-  if (!newNameIsAvailable) {
-    throw Error("Name submitted is not available");
-  }
-  // update the entry
-
-  const data = await prisma.location.update({
-    where: { location_id: selectedWorld.location_id },
-    data: {
-      location_name: newLocationName,
-    },
-  });
-
-  return data;
 }
 
 export async function checkThatNewNameIsAvailable(location_name: string) {

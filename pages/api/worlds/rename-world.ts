@@ -8,7 +8,6 @@ export default async function apiHandler(
   res: NextApiResponse
 ) {
   if (req.method !== "PATCH") {
-    throw new Error("/api/worlds/rename-worlds - no PATCH");
     res.status(400);
     return;
   }
@@ -33,7 +32,6 @@ export default async function apiHandler(
       .status(200)
       .json({ message: "Name successfully updated", updatedWorldVersion });
   } catch (err) {
-    console.log(err);
     logger.error(err);
     res.status(400);
   }

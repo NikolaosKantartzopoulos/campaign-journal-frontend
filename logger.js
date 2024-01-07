@@ -13,6 +13,12 @@ const { stream, send } = logflarePinoVercel({
 // create pino logger
 const logger = pino(
   {
+    transport: {
+      target: "pino-pretty",
+      options: {
+        colorize: true,
+      },
+    },
     browser: {
       transmit: {
         level: "info",
@@ -25,6 +31,7 @@ const logger = pino(
       revision: process.env.VERCEL_GITHUB_COMMIT_SHA,
     },
   },
+
   stream
 );
 

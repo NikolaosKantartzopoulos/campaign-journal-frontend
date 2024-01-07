@@ -1,17 +1,18 @@
+import logger from "../../../logger";
 import { prisma } from "../../../prisma/prisma";
 
 export async function addUserToFaction(faction_id: number, user_id: number) {
   try {
-    console.log(faction_id, user_id);
     const data = await prisma.faction_membership.create({
       data: {
         faction_id: faction_id,
         user_id: user_id,
       },
     });
-    console.log(data);
     return data;
-  } catch (err) {}
+  } catch (err) {
+    logger.error(err);
+  }
 }
 
 export async function deleteUserFromFaction(
@@ -26,7 +27,9 @@ export async function deleteUserFromFaction(
       },
     });
     return data;
-  } catch (err) {}
+  } catch (err) {
+    logger.error(err);
+  }
 }
 
 // export async function renameHeroFaction () {

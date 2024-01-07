@@ -126,13 +126,11 @@ const HeroesAndFactions = () => {
 
     const selectedFaction = selectedFactionEntry?.faction;
 
-    console.log(itemId, selectedFaction);
     try {
       const { data } = await axios.put(
         "/api/user-management/delete-user-from-faction",
         { faction_id: selectedFaction.faction_id, user_id: itemId }
       );
-      console.log(data);
       toastMessage(data.message, "success");
       queryClient.invalidateQueries({ queryKey: ["worldsHeroFactions"] });
     } catch (err: any) {

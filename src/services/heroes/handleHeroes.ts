@@ -16,11 +16,9 @@ export async function addExistingSentientToUsersVanguard(
 }
 
 export async function createAndAddSentientToUsersVanguard(
-  sentient: sentient,
-  user: user
-) {
-  console.log(sentient,user)
-}
+  _sentient: sentient,
+  _user: user
+) {}
 
 export async function getAllSentientsNotInUsersVanguard(user_id: number) {
   return (await prisma.$queryRaw`SELECT *

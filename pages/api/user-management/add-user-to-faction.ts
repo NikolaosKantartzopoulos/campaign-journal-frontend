@@ -19,7 +19,6 @@ export default async function apiHandler(
         req.body.faction_id,
         req.body.user_id
       );
-      console.log(data);
       res.status(200).json({
         data,
         message: `User added to Faction`,

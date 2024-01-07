@@ -40,14 +40,15 @@
     "axios": "^1.6.2",
     "next": "14.0.3",
     "next-auth": "^4.24.5",
-    "pino": "^8.17.2",
-    "pino-logflare": "^0.4.2",
     "prisma": "^5.7.0",
     "react": "^18",
     "react-dom": "^18",
     "toastify-js": "^1.12.0"
   },
   "devDependencies": {
+    "pino": "^8.17.2",
+    "pino-logflare": "^0.4.2",
+    "pino-pretty": "^10.3.1",
     "@tanstack/react-query-devtools": "^5.14.6",
     "@testing-library/jest-dom": "^6.1.6",
     "@testing-library/react": "^14.1.2",

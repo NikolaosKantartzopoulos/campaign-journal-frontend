@@ -84,8 +84,6 @@ export const getServerSideProps: GetServerSideProps = async (
       ),
   });
 
-  console.log("98098709870987", session?.selectedWorld?.location_id);
-  console.log(session);
   await queryClient.prefetchQuery({
     queryKey: [
       "worldsHeroFactions",
