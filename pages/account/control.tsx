@@ -5,7 +5,7 @@ import { GetServerSideProps, GetServerSidePropsContext } from "next";
 import { Session, getServerSession } from "next-auth";
 import { authOptions } from "../api/auth/[...nextauth]";
 import { getAllWorldsThatUserHasAccess } from "@/services/data-fetching/getWorlds";
-import { useSession } from "next-auth/react";
+import { signOut, useSession } from "next-auth/react";
 import LoadingSpinner from "@/Components/CustomComponents/LoadingSpinner";
 import axios from "axios";
 import { location } from "@prisma/client";
@@ -13,10 +13,14 @@ import { getPlayersSubscribedToWorld } from "@/services/data-fetching/getPlayers
 import { getWorldsHeroFactions } from "@/services/data-fetching/getFactions";
 
 const AccountControl = () => {
-  const { data: session, status } = useSession();
+  const { data: session } = useSession();
   const user = session?.user;
   const { data: playerLocations, isLoading } = useQuery<location[]>({
-    queryKey: [`getAllWorldsThatUserHasAccess-${user?.user_id}`],
+    queryKey: [
+      `getAllWorldsThatUserHasAccess`,
+      { user_id: user?.user_id },
+      { world_id: user?.selectedWorld?.location_id },
+    ],
     queryFn: async () => {
       const { data } = await axios(
         `/api/worlds/get-all-worlds-that-user-has-access/${user?.user_id}`
@@ -26,7 +30,11 @@ const AccountControl = () => {
     enabled: !!user,
   });
 
-  if (isLoading || status === "loading" || !user) {
+  if (!user || !session) {
+    signOut();
+  }
+
+  if (isLoading) {
     return <LoadingSpinner />;
   }
 
@@ -54,7 +62,8 @@ export const getServerSideProps: GetServerSideProps = async (
     context.res,
     authOptions
   )) as Session;
-  if (!session) {
+  const user = session?.user;
+  if (!session || !user) {
     return {
       redirect: {
         destination: "/",
@@ -62,22 +71,25 @@ export const getServerSideProps: GetServerSideProps = async (
       },
     };
   }
-  const user = session?.user;
 
   const queryClient = new QueryClient();
 
   await queryClient.prefetchQuery({
-    queryKey: [`getAllWorldsThatUserHasAccess-${user.user_id}`],
+    queryKey: [
+      `getAllWorldsThatUserHasAccess`,
+      { user_id: user?.user_id },
+      { world_id: user?.selectedWorld?.location_id },
+    ],
     queryFn: () => getAllWorldsThatUserHasAccess(Number(user.user_id)),
   });
 
   await queryClient.prefetchQuery({
     queryKey: [
       "playersSubscribedToWorld",
-      user?.selectedWorld?.location_id,
-      user?.user_id,
+      { user_id: user?.user_id },
+      { world_id: user?.selectedWorld?.location_id },
     ],
-    queryFn: () =>
+    queryFn: async () =>
       getPlayersSubscribedToWorld(
         user?.selectedWorld as location,
         Number(user.user_id)
@@ -87,10 +99,10 @@ export const getServerSideProps: GetServerSideProps = async (
   await queryClient.prefetchQuery({
     queryKey: [
       "worldsHeroFactions",
-      user?.selectedWorld?.location_id,
-      user?.user_id,
+      { user_id: user?.user_id },
+      { world_id: user?.selectedWorld?.location_id },
     ],
-    queryFn: () => getWorldsHeroFactions(user?.selectedWorld as location),
+    queryFn: async () => getWorldsHeroFactions(user?.selectedWorld as location),
   });
 
   return {

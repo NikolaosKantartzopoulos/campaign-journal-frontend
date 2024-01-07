@@ -10,11 +10,12 @@ import { useRouter } from "next/router";
 const Character = () => {
   const router = useRouter();
   const { data: session } = useSession();
+  const user = session?.user;
 
   const { data: sentient } = useQuery({
     queryKey: [`sentient-${router.query.sentient_id}`],
     queryFn: () => getUniqueSentientById(Number(router.query.sentient_id)),
-    enabled: !!session,
+    enabled: !!user,
   });
 
   return (

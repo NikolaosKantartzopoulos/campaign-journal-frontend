@@ -43,7 +43,7 @@ const WorldManagement = ({
         selectedWorld: createdWorld,
       });
       await queryClient.invalidateQueries({
-        queryKey: [`getAllWorldsThatUserHasAccess-${user?.user_id}`],
+        queryKey: ["getAllWorldsThatUserHasAccess"],
       });
       setVisibleOption(null);
       toastMessage("World successfully created", "success");
@@ -58,12 +58,12 @@ const WorldManagement = ({
       return;
     }
     try {
-      const { data } = await axios.put("/api/worlds/delete", {
+      const { data } = await axios.put("/api/worlds/delete-world", {
         location_name: deleteWorldInput,
       });
       toastMessage(data.message, "success");
       await queryClient.invalidateQueries({
-        queryKey: [`getAllWorldsThatUserHasAccess-${user?.user_id}`],
+        queryKey: [`getAllWorldsThatUserHasAccess`],
       });
 
       if (playerLocations.length === 1) {
@@ -82,7 +82,7 @@ const WorldManagement = ({
       }
 
       setDeleteWorldInput("");
-      setVisibleOption(null);
+      setVisibleOption(() => null);
     } catch (err: any) {
       toastMessage(err.response.data.message, "error");
     }
@@ -176,7 +176,8 @@ const WorldManagement = ({
           </Button>
         </FlexBox>
       )}
-      {playerLocations.length ? <HeroesAndFactions /> : null}
+
+      {user.selectedWorld ? <HeroesAndFactions /> : null}
     </OptionsCard>
   );
 };

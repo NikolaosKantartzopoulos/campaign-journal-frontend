@@ -1,6 +1,7 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import { getAPISession } from "@/utilities/functions/getServerSideSession";
 import { getWorldsHeroFactions } from "@/services/data-fetching/getFactions";
+import logger from "../../../logger";
 
 export default async function apiHandler(
   req: NextApiRequest,
@@ -24,6 +25,7 @@ export default async function apiHandler(
         message: "Worlds hero factions retrieved",
       });
     } catch (err) {
+      logger.error(err);
       res.status(400);
     }
   }

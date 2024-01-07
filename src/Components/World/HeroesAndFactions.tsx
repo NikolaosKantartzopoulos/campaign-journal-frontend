@@ -22,8 +22,8 @@ const HeroesAndFactions = () => {
   >({
     queryKey: [
       "playersSubscribedToWorld",
-      user?.selectedWorld?.location_id,
-      user?.user_id,
+      { user_id: user?.user_id },
+      { world_id: user?.selectedWorld?.location_id },
     ],
     queryFn: async () => {
       try {
@@ -34,14 +34,14 @@ const HeroesAndFactions = () => {
         return data;
       } catch (err) {}
     },
-    enabled: !!session,
+    enabled: !!user,
   });
 
   const { data: worldsHeroFactions } = useQuery<heroFactionTypes[]>({
     queryKey: [
       "worldsHeroFactions",
-      user?.selectedWorld?.location_id,
-      user?.user_id,
+      { user_id: user?.user_id },
+      { world_id: user?.selectedWorld?.location_id },
     ],
     queryFn: async () => {
       try {
@@ -66,8 +66,9 @@ const HeroesAndFactions = () => {
       const { message } = data;
       toastMessage(message, "success");
       queryClient.invalidateQueries({
-        queryKey: ["worldsHeroFactions", user?.selectedWorld?.location_id],
+        queryKey: ["worldsHeroFactions"],
       });
+      setFactionInputValue("");
     } catch (err: any) {
       toastMessage(err.message, "error");
     }
@@ -82,10 +83,7 @@ const HeroesAndFactions = () => {
       toastMessage(data.message, "success");
       setNewUsername("");
       queryClient.invalidateQueries({
-        queryKey: [
-          "playersSubscribedToWorld",
-          user?.selectedWorld?.location_id,
-        ],
+        queryKey: ["playersSubscribedToWorld"],
       });
     } catch (err: any) {
       if (err.response.status === 406)
@@ -201,7 +199,7 @@ const HeroesAndFactions = () => {
           }}
         >
           <FlexBox sx={{ gap: 0, alignItems: "stretch" }}>
-            {playersSubscribedToWorld && (
+            {playersSubscribedToWorld.length > 0 && (
               <SideBySideBox
                 visibleValue="user_name"
                 boxTitle={"Players"}

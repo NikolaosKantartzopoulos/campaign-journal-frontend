@@ -25,6 +25,14 @@ const LoginButton = ({ ...rest }) => {
         flexFlow: "row wrap",
         mx: 1,
       }}
+      onClick={() => {
+        console.log(
+          session,
+          user,
+          user?.selectedWorld,
+          user?.selectedWorld?.location_name
+        );
+      }}
     >
       <Button
         {...rest}

@@ -9,7 +9,7 @@ export function addWorldToUsersAvailableWorlds(
 ) {
   return prisma.world_user.create({
     data: {
-      location_id: location_id,
+      world_id: location_id,
       user_id: user_id,
     },
   });
@@ -36,6 +36,7 @@ export function createWorld({
 
 export async function renameWorld(
   newLocationName: string,
+  newDescription: string,
   selectedWorld: location
 ) {
   try {
@@ -70,6 +71,7 @@ export async function renameWorld(
       where: { location_id: selectedWorld.location_id },
       data: {
         location_name: newLocationName,
+        location_description: newDescription,
       },
     });
 
@@ -87,3 +89,7 @@ export async function checkThatNewNameIsAvailable(location_name: string) {
   }
   return true;
 }
+
+// export async function deleteWorld(_location_name: string, _user: user) {
+//   //TODO implement service layer to delete world function
+// }

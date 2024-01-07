@@ -26,6 +26,7 @@ export default async function apiHandler(
   try {
     const updatedWorldVersion = await renameWorld(
       req.body.newLocationName,
+      req.body.newDescription,
       user?.selectedWorld
     );
     res

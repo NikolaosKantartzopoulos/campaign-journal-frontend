@@ -32,7 +32,7 @@ export default async function apiHandler(
 
       await prisma.world_user.deleteMany({
         where: {
-          location_id: locationObject?.location_id,
+          world_id: locationObject?.location_id,
         },
       });
 
@@ -47,7 +47,55 @@ export default async function apiHandler(
         });
       }
 
-      await prisma.location.delete({
+      await prisma.event_chain.deleteMany({
+        where: { world_id: locationObject.location_id },
+      });
+
+      await prisma.event_faction.deleteMany({
+        where: { world_id: locationObject.location_id },
+      });
+
+      await prisma.event_item.deleteMany({
+        where: { world_id: locationObject.location_id },
+      });
+
+      await prisma.event_location.deleteMany({
+        where: { world_id: locationObject.location_id },
+      });
+
+      await prisma.event_sentient.deleteMany({
+        where: { world_id: locationObject.location_id },
+      });
+
+      await prisma.event.deleteMany({
+        where: { world_id: locationObject.location_id },
+      });
+
+      await prisma.faction_membership.deleteMany({
+        where: { world_id: locationObject.location_id },
+      });
+
+      await prisma.faction.deleteMany({
+        where: { world_id: locationObject.location_id },
+      });
+
+      await prisma.item.deleteMany({
+        where: { world_id: locationObject.location_id },
+      });
+
+      await prisma.location.deleteMany({
+        where: { world_id: locationObject.location_id },
+      });
+
+      await prisma.sentient.deleteMany({
+        where: { world_id: locationObject.location_id },
+      });
+
+      await prisma.world_user.deleteMany({
+        where: { world_id: locationObject.location_id },
+      });
+
+      await prisma.location.deleteMany({
         where: { location_id: locationObject.location_id },
       });
 

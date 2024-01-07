@@ -7,10 +7,6 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model attitudes {
-  attitude_description String @id @db.VarChar(255)
-}
-
 model event {
   event_id                                       Int              @id @default(autoincrement())
   event_title                                    String           @unique(map: "event_title") @db.VarChar(32)
@@ -43,6 +39,7 @@ model event_chain {
 model event_faction {
   event_id   Int
   faction_id Int
+  world_id   Int
   event      event   @relation(fields: [event_id], references: [event_id], onDelete: NoAction, onUpdate: NoAction, map: "event_faction_ibfk_1")
   faction    faction @relation(fields: [faction_id], references: [faction_id], onDelete: NoAction, onUpdate: NoAction, map: "event_faction_ibfk_2")
 
@@ -53,6 +50,7 @@ model event_faction {
 model event_item {
   event_id Int
   item_id  Int
+  world_id Int
   event    event @relation(fields: [event_id], references: [event_id], onDelete: NoAction, onUpdate: NoAction, map: "event_item_ibfk_1")
   item     item  @relation(fields: [item_id], references: [item_id], onDelete: NoAction, onUpdate: NoAction, map: "event_item_ibfk_2")
 
@@ -63,6 +61,7 @@ model event_item {
 model event_location {
   event_id    Int
   location_id Int
+  world_id    Int
   event       event    @relation(fields: [event_id], references: [event_id], onDelete: NoAction, onUpdate: NoAction, map: "event_location_ibfk_1")
   location    location @relation(fields: [location_id], references: [location_id], onDelete: NoAction, onUpdate: NoAction, map: "event_location_ibfk_2")
 
@@ -73,6 +72,7 @@ model event_location {
 model event_sentient {
   event_id    Int
   sentient_id Int
+  world_id    Int
   event       event    @relation(fields: [event_id], references: [event_id], onDelete: NoAction, onUpdate: NoAction, map: "event_sentient_ibfk_1")
   sentient    sentient @relation(fields: [sentient_id], references: [sentient_id], onDelete: NoAction, onUpdate: NoAction, map: "event_sentient_ibfk_2")
 
@@ -81,16 +81,17 @@ model event_sentient {
 }
 
 model faction {
-  faction_id         Int                  @id @default(autoincrement())
-  faction_name       String               @db.VarChar(255)
-  faction_goals      String?              @db.Text
-  faction_type       String?              @db.VarChar(255)
-  leader             Int?
-  world_id           Int
-  is_hero_faction    Boolean?
-  event_faction      event_faction[]
-  sentient           sentient?            @relation(fields: [leader], references: [sentient_id], onDelete: NoAction, onUpdate: NoAction, map: "faction_ibfk_1")
-  faction_membership faction_membership[]
+  faction_id                                 Int                  @id @default(autoincrement())
+  faction_name                               String               @db.VarChar(255)
+  faction_goals                              String?              @db.Text
+  faction_type                               String?              @db.VarChar(255)
+  leader                                     Int?
+  world_id                                   Int
+  is_hero_faction                            Boolean?
+  event_faction                              event_faction[]
+  sentient                                   sentient?            @relation(fields: [leader], references: [sentient_id], onDelete: NoAction, onUpdate: NoAction, map: "faction_ibfk_1")
+  faction_membership                         faction_membership[]
+  sentient_sentient_hero_faction_idTofaction sentient[]           @relation("sentient_hero_faction_idTofaction")
 
   @@index([leader], map: "leader")
 }
@@ -100,9 +101,12 @@ model faction_membership {
   faction_id            Int
   faction_membership_id Int       @id @default(autoincrement())
   user_id               Int?
+  world_id              Int
   sentient              sentient? @relation(fields: [sentient_id], references: [sentient_id], onDelete: NoAction, onUpdate: NoAction, map: "faction_membership_ibfk_1")
   faction               faction   @relation(fields: [faction_id], references: [faction_id], onDelete: NoAction, onUpdate: NoAction, map: "faction_membership_ibfk_2")
 
+  @@unique([faction_id, user_id], map: "unique_combinations")
+  @@unique([faction_id, sentient_id], map: "unique_combinations_sentient")
   @@index([faction_id], map: "faction_id")
   @@index([sentient_id], map: "sentient_id")
 }
@@ -130,6 +134,7 @@ model location {
   location_description String?                  @db.Text
   game_master          Int?
   location_name        String                   @db.VarChar(255)
+  world_id             Int?
   event_location       event_location[]
   item                 item[]
   location             location?                @relation("locationTolocation", fields: [part_of], references: [location_id], onDelete: NoAction, onUpdate: NoAction, map: "location_ibfk_1")
@@ -141,20 +146,23 @@ model location {
 }
 
 model sentient {
-  sentient_id        Int                  @id @default(autoincrement())
-  first_name         String               @db.VarChar(255)
-  last_name          String?              @db.TinyText
-  birth_date         DateTime?            @db.Date
-  heroes_team_name   String?              @db.VarChar(255)
-  race_name          String               @db.VarChar(255)
-  short_title        String?              @db.VarChar(255)
-  state              sentient_state?
-  world_id           Int
-  event_sentient     event_sentient[]
-  faction            faction[]
-  faction_membership faction_membership[]
-  item               item[]
-  user_sentient      user_sentient[]
+  sentient_id                               Int                  @id @default(autoincrement())
+  first_name                                String               @db.VarChar(255)
+  last_name                                 String?              @db.TinyText
+  birth_date                                DateTime?            @db.Date
+  hero_faction_id                           Int?
+  race_name                                 String               @db.VarChar(255)
+  short_title                               String?              @db.VarChar(255)
+  state                                     sentient_state?
+  world_id                                  Int
+  event_sentient                            event_sentient[]
+  faction                                   faction[]
+  faction_membership                        faction_membership[]
+  item                                      item[]
+  faction_sentient_hero_faction_idTofaction faction?             @relation("sentient_hero_faction_idTofaction", fields: [hero_faction_id], references: [faction_id], onDelete: NoAction, onUpdate: NoAction, map: "fk_hero_faction")
+  user_sentient                             user_sentient[]
+
+  @@index([hero_faction_id], map: "fk_hero_faction")
 }
 
 model user {
@@ -174,6 +182,7 @@ model user_sentient {
   user_sentient_id Int      @id @default(autoincrement())
   sentient_id      Int
   user_id          Int
+  world_id         Int
   sentient         sentient @relation(fields: [sentient_id], references: [sentient_id], onDelete: NoAction, onUpdate: NoAction, map: "sentient_hero_ibfk_1")
   user             user     @relation(fields: [user_id], references: [user_id], onDelete: NoAction, onUpdate: NoAction, map: "sentient_hero_ibfk_2")
 
@@ -184,12 +193,12 @@ model user_sentient {
 model world_user {
   user_world_id Int      @id @default(autoincrement())
   user_id       Int
-  location_id   Int
+  world_id      Int
   user          user     @relation(fields: [user_id], references: [user_id], onDelete: NoAction, onUpdate: NoAction, map: "world_user_ibfk_1")
-  location      location @relation(fields: [location_id], references: [location_id], onDelete: NoAction, onUpdate: NoAction, map: "world_user_ibfk_2")
+  location      location @relation(fields: [world_id], references: [location_id], onDelete: NoAction, onUpdate: NoAction, map: "world_user_ibfk_2")
 
-  @@unique([user_id, location_id], map: "user_id")
-  @@index([location_id], map: "location_id")
+  @@unique([user_id, world_id], map: "user_id")
+  @@index([world_id], map: "location_id")
 }
 
 enum location_location_scale {

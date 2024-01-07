@@ -13,14 +13,14 @@ const Characters = () => {
   const { data: sentients } = useQuery({
     queryKey: [
       "allSentients",
-      session?.selectedWorld?.location_id,
-      user?.user_id,
+      `selectedWorldId: ${session?.selectedWorld?.location_id}`,
+      `userId: ${user?.user_id}`,
     ],
     queryFn: async () => {
       const { data: sentient } = await axios("/api/sentients/");
       return sentient;
     },
-    enabled: !!session,
+    enabled: !!user,
   });
 
   return <CharactersTable sentients={sentients as sentient[]} />;

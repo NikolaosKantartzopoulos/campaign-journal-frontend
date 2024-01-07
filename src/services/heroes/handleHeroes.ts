@@ -1,24 +1,36 @@
 import { sentient, user } from "@prisma/client";
 import { prisma } from "../../../prisma/prisma";
+import logger from "../../../logger";
 
 export async function addExistingSentientToUsersVanguard(
   sentient: sentient,
   user: user
 ) {
   try {
+    if (!user) {
+      logger.error("No user in addExistingSentientToUsersVanguard");
+      return;
+    }
+    if (!user.location_id) {
+      logger.error(
+        "No world location_id in addExistingSentientToUsersVanguard"
+      );
+      return;
+    }
     await prisma.user_sentient.create({
       data: {
-        user_id: user.user_id,
+        user_id: user?.user_id,
         sentient_id: sentient.sentient_id,
+        world_id: user?.location_id,
       },
     });
   } catch (err) {}
 }
 
-export async function createAndAddSentientToUsersVanguard(
-  _sentient: sentient,
-  _user: user
-) {}
+// export async function createAndAddSentientToUsersVanguard(
+//   _sentient: sentient,
+//   _user: user
+// ) {}
 
 export async function getAllSentientsNotInUsersVanguard(user_id: number) {
   return (await prisma.$queryRaw`SELECT *

@@ -10,7 +10,9 @@ import {
   DialogActions,
   DialogContent,
   DialogTitle,
+  Divider,
   TextField,
+  TextareaAutosize,
   Typography,
 } from "@mui/material";
 import { FlexBox } from "../CustomComponents/FlexBox";
@@ -34,10 +36,20 @@ export default function SelectWorld() {
     setOpen(false);
   };
 
-  const [editWorldNameInput, setEditWorldNameInput] = useState("");
+  const [editWorldNameInput, setEditWorldNameInput] = useState(
+    user?.selectedWorld?.location_name || ""
+  );
+  const [editWorldDescription, setEditWorldDescription] = useState(
+    user?.selectedWorld?.location_description || ""
+  );
 
   const { data: playerLocations, isLoading } = useQuery<location[]>({
-    queryKey: [`getAllWorldsThatUserHasAccess-${user?.user_id}`],
+    queryKey: [
+      `getAllWorldsThatUserHasAccess`,
+      { user_id: user?.user_id },
+      { world_id: user?.selectedWorld?.location_id },
+    ],
+
     queryFn: async () => {
       try {
         const response = await axios(
@@ -49,10 +61,10 @@ export default function SelectWorld() {
         throw new Error("Failed to fetch data");
       }
     },
-    enabled: !!session,
+    enabled: !!user,
   });
 
-  if (isLoading || !session) {
+  if (isLoading) {
     return <LoadingSpinner />;
   }
 
@@ -96,10 +108,11 @@ export default function SelectWorld() {
     try {
       const { data } = await axios.patch("/api/worlds/rename-world", {
         newLocationName: editWorldNameInput,
+        newDescription: editWorldDescription,
       });
       toastMessage(data.message, "success");
       queryClient.invalidateQueries({
-        queryKey: [`getAllWorldsThatUserHasAccess-${user?.user_id}`],
+        queryKey: [`getAllWorldsThatUserHasAccess`],
       });
       handleClose();
       update({
@@ -108,6 +121,10 @@ export default function SelectWorld() {
     } catch (err: any) {
       logger.error(err);
     }
+  }
+
+  if (!user?.selectedWorld || !user?.location_id) {
+    return null;
   }
 
   if (status === "authenticated") {
@@ -148,17 +165,28 @@ export default function SelectWorld() {
             onClose={handleClose}
             aria-labelledby="alert-dialog-title"
             aria-describedby="alert-dialog-description"
+            sx={{ padding: "1rem" }}
           >
             <DialogTitle id="alert-dialog-title" sx={{ paddingBottom: 0 }}>
               Rename world
             </DialogTitle>
-            <DialogContent sx={{ p: 0 }}>
+            <DialogContent sx={{ p: 1 }}>
               <TextField
                 label="New name"
                 value={editWorldNameInput}
                 onChange={(e) => setEditWorldNameInput(e.target.value)}
                 size="small"
                 sx={{ margin: "1rem" }}
+              />
+              <Typography variant="h6">Description</Typography>
+              <TextareaAutosize
+                style={{
+                  width: "100%",
+                  minHeight: "4rem",
+                  padding: "1rem",
+                }}
+                value={editWorldDescription}
+                onChange={(e) => setEditWorldDescription(e.target.value)}
               />
             </DialogContent>
             <DialogActions>
@@ -167,6 +195,15 @@ export default function SelectWorld() {
             </DialogActions>
           </Dialog>
         </FlexBox>
+        {user?.selectedWorld?.location_description && (
+          <>
+            <Divider sx={{ m: 2 }} />
+            <Typography variant="body1" align="center" sx={{ m: 1 }}>
+              {user?.selectedWorld?.location_description}
+            </Typography>
+            <Divider sx={{ m: 2 }} />
+          </>
+        )}
       </Box>
     );
   }

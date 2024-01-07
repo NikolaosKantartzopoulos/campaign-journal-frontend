@@ -18,17 +18,25 @@ const Heroes = () => {
   const { data: session } = useSession();
   const user = session?.user;
   const { data: sentientsNOTInUsersVanguard } = useQuery<sentient[], Error>({
-    queryKey: [`getAllSentientsNotInUsersVanguard-${user?.user_id}`],
+    queryKey: [
+      "getAllSentientsNotInUsersVanguard",
+      `selectedWorldId: ${session?.selectedWorld?.location_id}`,
+      `userId: ${user?.user_id}`,
+    ],
     queryFn: async () => {
       const { data: sentientsNOTInUsersVanguard } = await axios.get(
         `/api/heroes/getAllSentientsNotInUsersVanguard/${user?.user_id}`
       );
       return sentientsNOTInUsersVanguard;
     },
-    enabled: !!session,
+    enabled: !!user,
   });
   const { data: heroesInUsersVanguard } = useQuery<sentient[], Error>({
-    queryKey: [`getAllSentientsInUsersVanguard-${user?.user_id}`],
+    queryKey: [
+      "getAllSentientsInUsersVanguard",
+      `selectedWorldId: ${session?.selectedWorld?.location_id}`,
+      `userId: ${user?.user_id}`,
+    ],
 
     queryFn: async () => {
       const { data: heroesInUsersVanguard } = await axios.get(
@@ -36,7 +44,7 @@ const Heroes = () => {
       );
       return heroesInUsersVanguard;
     },
-    enabled: !!session,
+    enabled: !!user,
   });
 
   if (!sentientsNOTInUsersVanguard || !heroesInUsersVanguard) {
@@ -77,11 +85,19 @@ export const getServerSideProps: GetServerSideProps = async (
   const queryClient = new QueryClient();
 
   await queryClient.prefetchQuery({
-    queryKey: [`getAllSentientsNotInUsersVanguard-${user.user_id}`],
+    queryKey: [
+      "getAllSentientsNotInUsersVanguard",
+      `selectedWorldId: ${session?.selectedWorld?.location_id}`,
+      `userId: ${user?.user_id}`,
+    ],
     queryFn: () => getAllSentientsNotInUsersVanguard(Number(user.user_id)),
   });
   await queryClient.prefetchQuery({
-    queryKey: [`getAllSentientsInUsersVanguard-${user.user_id}`],
+    queryKey: [
+      "getAllSentientsInUsersVanguard",
+      `selectedWorldId: ${session?.selectedWorld?.location_id}`,
+      `userId: ${user?.user_id}`,
+    ],
     queryFn: () => getAllSentientsInUsersVanguard(Number(user.user_id)),
   });
 
