@@ -23,6 +23,7 @@ const AccountControl = () => {
       );
       return data;
     },
+    enabled: !!user,
   });
 
   if (isLoading || status === "loading" || !user) {
@@ -73,7 +74,7 @@ export const getServerSideProps: GetServerSideProps = async (
   await queryClient.prefetchQuery({
     queryKey: [
       "playersSubscribedToWorld",
-      session?.selectedWorld?.location_id,
+      user?.selectedWorld?.location_id,
       user?.user_id,
     ],
     queryFn: () =>
@@ -83,10 +84,12 @@ export const getServerSideProps: GetServerSideProps = async (
       ),
   });
 
+  console.log("98098709870987", session?.selectedWorld?.location_id);
+  console.log(session);
   await queryClient.prefetchQuery({
     queryKey: [
       "worldsHeroFactions",
-      session?.selectedWorld?.location_id,
+      user?.selectedWorld?.location_id,
       user?.user_id,
     ],
     queryFn: () => getWorldsHeroFactions(user?.selectedWorld as location),

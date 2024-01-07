@@ -48,6 +48,7 @@ const AccountEditScreen = ({
         </Button>
         <Button
           endIcon={<Logout />}
+          variant="outlined"
           onClick={() => signOut({ callbackUrl: "/" })}
           sx={{
             maxWidth: "250px",

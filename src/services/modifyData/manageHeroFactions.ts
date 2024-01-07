@@ -28,3 +28,9 @@ export async function deleteUserFromFaction(
     return data;
   } catch (err) {}
 }
+
+// export async function renameHeroFaction () {
+//   // check that new name does not exist
+
+//   // update the entry
+// }

@@ -17,4 +17,5 @@
 //       throw new Error("Failed to fetch data");
 //     }
 //   },
+// enabled: !!session,
 // });

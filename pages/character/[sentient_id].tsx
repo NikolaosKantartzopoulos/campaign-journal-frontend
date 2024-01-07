@@ -4,14 +4,17 @@ import { Box, Typography } from "@mui/material";
 import { sentient } from "@prisma/client";
 import { QueryClient, dehydrate, useQuery } from "@tanstack/react-query";
 import { GetServerSideProps } from "next";
+import { useSession } from "next-auth/react";
 import { useRouter } from "next/router";
 
 const Character = () => {
   const router = useRouter();
+  const { data: session } = useSession();
 
   const { data: sentient } = useQuery({
     queryKey: [`sentient-${router.query.sentient_id}`],
     queryFn: () => getUniqueSentientById(Number(router.query.sentient_id)),
+    enabled: !!session,
   });
 
   return (

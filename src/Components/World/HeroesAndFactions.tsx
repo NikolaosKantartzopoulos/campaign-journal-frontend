@@ -22,7 +22,7 @@ const HeroesAndFactions = () => {
   >({
     queryKey: [
       "playersSubscribedToWorld",
-      session?.selectedWorld?.location_id,
+      user?.selectedWorld?.location_id,
       user?.user_id,
     ],
     queryFn: async () => {
@@ -34,16 +34,22 @@ const HeroesAndFactions = () => {
         return data;
       } catch (err) {}
     },
+    enabled: !!session,
   });
 
   const { data: worldsHeroFactions } = useQuery<heroFactionTypes[]>({
-    queryKey: ["worldsHeroFactions"],
+    queryKey: [
+      "worldsHeroFactions",
+      user?.selectedWorld?.location_id,
+      user?.user_id,
+    ],
     queryFn: async () => {
       try {
         const { data } = await axios("/api/worlds/get-worlds-hero-factions");
         return data.worldsHeroFactions;
       } catch (err) {}
     },
+    enabled: !!user,
   });
 
   const [factionInputValue, setFactionInputValue] = useState<string>("");
@@ -59,7 +65,9 @@ const HeroesAndFactions = () => {
       });
       const { message } = data;
       toastMessage(message, "success");
-      queryClient.invalidateQueries({ queryKey: ["worldsHeroFactions"] });
+      queryClient.invalidateQueries({
+        queryKey: ["worldsHeroFactions", user?.selectedWorld?.location_id],
+      });
     } catch (err: any) {
       toastMessage(err.message, "error");
     }
@@ -73,7 +81,12 @@ const HeroesAndFactions = () => {
       });
       toastMessage(data.message, "success");
       setNewUsername("");
-      queryClient.invalidateQueries({ queryKey: ["playersSubscribedToWorld"] });
+      queryClient.invalidateQueries({
+        queryKey: [
+          "playersSubscribedToWorld",
+          user?.selectedWorld?.location_id,
+        ],
+      });
     } catch (err: any) {
       if (err.response.status === 406)
         toastMessage(err?.response?.data?.message, "error");
@@ -131,7 +144,7 @@ const HeroesAndFactions = () => {
 
   async function handleHeroFactionsBoxTitleClick() {}
 
-  if (!user) {
+  if (!user || !playersSubscribedToWorld || !worldsHeroFactions) {
     return <LoadingSpinner />;
   }
 

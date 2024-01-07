@@ -25,6 +25,7 @@ const Heroes = () => {
       );
       return sentientsNOTInUsersVanguard;
     },
+    enabled: !!session,
   });
   const { data: heroesInUsersVanguard } = useQuery<sentient[], Error>({
     queryKey: [`getAllSentientsInUsersVanguard-${user?.user_id}`],
@@ -35,6 +36,7 @@ const Heroes = () => {
       );
       return heroesInUsersVanguard;
     },
+    enabled: !!session,
   });
 
   if (!sentientsNOTInUsersVanguard || !heroesInUsersVanguard) {
