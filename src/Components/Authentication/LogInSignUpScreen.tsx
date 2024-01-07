@@ -71,6 +71,11 @@ const LogInSignUpScreen = () => {
           label="Password"
           value={userPassword}
           onChange={(e) => setUserPassword(e.target.value)}
+          onKeyDown={(e) => {
+            if (e.key === "Enter") {
+              handleLogin();
+            }
+          }}
         />
         <Box
           sx={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "32px" }}
