@@ -1,10 +1,12 @@
 import CharactersTable from "@/Components/Characters/CharactersTable";
-import { GetServerSideProps } from "next";
+import { GetServerSideProps, GetServerSidePropsContext } from "next";
 import { QueryClient, dehydrate, useQuery } from "@tanstack/react-query";
 import { getAllSentients } from "@/services/data-fetching/getSentients";
 import { sentient } from "@prisma/client";
 import axios from "axios";
 import { useSession } from "next-auth/react";
+import { Session, getServerSession } from "next-auth";
+import { authOptions } from "./api/auth/[...nextauth]";
 
 const Characters = () => {
   const { data: session } = useSession();
@@ -13,8 +15,8 @@ const Characters = () => {
   const { data: sentients } = useQuery({
     queryKey: [
       "allSentients",
-      `selectedWorldId: ${session?.selectedWorld?.location_id}`,
-      `userId: ${user?.user_id}`,
+      { user_id: user?.user_id },
+      { world_id: user?.selectedWorld?.location_id },
     ],
     queryFn: async () => {
       const { data: sentient } = await axios("/api/sentients/");
@@ -26,15 +28,35 @@ const Characters = () => {
   return <CharactersTable sentients={sentients as sentient[]} />;
 };
 
-export const getServerSideProps = (async () => {
+export const getServerSideProps: GetServerSideProps = async (
+  context: GetServerSidePropsContext
+) => {
+  const session = (await getServerSession(
+    context.req,
+    context.res,
+    authOptions
+  )) as Session;
+  const user = session?.user;
+  if (!session || !user) {
+    return {
+      redirect: {
+        destination: "/",
+        permanent: false,
+      },
+    };
+  }
   const queryClient = new QueryClient();
 
   await queryClient.prefetchQuery({
-    queryKey: ["allSentients"],
+    queryKey: [
+      "allSentients",
+      { user_id: user?.user_id },
+      { world_id: user?.selectedWorld?.location_id },
+    ],
     queryFn: getAllSentients,
   });
 
   return { props: { dehydratedState: dehydrate(queryClient) } };
-}) satisfies GetServerSideProps;
+};
 
 export default Characters;

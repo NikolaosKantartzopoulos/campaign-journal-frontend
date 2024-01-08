@@ -1,7 +1,6 @@
 import { Box, Button, Divider, TextField } from "@mui/material";
 import { FlexBox } from "../CustomComponents/FlexBox";
 import SelectWorld from "./SelectWorld";
-import { getPlayersSubscribedToWorldReturnType } from "@/services/data-fetching/getPlayers";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import axios from "axios";
 import { MouseEvent, useState } from "react";
@@ -9,7 +8,10 @@ import { useSession } from "next-auth/react";
 import { toastMessage } from "../CustomComponents/Toastify/Toast";
 import LoadingSpinner from "../CustomComponents/LoadingSpinner";
 import SideBySideBox from "./SideBySideBox";
-import { heroFactionTypes } from "@/utilities/types/heroFactionTypes";
+import {
+  heroFactionTypes,
+  userMinimumInfo,
+} from "@/utilities/types/heroFactionTypes";
 
 const HeroesAndFactions = () => {
   const { data: session } = useSession();
@@ -17,9 +19,7 @@ const HeroesAndFactions = () => {
   const user = session?.user;
   const queryClient = useQueryClient();
 
-  const { data: playersSubscribedToWorld } = useQuery<
-    getPlayersSubscribedToWorldReturnType[]
-  >({
+  const { data: playersSubscribedToWorld } = useQuery<userMinimumInfo[]>({
     queryKey: [
       "playersSubscribedToWorld",
       { user_id: user?.user_id },
@@ -75,7 +75,17 @@ const HeroesAndFactions = () => {
   }
 
   const handleAddPlayerToWorld = async () => {
+    if (
+      playersSubscribedToWorld
+        ?.map((player) => player.user_name)
+        .includes(newUsername)
+    ) {
+      toastMessage("User already invited", "error");
+      setNewUsername("");
+      return;
+    }
     try {
+      console.log(newUsername, user?.location_id);
       const { data } = await axios.post(`/api/worlds/add-user`, {
         user_name: newUsername,
         location_id: user?.location_id,
@@ -91,7 +101,7 @@ const HeroesAndFactions = () => {
     }
   };
 
-  async function handlePlayerRowClick(e: MouseEvent, user_id: string) {
+  async function addUserToHeroFaction(e: MouseEvent, user_id: string) {
     if (!worldsHeroFactions) return;
     if (!selectedFactionName) {
       toastMessage("Select a User Faction", "warning");
@@ -135,6 +145,70 @@ const HeroesAndFactions = () => {
       toastMessage(err.message, "error");
     }
   }
+  console.log("playersSubscribedToWorld", playersSubscribedToWorld);
+  console.log("worldsHeroFactions", worldsHeroFactions);
+
+  async function handleRemovePlayerFromWorld() {
+    if (!playersSubscribedToWorld) {
+      return;
+    }
+    const userToBeDeleted = playersSubscribedToWorld?.find(
+      (el) => el.user_name === newUsername.trim()
+    );
+
+    if (!userToBeDeleted) {
+      toastMessage("No such user exists", "error");
+      return;
+    }
+
+    try {
+      const { data } = await axios.post("/api/worlds/delete-user-from-world", {
+        userToBeDeleted,
+      });
+      toastMessage(data.message || "User deleted", "success");
+
+      queryClient.setQueryData(["playersSubscribedToWorld"], () => {
+        const newData = [...playersSubscribedToWorld].filter(
+          (el) => el.user_name !== newUsername
+        );
+        return newData;
+      });
+
+      if (worldsHeroFactions) {
+        queryClient.setQueryData(["worldsHeroFactions"], () => {
+          const worldsHeroFactionCopy: heroFactionTypes[] = [
+            ...worldsHeroFactions,
+          ] as heroFactionTypes[];
+          for (const faction of worldsHeroFactionCopy) {
+            faction.usersSubscribed = [...faction.usersSubscribed].filter(
+              (el) => el.user_name !== newUsername
+            );
+          }
+
+          return worldsHeroFactionCopy;
+        });
+      }
+
+      queryClient.invalidateQueries({
+        queryKey: [
+          "playersSubscribedToWorld",
+          { user_id: user?.user_id },
+          { world_id: user?.selectedWorld?.location_id },
+        ],
+      });
+
+      queryClient.invalidateQueries({
+        queryKey: [
+          "worldsHeroFactions",
+          { user_id: user?.user_id },
+          { world_id: user?.selectedWorld?.location_id },
+        ],
+      });
+      setNewUsername("");
+    } catch (err: any) {
+      toastMessage(err.message, "error");
+    }
+  }
 
   async function handlePlayersBoxTitleClick() {}
 
@@ -163,6 +237,11 @@ const HeroesAndFactions = () => {
               label="Player's Name"
               value={newUsername}
               onChange={(e) => setNewUsername(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") {
+                  handleAddPlayerToWorld();
+                }
+              }}
               size="small"
             />
             <Button
@@ -173,6 +252,15 @@ const HeroesAndFactions = () => {
             >
               Invite
             </Button>
+            <Button
+              onClick={handleRemovePlayerFromWorld}
+              variant="outlined"
+              color="error"
+              disabled={!newUsername}
+              sx={{ width: "85px" }}
+            >
+              Delete
+            </Button>
           </FlexBox>
 
           <FlexBox sx={{ gap: 0, alignItems: "stretch", width: "320px" }}>
@@ -180,6 +268,11 @@ const HeroesAndFactions = () => {
               label="Faction name"
               value={factionInputValue}
               onChange={(e) => setFactionInputValue(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") {
+                  handleCreateHeroFaction();
+                }
+              }}
               size="small"
             />
             <Button
@@ -206,7 +299,7 @@ const HeroesAndFactions = () => {
                 itemsArray={playersSubscribedToWorld}
                 idUsed="user_id"
                 sx={{ flexBasis: "150px" }}
-                onItemClick={handlePlayerRowClick}
+                onItemClick={addUserToHeroFaction}
                 onTitleClick={handlePlayersBoxTitleClick}
                 visibleOptions={true}
               />

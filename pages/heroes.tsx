@@ -20,8 +20,8 @@ const Heroes = () => {
   const { data: sentientsNOTInUsersVanguard } = useQuery<sentient[], Error>({
     queryKey: [
       "getAllSentientsNotInUsersVanguard",
-      `selectedWorldId: ${session?.selectedWorld?.location_id}`,
-      `userId: ${user?.user_id}`,
+      { user_id: user?.user_id },
+      { world_id: user?.selectedWorld?.location_id },
     ],
     queryFn: async () => {
       const { data: sentientsNOTInUsersVanguard } = await axios.get(
@@ -34,8 +34,8 @@ const Heroes = () => {
   const { data: heroesInUsersVanguard } = useQuery<sentient[], Error>({
     queryKey: [
       "getAllSentientsInUsersVanguard",
-      `selectedWorldId: ${session?.selectedWorld?.location_id}`,
-      `userId: ${user?.user_id}`,
+      { user_id: user?.user_id },
+      { world_id: user?.selectedWorld?.location_id },
     ],
 
     queryFn: async () => {
@@ -87,16 +87,16 @@ export const getServerSideProps: GetServerSideProps = async (
   await queryClient.prefetchQuery({
     queryKey: [
       "getAllSentientsNotInUsersVanguard",
-      `selectedWorldId: ${session?.selectedWorld?.location_id}`,
-      `userId: ${user?.user_id}`,
+      { user_id: user?.user_id },
+      { world_id: user?.selectedWorld?.location_id },
     ],
     queryFn: () => getAllSentientsNotInUsersVanguard(Number(user.user_id)),
   });
   await queryClient.prefetchQuery({
     queryKey: [
       "getAllSentientsInUsersVanguard",
-      `selectedWorldId: ${session?.selectedWorld?.location_id}`,
-      `userId: ${user?.user_id}`,
+      { user_id: user?.user_id },
+      { world_id: user?.selectedWorld?.location_id },
     ],
     queryFn: () => getAllSentientsInUsersVanguard(Number(user.user_id)),
   });

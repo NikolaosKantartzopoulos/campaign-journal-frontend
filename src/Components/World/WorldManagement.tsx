@@ -154,7 +154,7 @@ const WorldManagement = ({
       )}
 
       {visibleOption === "deleteWorld" && (
-        <FlexBox>
+        <FlexBox sx={{ flexFlow: "row wrap" }}>
           <TextField
             label="World's name"
             value={deleteWorldInput}

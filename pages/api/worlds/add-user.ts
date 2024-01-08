@@ -35,7 +35,8 @@ export default async function apiHandler(
       }
 
       const { user_id }: { user_id: number } = userFound as { user_id: number };
-
+      console.log("====================================");
+      console.log(user_id, location_id);
       await prisma.world_user.create({
         data: {
           user_id: user_id,

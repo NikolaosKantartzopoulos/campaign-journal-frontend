@@ -1,16 +1,12 @@
 import { location, user } from "@prisma/client";
 import { prisma } from "../../../prisma/prisma";
 import logger from "../../../logger";
-
-export interface getPlayersSubscribedToWorldReturnType {
-  user_name: string;
-  user_id: number;
-}
+import { userMinimumInfo } from "@/utilities/types/heroFactionTypes";
 
 export async function getPlayersSubscribedToWorld(
   activeWorld: location,
   personal_id: number
-): Promise<getPlayersSubscribedToWorldReturnType[]> {
+): Promise<userMinimumInfo[]> {
   if (!activeWorld) {
     throw Error("No active world set");
   }
@@ -25,7 +21,7 @@ export async function getPlayersSubscribedToWorld(
     const players = usersSubscribedToWorld.filter(
       (us) => us.user_id !== personal_id
     );
-    return players as getPlayersSubscribedToWorldReturnType[];
+    return players as userMinimumInfo[];
   } catch (err) {
     logger.error(err);
     throw err;

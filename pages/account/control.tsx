@@ -15,6 +15,7 @@ import { getWorldsHeroFactions } from "@/services/data-fetching/getFactions";
 const AccountControl = () => {
   const { data: session } = useSession();
   const user = session?.user;
+
   const { data: playerLocations, isLoading } = useQuery<location[]>({
     queryKey: [
       `getAllWorldsThatUserHasAccess`,

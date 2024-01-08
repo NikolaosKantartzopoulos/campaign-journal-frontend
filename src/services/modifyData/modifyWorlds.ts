@@ -46,27 +46,6 @@ export async function renameWorld(
     if (selectedWorld.location_scale !== "World")
       throw Error("Location's scale is not world");
 
-    // check if world to be updated exists and is up to date
-    const existingWorld = await prisma.location.findFirst({
-      where: {
-        location_name: selectedWorld.location_name,
-      },
-    });
-
-    if (!existingWorld) {
-      throw Error(`No world named ${newLocationName} exists`);
-    }
-
-    // check if new world name exists
-    const newNameIsAvailable = await checkThatNewNameIsAvailable(
-      newLocationName
-    );
-
-    if (!newNameIsAvailable) {
-      throw Error("Name submitted is not available");
-    }
-    // update the entry
-
     const data = await prisma.location.update({
       where: { location_id: selectedWorld.location_id },
       data: {

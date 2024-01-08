@@ -41,3 +41,19 @@ export async function getAllWorldsThatUserHasAccess(
   const locations = locationsData.map((el) => el.location);
   return locations;
 }
+
+export function getWorldFromId({
+  user_id,
+  world_id,
+}: {
+  user_id: number;
+  world_id: number;
+}) {
+  return prisma.location.findFirst({
+    where: {
+      world_id: world_id,
+      location_scale: "World",
+      game_master: user_id,
+    },
+  });
+}
