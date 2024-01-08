@@ -3,12 +3,12 @@ import { FlexBox } from "../CustomComponents/FlexBox";
 import { Dispatch, MouseEvent, SetStateAction } from "react";
 
 interface SideBySideBoxProps<T> {
-  boxTitle: string;
+  boxTitle?: string;
   itemsArray: T[];
   idUsed: string;
   visibleValue: string;
   sx?: SxProps;
-  onItemClick: (e: MouseEvent, idUsed: string, boxTitle: string) => void;
+  onItemClick: (e: MouseEvent, idUsed: string, boxTitle?: string) => void;
   onTitleClick: (e: MouseEvent, title: string) => void;
   noVisibleOptionsText?: string;
   visibleOptions?: string | null | boolean;
@@ -33,27 +33,30 @@ const SideBySideBox = ({
         display: "flex",
         flexDirection: "column",
         userSelect: "none",
+        gap: 0,
         // border: "1px solid black",
         ...sx,
       }}
     >
-      <Typography
-        variant="h6"
-        sx={(theme) => ({
-          px: "1rem",
-          cursor: "pointer",
-          "&:hover": { scale: "1.01" },
-          background: theme.palette.primary.light,
-          color: "white",
-        })}
-        onClick={(e) => {
-          if (!setVisibleOptions) return;
-          setVisibleOptions(boxTitle);
-          onTitleClick(e, boxTitle);
-        }}
-      >
-        {boxTitle}
-      </Typography>
+      {boxTitle && (
+        <Typography
+          variant="h6"
+          sx={(theme) => ({
+            px: "1rem",
+            cursor: "pointer",
+            "&:hover": { scale: "1.01" },
+            background: theme.palette.primary.light,
+            color: "white",
+          })}
+          onClick={(e) => {
+            if (!setVisibleOptions) return;
+            setVisibleOptions(boxTitle);
+            onTitleClick(e, boxTitle);
+          }}
+        >
+          {boxTitle}
+        </Typography>
+      )}
       {(visibleOptions == boxTitle || visibleOptions === true) && (
         <FlexBox sx={{ flexDirection: "column", gap: 0 }}>
           {itemsArray.map((item) => (
@@ -68,9 +71,11 @@ const SideBySideBox = ({
                   cursor: "pointer",
                 },
               }}
-              onClick={(e: MouseEvent) =>
-                onItemClick(e, item[idUsed], boxTitle)
-              }
+              onClick={(e: MouseEvent) => {
+                if (boxTitle) {
+                  onItemClick(e, item[idUsed], boxTitle);
+                } else onItemClick(e, item[idUsed]);
+              }}
             >
               {item[visibleValue]}
             </Typography>

@@ -12,6 +12,7 @@ import {
   heroFactionTypes,
   userMinimumInfo,
 } from "@/utilities/types/heroFactionTypes";
+import CoolTitleBox from "../CustomComponents/CoolTitleBox";
 
 const HeroesAndFactions = () => {
   const { data: session } = useSession();
@@ -60,8 +61,31 @@ const HeroesAndFactions = () => {
 
   async function handleCreateHeroFaction() {
     try {
-      const { data } = await axios.post("/api/heroes/create-hero-faction/", {
+      const { data } = await axios.post("/api/worlds/create-hero-faction/", {
         newFactionName: factionInputValue,
+      });
+      const { message } = data;
+      toastMessage(message, "success");
+      queryClient.invalidateQueries({
+        queryKey: ["worldsHeroFactions"],
+      });
+      setFactionInputValue("");
+    } catch (err: any) {
+      toastMessage(err.message, "error");
+    }
+  }
+
+  async function handleDeleteHeroFaction() {
+    const selectedFactionEntry = worldsHeroFactions?.find(
+      (entry) => entry.faction.faction_name === factionInputValue
+    );
+    if (!selectedFactionEntry) {
+      toastMessage("No such faction exists", "error");
+      return;
+    }
+    try {
+      const { data } = await axios.post("/api/worlds/delete-hero-faction/", {
+        factionToBeDeleted: selectedFactionEntry.faction,
       });
       const { message } = data;
       toastMessage(message, "success");
@@ -85,7 +109,6 @@ const HeroesAndFactions = () => {
       return;
     }
     try {
-      console.log(newUsername, user?.location_id);
       const { data } = await axios.post(`/api/worlds/add-user`, {
         user_name: newUsername,
         location_id: user?.location_id,
@@ -145,8 +168,6 @@ const HeroesAndFactions = () => {
       toastMessage(err.message, "error");
     }
   }
-  console.log("playersSubscribedToWorld", playersSubscribedToWorld);
-  console.log("worldsHeroFactions", worldsHeroFactions);
 
   async function handleRemovePlayerFromWorld() {
     if (!playersSubscribedToWorld) {
@@ -283,35 +304,64 @@ const HeroesAndFactions = () => {
             >
               Create
             </Button>
+            <Button
+              onClick={handleDeleteHeroFaction}
+              color="error"
+              disabled={!factionInputValue}
+              variant="outlined"
+              sx={{ width: "85px" }}
+            >
+              Delete
+            </Button>
           </FlexBox>
         </FlexBox>
         <Box
           sx={{
             my: "1rem",
             mx: "auto",
+            display: "grid",
+            gridTemplateColumns: "1fr 1fr",
           }}
         >
-          <FlexBox sx={{ gap: 0, alignItems: "stretch" }}>
-            {playersSubscribedToWorld.length > 0 && (
-              <SideBySideBox
-                visibleValue="user_name"
-                boxTitle={"Players"}
-                itemsArray={playersSubscribedToWorld}
-                idUsed="user_id"
-                sx={{ flexBasis: "150px" }}
-                onItemClick={addUserToHeroFaction}
-                onTitleClick={handlePlayersBoxTitleClick}
-                visibleOptions={true}
-              />
-            )}
+          <Box>
+            <CoolTitleBox>Heroes</CoolTitleBox>
+            <FlexBox
+              sx={{
+                gap: 0,
+                alignItems: "stretch",
+                justifyContent: "flex-start",
+              }}
+            >
+              {playersSubscribedToWorld.length > 0 && (
+                <SideBySideBox
+                  visibleValue="user_name"
+                  itemsArray={playersSubscribedToWorld}
+                  idUsed="user_id"
+                  sx={{ flexBasis: "150px" }}
+                  onItemClick={addUserToHeroFaction}
+                  onTitleClick={handlePlayersBoxTitleClick}
+                  visibleOptions={true}
+                />
+              )}
+            </FlexBox>
+          </Box>
 
+          <Box
+            sx={{
+              flex: "1 1 0",
+              height: "100%",
+              alignItems: "stretch",
+              flexDirection: "column",
+            }}
+          >
+            <CoolTitleBox>Factions</CoolTitleBox>
             <FlexBox
               sx={{
                 flex: "1 1 0",
-                height: "100%",
                 alignItems: "stretch",
                 flexDirection: "column",
-                gap: 0,
+                justifyContent: "flex-start",
+                gap: "1px",
               }}
             >
               {worldsHeroFactions &&
@@ -322,7 +372,6 @@ const HeroesAndFactions = () => {
                     boxTitle={heroFactionAndUsersArray.faction.faction_name}
                     itemsArray={heroFactionAndUsersArray.usersSubscribed}
                     idUsed={"user_id"}
-                    sx={{ flex: "1 1 0", height: "100%" }}
                     onItemClick={handleDeleteUserFromFaction}
                     onTitleClick={handleHeroFactionsBoxTitleClick}
                     visibleOptions={selectedFactionName}
@@ -330,7 +379,7 @@ const HeroesAndFactions = () => {
                   />
                 ))}
             </FlexBox>
-          </FlexBox>
+          </Box>
         </Box>
       </Box>
     </>
