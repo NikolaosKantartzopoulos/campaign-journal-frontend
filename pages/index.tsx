@@ -1,11 +1,52 @@
 import { GetServerSideProps } from "next";
-
-import { Typography } from "@mui/material";
+import { Box, Button, Typography } from "@mui/material";
 import { useSession } from "next-auth/react";
+import fs from "fs/promises";
+import Image from "next/image";
+import { useState } from "react";
+import axios from "axios";
+import { sentient } from "@prisma/client";
+import { toastMessage } from "@/Components/CustomComponents/Toastify/Toast";
 
-export default function Home() {
-  // const userCtx = useLoggedInUser();
+export default function Home({ image }: { image: string }) {
   const { data: session } = useSession();
+
+  const [selectedFile, setSelectedFile] = useState(null);
+
+  const handleFileChange = (event: any) => {
+    // Get the selected file from the input
+    const file = event.target.files[0];
+    setSelectedFile(file);
+  };
+
+  const handleUpload = async () => {
+    try {
+      if (!selectedFile) {
+        toastMessage("Enter an image File", "error");
+        return;
+      }
+      const formData = new FormData();
+      formData.append("characterProfileImage", selectedFile);
+
+      const { data: newSentientData }: { data: sentient } = await axios.post(
+        "/api/sentients/unique/",
+        {
+          first_name: "Strahd",
+          last_name: "von Zarovich",
+          race_name: "Vampire",
+          short_title: "Dark Lord",
+        }
+      );
+      console.log("sentientCreated with id", newSentientData.sentient_id);
+      const { data } = await axios.post(
+        `/api/files/sentients/${newSentientData.sentient_id}`,
+        formData
+      );
+      console.log(data)
+    } catch (error: any) {
+      console.log(error.response?.data);
+    }
+  };
 
   return (
     <main>
@@ -14,12 +55,29 @@ export default function Home() {
       {session && (
         <Typography variant="h5">Welcome {session?.user?.user_name}</Typography>
       )}
+
+      <Button variant="contained" component="label" onClick={handleUpload}>
+        Upload File
+      </Button>
+      <input type="file" onChange={handleFileChange} />
+      <button onClick={() => console.log(selectedFile)}>asdf</button>
+      <Box sx={{ width: "350px", height: "400px", position: "relative" }}>
+        <Image
+          src={`data:image/png;base64,${image}`}
+          alt="Your Image"
+          fill={true}
+        />
+      </Box>
     </main>
   );
 }
 
 export const getServerSideProps: GetServerSideProps = async () => {
+  const imageBuffer = await fs.readFile("/home/nik/sambashare/vox.png");
+  const base64Image = imageBuffer.toString("base64");
   return {
-    props: {},
+    props: {
+      image: base64Image,
+    },
   };
 };

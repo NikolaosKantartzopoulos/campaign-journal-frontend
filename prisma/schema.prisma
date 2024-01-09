@@ -148,13 +148,14 @@ model location {
 model sentient {
   sentient_id                               Int                  @id @default(autoincrement())
   first_name                                String               @db.VarChar(255)
-  last_name                                 String?              @db.TinyText
+  last_name                                 String?              @db.VarChar(255)
   birth_date                                DateTime?            @db.Date
   hero_faction_id                           Int?
   race_name                                 String               @db.VarChar(255)
   short_title                               String?              @db.VarChar(255)
   state                                     sentient_state?
   world_id                                  Int
+  profile_image_path                        Boolean?             @default(false)
   event_sentient                            event_sentient[]
   faction                                   faction[]
   faction_membership                        faction_membership[]
@@ -162,6 +163,7 @@ model sentient {
   faction_sentient_hero_faction_idTofaction faction?             @relation("sentient_hero_faction_idTofaction", fields: [hero_faction_id], references: [faction_id], onDelete: NoAction, onUpdate: NoAction, map: "fk_hero_faction")
   user_sentient                             user_sentient[]
 
+  @@unique([world_id, first_name, last_name], map: "unique_sentient_constraint")
   @@index([hero_faction_id], map: "fk_hero_faction")
 }
 
