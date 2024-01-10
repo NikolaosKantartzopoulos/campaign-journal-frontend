@@ -1,6 +1,8 @@
 import { NextApiRequest } from "next";
 import formidable from "formidable";
 import path from "path";
+import fs from "fs/promises";
+import logger from "../../logger";
 
 export const saveFile = (
   req: NextApiRequest,
@@ -21,7 +23,7 @@ export const saveFile = (
       };
     } else {
       // options.filename = (name, ext, path, form) => {
-      options.filename = (path) => {
+      options.filename = (path: any) => {
         return Date.now().toString() + "_" + path.originalFilename;
       };
     }
@@ -36,3 +38,25 @@ export const saveFile = (
     });
   });
 };
+export async function readImageFromDrive(
+  folderName?: string,
+  fileName?: string
+) {
+  // Replace 'path/to/your/image.jpg' with the actual path to your image file
+  const imagePath = path.join(
+    process.env.FILE_STORAGE_PATH || "/public/",
+    folderName || "",
+    fileName || ""
+  );
+  console.log(imagePath);
+  try {
+    // Reading the image file using fs.promises.readFile()
+    const image = await fs.readFile(imagePath);
+    // Encode the image data to Base64
+    const base64Image = Buffer.from(image).toString("base64");
+    return base64Image;
+  } catch (err) {
+    logger.error("Error reading the file:", err);
+    return null; // Return null or handle the error accordingly
+  }
+}

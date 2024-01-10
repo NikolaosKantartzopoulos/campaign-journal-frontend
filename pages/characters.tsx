@@ -7,10 +7,14 @@ import axios from "axios";
 import { useSession } from "next-auth/react";
 import { Session, getServerSession } from "next-auth";
 import { authOptions } from "./api/auth/[...nextauth]";
+import { Box, Button } from "@mui/material";
+import { isUserGameMaster } from "@/utilities/helperFn/isUserGameMaster";
+import { useRouter } from "next/router";
 
 const Characters = () => {
   const { data: session } = useSession();
   const user = session?.user;
+  const router = useRouter();
 
   const { data: sentients } = useQuery({
     queryKey: [
@@ -25,7 +29,21 @@ const Characters = () => {
     enabled: !!user,
   });
 
-  return <CharactersTable sentients={sentients as sentient[]} />;
+  return (
+    <Box>
+      {isUserGameMaster(session) && (
+        <Button
+          variant="outlined"
+          onClick={() => {
+            router.push(`/character/manage-sentient/`);
+          }}
+        >
+          Create
+        </Button>
+      )}
+      <CharactersTable sentients={sentients as sentient[]} />;
+    </Box>
+  );
 };
 
 export const getServerSideProps: GetServerSideProps = async (

@@ -1,0 +1,170 @@
+import Button from "@mui/material/Button";
+import { useState } from "react";
+import {
+  Box,
+  FormControl,
+  InputLabel,
+  NativeSelect,
+  TextField,
+} from "@mui/material";
+import { FlexBox } from "@/Components/CustomComponents/FlexBox";
+import { toastMessage } from "@/Components/CustomComponents/Toastify/Toast";
+import axios, { AxiosError } from "axios";
+import { sentient } from "@prisma/client";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useSession } from "next-auth/react";
+import { useRouter } from "next/router";
+
+const CharacterBasicInfo = () => {
+  const { data: session } = useSession();
+  const user = session?.user;
+  const router = useRouter();
+
+  const queryClient = useQueryClient();
+
+  const { data: sentient } = useQuery({
+    queryKey: [
+      "sentient",
+      { user_id: user?.user_id },
+      { world_id: user?.selectedWorld?.location_id },
+      { sentient_id: router.query.sentient_id },
+    ],
+    queryFn: async () => {
+      const { data: sentient } = await axios(
+        `/api/sentients/unique/${router.query.sentient_id}`
+      );
+      return sentient;
+    },
+    enabled: !!user,
+  });
+
+  const [firstName, setFirstName] = useState(sentient?.first_name || "");
+  const [lastName, setLastName] = useState(sentient?.last_name || "");
+  const [race, setRace] = useState(sentient?.race_name || "");
+  const [shortTitle, setShortTitle] = useState(sentient?.short_title || "");
+  const [vitality, setVitality] = useState(sentient?.state || "alive");
+
+  async function handleCreateSentient() {
+    console.log(firstName, lastName, race, shortTitle, vitality);
+    try {
+      const { data: sentientCreated } = await axios.post<sentient>(
+        "/api/sentients/unique",
+        {
+          first_name: firstName,
+          last_name: lastName,
+          race_name: race,
+          short_title: shortTitle,
+          state: vitality,
+        }
+      );
+      console.log(sentientCreated);
+      queryClient.invalidateQueries({ queryKey: ["allSentients"] });
+    } catch (error) {
+      const err = error as AxiosError<{ message: string }>;
+      console.log(err);
+      toastMessage("There was an error", "error");
+    }
+  }
+
+  async function handleEditSentient() {
+    console.log(firstName, lastName, race, shortTitle, vitality);
+    // try {
+    //   const { data } = await axios.post("/api/sentients/unique", {
+    //     first_name: firstName,
+    //     last_name: lastName,
+    //     race_name: race,
+    //     short_title: shortTitle,
+    //     state: vitality,
+    //   });
+    //   // setCharacterCreated(true);
+    // } catch (error) {
+    //   const err = error as AxiosError<{ message: string }>;
+    //   console.log(err);
+    //   toastMessage("There was an error", "error");
+    // }
+  }
+
+  return (
+    <Box
+      sx={{
+        display: "flex",
+        flexDirection: "column",
+        gap: 4,
+      }}
+    >
+      <FlexBox>
+        <TextField
+          placeholder="Thor"
+          size="small"
+          value={firstName}
+          onChange={(e) => setFirstName(e.target.value)}
+          label="First Name"
+        />
+        <TextField
+          placeholder="Odinson"
+          size="small"
+          value={lastName}
+          onChange={(e) => setLastName(e.target.value)}
+          label="Last Name"
+        />
+      </FlexBox>
+      <TextField
+        placeholder="god of Thunder"
+        size="small"
+        value={shortTitle}
+        onChange={(e) => setShortTitle(e.target.value)}
+        label="Short Title"
+      />
+      <FlexBox>
+        <TextField
+          placeholder="Norse God"
+          size="small"
+          value={race}
+          onChange={(e) => setRace(e.target.value)}
+          label="Race"
+        />
+        <FormControl fullWidth>
+          <InputLabel variant="standard" htmlFor="uncontrolled-native">
+            State
+          </InputLabel>
+          <NativeSelect
+            size="small"
+            defaultValue={sentient.state}
+            inputProps={{
+              name: "age",
+            }}
+            onChange={(e) => setVitality(e.target.value)}
+          >
+            <option value={"alive"}>Alive</option>
+            <option value={"dead"}>Dead</option>
+            <option value={"undead"}>Undead</option>
+            <option value={"missing"}>Missing</option>
+          </NativeSelect>
+        </FormControl>
+      </FlexBox>
+      {!sentient && (
+        <Button variant="contained" onClick={handleCreateSentient}>
+          Create
+        </Button>
+      )}
+      {sentient &&
+        (firstName !== sentient?.first_name ||
+          lastName !== sentient?.last_name ||
+          race !== sentient?.race_name ||
+          shortTitle !== sentient?.short_title ||
+          vitality !== sentient?.state) && (
+          <Button
+            variant="contained"
+            onClick={() => {
+              handleEditSentient();
+              console.log("TODO edit character");
+            }}
+          >
+            Edit
+          </Button>
+        )}
+    </Box>
+  );
+};
+
+export default CharacterBasicInfo;

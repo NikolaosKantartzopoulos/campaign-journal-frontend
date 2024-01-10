@@ -1,6 +1,6 @@
 import { getAPISession } from "./../../../../src/utilities/functions/getServerSideSession";
 import { NextApiHandler } from "next";
-import { saveFile } from "@/utilities/formidable";
+import { readImageFromDrive, saveFile } from "@/utilities/formidable";
 import logger from "../../../../logger";
 import { addProfileImageToSentient } from "@/services/modifyData/sentients";
 
@@ -18,16 +18,24 @@ const handler: NextApiHandler = async (req, res) => {
       return;
     }
     const { sentient_id } = req.query;
-    await saveFile(
-      req,
-      true,
-      "characters",
-      `${user.location_id}_${sentient_id}`
-    );
+    switch (req.method) {
+      case "POST":
+        await saveFile(
+          req,
+          true,
+          "characters",
+          `${user.location_id}_${sentient_id}`
+        );
 
-    await addProfileImageToSentient({ sentient_id: Number(sentient_id) });
+        await addProfileImageToSentient({ sentient_id: Number(sentient_id) });
+        res.json({ done: "ok" });
 
-    res.json({ done: "ok" });
+        break;
+      case "GET":
+        const image = await readImageFromDrive();
+        res.setHeader("Content-Type", "image/jpg");
+        res.status(200).send(image);
+    }
   } catch (err) {
     logger.error(err);
   }

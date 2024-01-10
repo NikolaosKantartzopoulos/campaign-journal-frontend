@@ -14,13 +14,14 @@ export default async function apiHandler(
         res.status(401);
         return;
       }
-      const { first_name, last_name, race_name, short_title } = req.body;
+      const { first_name, last_name, race_name, short_title, state } = req.body;
       console.log(req.body);
       const newlyCreatedSentient = await createSentient({
         first_name,
         last_name,
         race_name,
         short_title,
+        state,
         world_id: user?.location_id,
       });
 

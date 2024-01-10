@@ -8,12 +8,14 @@ export async function createSentient({
   race_name,
   short_title,
   world_id,
+  state = "alive",
 }: {
   first_name: string;
   last_name: string;
   race_name: string;
   short_title: string;
   world_id: number;
+  state?: "alive" | "dead" | "undead" | "missing";
 }): Promise<sentient | undefined> {
   try {
     const newlyCreatedSentient = await prisma.sentient.create({
@@ -23,6 +25,7 @@ export async function createSentient({
         race_name: race_name,
         short_title: short_title,
         world_id: world_id,
+        state: state,
       },
     });
 
