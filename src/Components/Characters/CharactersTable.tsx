@@ -98,21 +98,22 @@ export default function CharactersTable({
             </TableRow>
           </TableHead>
           <TableBody>
-            {filterContentState.map((character) => (
-              <TableRow
-                key={character.sentient_id}
-                hover
-                onClick={(e: React.MouseEvent<HTMLElement>) =>
-                  handleCharacterRowClick(e, character)
-                }
-              >
-                <TableCell align="left">{character.first_name}</TableCell>
-                <TableCell align="left">{character.last_name}</TableCell>
-                <TableCell align="left">{character.short_title}</TableCell>
-                <TableCell align="left">{character.race_name}</TableCell>
-                <TableCell align="left">{character.state}</TableCell>
-              </TableRow>
-            ))}
+            {filterContentState &&
+              filterContentState.map((character) => (
+                <TableRow
+                  key={character.sentient_id}
+                  hover
+                  onClick={(e: React.MouseEvent<HTMLElement>) =>
+                    handleCharacterRowClick(e, character)
+                  }
+                >
+                  <TableCell align="left">{character.first_name}</TableCell>
+                  <TableCell align="left">{character.last_name}</TableCell>
+                  <TableCell align="left">{character.short_title}</TableCell>
+                  <TableCell align="left">{character.race_name}</TableCell>
+                  <TableCell align="left">{character.state}</TableCell>
+                </TableRow>
+              ))}
           </TableBody>
         </Table>
       </TableContainer>
