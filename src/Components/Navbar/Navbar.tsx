@@ -27,7 +27,8 @@ const Navbar = ({
         sx={{
           display: "flex",
           justifyContent: "space-between",
-          padding: 1,
+          padding: under600px ? "0px 0.5rem" : 1,
+          height: under600px ? "32px" : null,
         }}
       >
         {under600px && (

@@ -35,7 +35,9 @@ const LinkSection = () => {
       />
       <LinkTo
         href="/locations"
-        startIcon={<SignpostIcon />}
+        startIcon={
+          <SignpostIcon sx={{ height: "25px", width: "26px", p: 0 }} />
+        }
         linkText="Locations"
       />
       <LinkTo

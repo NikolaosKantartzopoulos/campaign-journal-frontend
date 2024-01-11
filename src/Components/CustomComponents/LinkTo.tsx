@@ -7,7 +7,6 @@ import { usePathname } from "next/navigation";
 const LinkButton = styled(Button)({
   textDecoration: "none",
   fontSize: "1.5rem",
-  padding: "0.5 1rem",
   flexGrow: 1,
   flexBasis: 1,
   textAlign: "center",
@@ -15,6 +14,7 @@ const LinkButton = styled(Button)({
   whiteSpace: "nowrap",
   gap: "0.5rem",
   display: "flex",
+  padding: "0.25rem",
   justifyContent: "center",
   alignItems: "center",
   textDecorationLine: "none",
@@ -53,7 +53,7 @@ const LinkTo = ({
     <Link
       href={href}
       style={{
-        border: isActiveLink ? "1px solid white" : "1px solid rgba(0,0,0,0)",
+        // border: isActiveLink ? "1px solid white" : "1px solid rgba(0,0,0,0)",
         color: isActiveLink ? "white" : "red",
       }}
     >
@@ -63,6 +63,9 @@ const LinkTo = ({
         sx={{
           color: isActiveLink ? "white" : "#ddd",
           fontWeight: isActiveLink ? "bold" : "none",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
         }}
       >
         {startIcon && startIcon}
@@ -74,7 +77,9 @@ const LinkTo = ({
             isActiveLink={isActiveLink}
           />
         )}
-        <Typography variant="body1">{linkText}</Typography>
+        <Typography variant="body1" sx={{ fontSize: "14px", pt: "2px" }}>
+          {linkText}
+        </Typography>
       </LinkButton>
     </Link>
   );

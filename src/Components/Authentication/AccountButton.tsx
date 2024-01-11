@@ -1,7 +1,8 @@
 import { Box, Button, Typography } from "@mui/material";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import { useRouter } from "next/router";
-import { useSession } from "next-auth/react";
+import { signOut, useSession } from "next-auth/react";
+import { Logout } from "@mui/icons-material";
 
 const LoginButton = ({ ...rest }) => {
   const { data: session } = useSession();
@@ -19,7 +20,7 @@ const LoginButton = ({ ...rest }) => {
         gap: "8px",
         justifyContent: "center",
         alignItems: "center",
-        flexFlow: "row wrap",
+        flexFlow: "row",
         mx: 1,
       }}
       onClick={() => {
@@ -45,9 +46,15 @@ const LoginButton = ({ ...rest }) => {
           gap: 1,
         }}
       >
-        <AccountCircleIcon sx={{ height: "32px", width: "32px" }} />
+        {!user && <AccountCircleIcon sx={{ height: "32px", width: "32px" }} />}
         {user && <Typography variant="body1">{user.user_name}</Typography>}
       </Button>
+      {user && (
+        <Logout
+          onClick={() => signOut({ callbackUrl: "/" })}
+          sx={{ "&:hover": { cursor: "pointer" } }}
+        />
+      )}
     </Box>
   );
 };

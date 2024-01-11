@@ -38,9 +38,15 @@ export async function editUsersCredentials({
   enableEditUserName: string;
   user_name: string;
 }): Promise<user | undefined> {
-  let userRetrieved: user;
   try {
-    if (enablePasswordChange) {
+    let userRetrieved;
+    if (enablePasswordChange && enableEditUserName) {
+      userRetrieved = await updateUserNameAndUserPassword({
+        user_id: user_id,
+        user_name: user_name,
+        user_password: user_password,
+      });
+    } else if (enablePasswordChange) {
       userRetrieved = await updateUserPassword({
         user_id: user_id,
         user_password: user_password,
@@ -50,14 +56,7 @@ export async function editUsersCredentials({
         user_id: user_id,
         user_name: user_name,
       });
-    } else {
-      userRetrieved = await updateUserNameAndUserPassword({
-        user_id: user_id,
-        user_name: user_name,
-        user_password: user_password,
-      });
     }
-    console.log(userRetrieved);
     return userRetrieved;
   } catch (err) {
     logger.error(err);

@@ -1,12 +1,10 @@
 import { Button } from "@mui/material";
-import { signOut } from "next-auth/react";
 import EditAccountCredentials from "./EditAccountCredentials";
 import WorldManagement from "../World/WorldManagement";
 import { FlexBox } from "../CustomComponents/FlexBox";
 import { useState } from "react";
 import SettingsIcon from "@mui/icons-material/Settings";
 import LandscapeIcon from "@mui/icons-material/Landscape";
-import { Logout } from "@mui/icons-material";
 import { location } from "@prisma/client";
 
 const AccountEditScreen = ({
@@ -34,7 +32,7 @@ const AccountEditScreen = ({
           variant={selectedTab === "account" ? "contained" : "outlined"}
           endIcon={<SettingsIcon />}
           onClick={() => setSelectedTab("account")}
-          sx={{ maxWidth: "250px", marginBottom: "1rem" }}
+          sx={{ maxWidth: "250px" }}
         >
           Account
         </Button>
@@ -42,21 +40,9 @@ const AccountEditScreen = ({
           variant={selectedTab === "worlds" ? "contained" : "outlined"}
           endIcon={<LandscapeIcon />}
           onClick={() => setSelectedTab("worlds")}
-          sx={{ maxWidth: "250px", marginBottom: "1rem" }}
+          sx={{ maxWidth: "250px" }}
         >
           Worlds
-        </Button>
-        <Button
-          endIcon={<Logout />}
-          variant="outlined"
-          onClick={() => signOut({ callbackUrl: "/" })}
-          sx={{
-            maxWidth: "250px",
-            marginBottom: "1rem",
-            whiteSpace: "nowrap",
-          }}
-        >
-          Sign Out
         </Button>
       </FlexBox>
       {selectedTab === "account" && <EditAccountCredentials />}

@@ -39,10 +39,7 @@ const EditAccountCredentials = () => {
       });
       console.log(data.userRetrieved);
       update({ user: data.userRetrieved });
-      toastMessage(
-        "User updated successfully. Next time please log in with your new credentials.",
-        "success"
-      );
+      toastMessage("User updated", "success");
       setNewUserName("");
       setNewPasswordField("");
       setEnableEditUserName(false);
