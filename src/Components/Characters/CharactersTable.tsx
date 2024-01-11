@@ -8,16 +8,19 @@ import Paper from "@mui/material/Paper";
 import { useRouter } from "next/router";
 import React from "react";
 import useFilterContent from "@/utilities/functions/hooks/useFilterContent";
-import { Typography } from "@mui/material";
+import { Button, Typography } from "@mui/material";
 import { FlexBox } from "../CustomComponents/FlexBox";
 import { sentient } from "@prisma/client";
 import SearchBox from "../CustomComponents/SearchBox";
+import { isUserGameMaster } from "@/utilities/helperFn/isUserGameMaster";
+import { useSession } from "next-auth/react";
 
 export default function CharactersTable({
   sentients,
 }: {
   sentients: sentient[];
 }) {
+  const { data: session } = useSession();
   const router = useRouter();
   const {
     filterContentState,
@@ -38,12 +41,24 @@ export default function CharactersTable({
 
   return (
     <FlexBox sx={{ flexDirection: "column", paddingTop: "1rem" }}>
-      <SearchBox
-        handleSearchFieldKeyStroke={handleSearchFieldKeyStroke}
-        handleSearch={handleSearch}
-        searchFieldState={searchFieldState}
-        clearSearchField={resetFilterContent}
-      />
+      <FlexBox sx={{ gap: "0", alignItems: "stretch" }}>
+        {isUserGameMaster(session) && (
+          <Button
+            variant="outlined"
+            onClick={() => {
+              router.push(`/character/manage-sentient/`);
+            }}
+          >
+            Create
+          </Button>
+        )}
+        <SearchBox
+          handleSearchFieldKeyStroke={handleSearchFieldKeyStroke}
+          handleSearch={handleSearch}
+          searchFieldState={searchFieldState}
+          clearSearchField={resetFilterContent}
+        />
+      </FlexBox>
       <TableContainer component={Paper}>
         <Table sx={{ minWidth: 650 }} aria-label="simple table" size="small">
           <TableHead>

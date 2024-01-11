@@ -26,15 +26,16 @@ const handler: NextApiHandler = async (req, res) => {
           "characters",
           `${user.location_id}_${sentient_id}`
         );
-
         await addProfileImageToSentient({ sentient_id: Number(sentient_id) });
         res.json({ done: "ok" });
-
         break;
       case "GET":
         const image = await readImageFromDrive();
         res.setHeader("Content-Type", "image/jpg");
         res.status(200).send(image);
+        break;
+      default:
+        res.status(400);
     }
   } catch (err) {
     logger.error(err);

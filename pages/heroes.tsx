@@ -90,7 +90,11 @@ export const getServerSideProps: GetServerSideProps = async (
       { user_id: user?.user_id },
       { world_id: user?.selectedWorld?.location_id },
     ],
-    queryFn: () => getAllSentientsNotInUsersVanguard(Number(user.user_id)),
+    queryFn: () =>
+      getAllSentientsNotInUsersVanguard({
+        world_id: user.selectedWorld?.location_id as number,
+        user_id: Number(user.user_id),
+      }),
   });
   await queryClient.prefetchQuery({
     queryKey: [
@@ -98,7 +102,11 @@ export const getServerSideProps: GetServerSideProps = async (
       { user_id: user?.user_id },
       { world_id: user?.selectedWorld?.location_id },
     ],
-    queryFn: () => getAllSentientsInUsersVanguard(Number(user.user_id)),
+    queryFn: () =>
+      getAllSentientsInUsersVanguard({
+        world_id: user.selectedWorld?.location_id as number,
+        user_id: Number(user.user_id),
+      }),
   });
 
   return {

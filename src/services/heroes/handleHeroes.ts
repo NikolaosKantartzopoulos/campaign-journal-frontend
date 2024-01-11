@@ -24,7 +24,9 @@ export async function addExistingSentientToUsersVanguard(
         world_id: user?.location_id,
       },
     });
-  } catch (err) {}
+  } catch (err) {
+    logger.error(err);
+  }
 }
 
 // export async function createAndAddSentientToUsersVanguard(
@@ -32,7 +34,13 @@ export async function addExistingSentientToUsersVanguard(
 //   _user: user
 // ) {}
 
-export async function getAllSentientsNotInUsersVanguard(user_id: number) {
+export async function getAllSentientsNotInUsersVanguard({
+  world_id,
+  user_id,
+}: {
+  world_id: number;
+  user_id: number;
+}) {
   return (await prisma.$queryRaw`SELECT *
     FROM sentient
     WHERE sentient_id NOT IN (
@@ -40,11 +48,17 @@ export async function getAllSentientsNotInUsersVanguard(user_id: number) {
         FROM sentient s
         JOIN user_sentient us ON s.sentient_id = us.sentient_id
         JOIN user u ON us.user_id = u.user_id
-        WHERE u.user_id = ${user_id}
+        WHERE u.user_id = ${user_id} AND us.world_id = ${world_id}
     )`) as sentient[];
 }
 
-export async function getAllSentientsInUsersVanguard(user_id: number) {
+export async function getAllSentientsInUsersVanguard({
+  world_id,
+  user_id,
+}: {
+  world_id: number;
+  user_id: number;
+}) {
   return (await prisma.$queryRaw`SELECT *
     FROM sentient
     WHERE sentient_id IN (
@@ -52,6 +66,6 @@ export async function getAllSentientsInUsersVanguard(user_id: number) {
         FROM sentient s
         JOIN user_sentient us ON s.sentient_id = us.sentient_id
         JOIN user u ON us.user_id = u.user_id
-        WHERE u.user_id = ${user_id}
+        WHERE u.user_id = ${user_id} AND us.world_id = ${world_id}
     )`) as sentient[];
 }

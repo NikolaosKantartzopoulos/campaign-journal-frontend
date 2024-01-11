@@ -1,4 +1,5 @@
 import { sentient, user } from "@prisma/client";
+import { useQueryClient } from "@tanstack/react-query";
 import axios, { AxiosResponse } from "axios";
 import {
   Dispatch,
@@ -30,7 +31,7 @@ export function AddHeroContextProvider({ children }: { children: ReactNode }) {
   const [addHeroOption, setAddHeroOption] = useState<"new" | "existing" | null>(
     null
   );
-
+  const queryClient = useQueryClient();
   const [open, setOpen] = useState<boolean>(false);
 
   const handleProceedToHeroConfirmation = (
@@ -59,6 +60,13 @@ export function AddHeroContextProvider({ children }: { children: ReactNode }) {
         user,
       });
     }
+    queryClient.invalidateQueries({
+      queryKey: [
+        "getAllSentientsInUsersVanguard",
+        { user_id: user?.user_id },
+        "getAllSentientsNotInUsersVanguard",
+      ],
+    });
   }
 
   return (

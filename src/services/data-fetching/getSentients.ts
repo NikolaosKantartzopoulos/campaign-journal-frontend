@@ -1,9 +1,17 @@
 import logger from "../../../logger";
 import { prisma } from "../../../prisma/prisma";
 
-export async function getAllSentients() {
+export async function getAllSentients({ world_id }: { world_id: number }) {
+  if (!world_id) {
+    logger.error("getAllSentients missing world_id");
+    throw Error("getAllSentients missing world_id");
+  }
   try {
-    return prisma.sentient.findMany();
+    return prisma.sentient.findMany({
+      where: {
+        world_id: world_id,
+      },
+    });
   } catch (err) {
     logger.error(err);
   }

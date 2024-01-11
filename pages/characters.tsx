@@ -7,14 +7,11 @@ import axios from "axios";
 import { useSession } from "next-auth/react";
 import { Session, getServerSession } from "next-auth";
 import { authOptions } from "./api/auth/[...nextauth]";
-import { Box, Button } from "@mui/material";
-import { isUserGameMaster } from "@/utilities/helperFn/isUserGameMaster";
-import { useRouter } from "next/router";
+import { Box } from "@mui/material";
 
 const Characters = () => {
   const { data: session } = useSession();
   const user = session?.user;
-  const router = useRouter();
 
   const { data: sentients } = useQuery({
     queryKey: [
@@ -31,17 +28,7 @@ const Characters = () => {
 
   return (
     <Box>
-      {isUserGameMaster(session) && (
-        <Button
-          variant="outlined"
-          onClick={() => {
-            router.push(`/character/manage-sentient/`);
-          }}
-        >
-          Create
-        </Button>
-      )}
-      <CharactersTable sentients={sentients as sentient[]} />;
+      <CharactersTable sentients={sentients as sentient[]} />
     </Box>
   );
 };
@@ -54,8 +41,11 @@ export const getServerSideProps: GetServerSideProps = async (
     context.res,
     authOptions
   )) as Session;
+
   const user = session?.user;
-  if (!session || !user) {
+  const world_id = user.selectedWorld?.location_id;
+
+  if (!session || !user || !world_id) {
     return {
       redirect: {
         destination: "/",
@@ -69,9 +59,9 @@ export const getServerSideProps: GetServerSideProps = async (
     queryKey: [
       "allSentients",
       { user_id: user?.user_id },
-      { world_id: user?.selectedWorld?.location_id },
+      { world_id: world_id },
     ],
-    queryFn: getAllSentients,
+    queryFn: () => getAllSentients({ world_id: world_id }),
   });
 
   return { props: { dehydratedState: dehydrate(queryClient) } };
