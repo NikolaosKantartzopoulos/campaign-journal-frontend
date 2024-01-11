@@ -15,7 +15,6 @@ import { useSession } from "next-auth/react";
 const AddHeroConfirmation = () => {
   const { selectedHero, handleClose, submitHeroSelection, open } =
     React.useContext(AddHeroContext) as AddHeroContextInterface;
-  // const { user } = React.useContext(UserContext) as UserContextInterface;
   const { data: session } = useSession();
   const user = session?.user;
 

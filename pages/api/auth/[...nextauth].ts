@@ -13,10 +13,38 @@ export const authOptions: NextAuthOptions = {
     async jwt({ token, user, session, trigger }) {
       // Persist the OAuth access_token and or the user id to the token right after signin
 
-      if (trigger === "update") {
+      if (
+        (trigger === "update" && session?.selectedWorld) ||
+        session?.location_id
+      ) {
         // Note, that `session` can be any arbitrary object, remember to validate it!
         token.user.selectedWorld = session.selectedWorld;
         token.user.location_id = session.location_id;
+
+        return token;
+      }
+
+      if (trigger === "update" && session?.user) {
+        // Note, that `session` can be any arbitrary object, remember to validate it!
+        token.user = session.user;
+
+        if (session?.user?.location_id) {
+          const selectedWorld = (await prisma.location.findUnique({
+            where: {
+              location_id: session.user.location_id,
+            },
+          })) as location;
+
+          token.user.selectedWorld = selectedWorld;
+        }
+        if (session?.user?.sentient_id) {
+          const selectedHero = (await prisma.sentient.findUnique({
+            where: {
+              sentient_id: session.user.sentient_id,
+            },
+          })) as sentient;
+          token.user.selectedHero = selectedHero;
+        }
 
         return token;
       }

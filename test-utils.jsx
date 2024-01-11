@@ -7,7 +7,6 @@ import {
 } from "@tanstack/react-query";
 import { ThemeProvider } from "@mui/material/styles";
 import { SessionProvider } from "next-auth/react";
-import { UserContextProvider } from "@/Context/UserContext";
 import { theme } from "./src/styles/muiTheme";
 import Layout from '@/Components/Layouts/Layout';
 
@@ -24,12 +23,10 @@ const AllTheProviders = ({children}) => {
       <SessionProvider session={mockSession}>
         {/* <QueryClientProvider client={queryClient}> */}
           {/* <HydrationBoundary state={pageProps.dehydratedState}> */}
-            <UserContextProvider>
               {/* <CssBaseline /> */}
               <Layout>
         {children}
         </Layout>
-            </UserContextProvider>
           {/* </HydrationBoundary> */}
           {/* <ReactQueryDevtools initialIsOpen={false} /> */}
         {/* </QueryClientProvider> */}

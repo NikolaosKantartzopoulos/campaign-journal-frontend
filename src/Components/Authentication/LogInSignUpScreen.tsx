@@ -1,12 +1,11 @@
 import { Box, Button, TextField } from "@mui/material";
-import { AxiosResponse } from "axios";
+import axios from "axios";
 import { GetServerSideProps } from "next";
-import { useContext, useState } from "react";
+import { useState } from "react";
 import { toastMessage } from "../CustomComponents/Toastify/Toast";
-import UserContext from "@/Context/UserContext";
 import { UserControlScreenBox } from "./AuthenticationCSS";
 import { useRouter } from "next/router";
-import { signIn } from "next-auth/react";
+import { signIn, useSession } from "next-auth/react";
 
 const userInfoCSS = {
   maxWidth: "375px",
@@ -17,11 +16,10 @@ const userInfoCSS = {
 };
 
 const LogInSignUpScreen = () => {
-  const userCtx = useContext(UserContext);
   const router = useRouter();
   const [userName, setUserName] = useState<string>("");
   const [userPassword, setUserPassword] = useState<string>("");
-
+  const { update } = useSession();
   async function handleLogin() {
     try {
       const [user_name, user_password] = [userName, userPassword];
@@ -47,11 +45,15 @@ const LogInSignUpScreen = () => {
     }
     try {
       const [user_name, user_password] = [userName, userPassword];
-      (await userCtx?.createUser(user_name, user_password)) as AxiosResponse;
+      await axios.post("/api/user-management", {
+        user_name,
+        user_password,
+      });
       toastMessage(
         "AccountCreated! Please log in with your new account",
         "success"
       );
+      update({ user_name: userName, user_password: userPassword });
       setUserName("");
       setUserPassword("");
     } catch (e) {

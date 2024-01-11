@@ -1,16 +1,13 @@
-import UserContext from "@/Context/UserContext";
 import { Box, Button, TextField } from "@mui/material";
-import { useContext, useState } from "react";
+import { useState } from "react";
 import { FlexBox } from "../CustomComponents/FlexBox";
-import { AxiosError } from "axios";
+import axios, { AxiosError } from "axios";
 import { toastMessage } from "../CustomComponents/Toastify/Toast";
 import { useSession } from "next-auth/react";
 import OptionsCard from "../CustomComponents/OptionsCard";
 
 const EditAccountCredentials = () => {
-  const userCtx = useContext(UserContext);
-  const { data: session } = useSession();
-  const user = session?.user;
+  const { update } = useSession();
 
   const [newPasswordField, setNewPasswordField] = useState<string>("");
   const [newUserName, setNewUserName] = useState<string>("");
@@ -34,15 +31,14 @@ const EditAccountCredentials = () => {
         newUserName,
         newPasswordField,
       ];
-      await userCtx?.editUser(
-        user?.user_id as number,
-        user?.user_name as string,
+      const { data } = await axios.patch("/api/user-management/", {
         newUser_name,
         newUser_passwordField,
         enableEditUserName,
-        enablePasswordChange
-      );
-      // userCtx?.setUser({ ...user, user_name: newUser_name });
+        enablePasswordChange,
+      });
+      console.log(data.userRetrieved);
+      update({ user: data.userRetrieved });
       toastMessage(
         "User updated successfully. Next time please log in with your new credentials.",
         "success"

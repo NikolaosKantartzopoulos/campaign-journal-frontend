@@ -7,7 +7,7 @@ import {
   updateUserPassword,
 } from "@/clients/sentient/users/userDataClient";
 
-export async function checkIfUsernameExists({
+export async function checkIfUserNameIsUnique({
   user_name,
 }: {
   user_name: string;
@@ -33,7 +33,7 @@ export async function editUsersCredentials({
   user_password,
 }: {
   enablePasswordChange: string;
-  user_id: string;
+  user_id: number;
   user_password: string;
   enableEditUserName: string;
   user_name: string;
@@ -57,6 +57,7 @@ export async function editUsersCredentials({
         user_password: user_password,
       });
     }
+    console.log(userRetrieved);
     return userRetrieved;
   } catch (err) {
     logger.error(err);

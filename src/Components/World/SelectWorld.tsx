@@ -88,7 +88,6 @@ export default function SelectWorld() {
       if (status === 200) {
         toastMessage("Active world updated", "success");
         update({
-          test: "value",
           location_id: worldToSend?.location_id,
           selectedWorld: getLocationFromLocationId(
             Number(worldToSend?.location_id),

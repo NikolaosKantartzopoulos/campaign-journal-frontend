@@ -1,6 +1,11 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import { prisma } from "../../../prisma/prisma";
 import { user } from "@prisma/client";
+import {
+  checkIfUserNameIsUnique,
+  editUsersCredentials,
+} from "@/services/users/user-management";
+import { getAPISession } from "@/utilities/functions/getServerSideSession";
 
 export interface UserManagementApiResponse {
   text: string;
@@ -36,53 +41,45 @@ export default async function apiHandler(
   }
 
   if (req.method === "PATCH") {
-    // edit user username and/or password
+    // edit user's username / password or both
+    const { user } = await getAPISession(req, res);
+    if (!user) {
+      res.status(401);
+      return;
+    }
+    const {
+      newUser_name,
+      newUser_passwordField,
+      enableEditUserName,
+      enablePasswordChange,
+    } = req.body;
 
-    const { user_id, newUserName, newPasswordField } = req.body;
-    let userRetrieved;
+    const usernameIsUnique = await checkIfUserNameIsUnique({
+      user_name: newUser_name,
+    });
+
+    if (!usernameIsUnique) {
+      res.status(400).json({ text: "Username exists" });
+      return;
+    }
     try {
-      if (newUserName === "") {
-        userRetrieved = await prisma.user.update({
-          where: {
-            user_id: user_id,
-          },
-          data: {
-            user_password: newPasswordField,
-          },
-        });
-      } else if (newPasswordField === "") {
-        userRetrieved = await prisma.user.update({
-          where: {
-            user_id: user_id,
-          },
-          data: {
-            user_name: newUserName,
-          },
-        });
-      } else {
-        userRetrieved = await prisma.user.update({
-          where: {
-            user_id: user_id,
-          },
-          data: {
-            user_name: newUserName,
-            user_password: newPasswordField,
-          },
-        });
+      const userRetrieved = await editUsersCredentials({
+        user_id: user?.user_id,
+        enableEditUserName: enableEditUserName,
+        enablePasswordChange: enablePasswordChange,
+        user_name: newUser_name,
+        user_password: newUser_passwordField,
+      });
+      if (!userRetrieved) {
+        res.status(400);
+        return;
       }
 
-      const user: user = {
-        user_name: userRetrieved.user_name,
-        user_id: userRetrieved.user_id,
-        user_password: userRetrieved.user_password || "",
-        location_id: userRetrieved.location_id,
-        sentient_id: userRetrieved.sentient_id,
-      };
-
-      res.status(200).json({ text: "Logged in successfully", user });
+      res.status(200).json({ text: "Logged in successfully", userRetrieved });
     } catch (e) {
-      res.status(400).json(e);
+      res.status(400).json("Error. Please try again.");
     }
+
     res.status(500);
   }
 }

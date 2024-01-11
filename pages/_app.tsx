@@ -7,7 +7,6 @@ import {
 } from "@tanstack/react-query";
 import { ThemeProvider } from "@mui/material/styles";
 import { SessionProvider } from "next-auth/react";
-import { UserContextProvider } from "@/Context/UserContext";
 import CssBaseline from "@mui/material/CssBaseline";
 import { EmotionCache } from "@emotion/react";
 import { theme } from "../src/styles/muiTheme";
@@ -46,12 +45,10 @@ export default function MyApp(props: MyAppProps) {
       <SessionProvider session={session}>
         <QueryClientProvider client={queryClient}>
           <HydrationBoundary state={pageProps.dehydratedState}>
-            <UserContextProvider>
-              <CssBaseline />
-              <Layout>
-                <Component {...pageProps} />
-              </Layout>
-            </UserContextProvider>
+            <CssBaseline />
+            <Layout>
+              <Component {...pageProps} />
+            </Layout>
           </HydrationBoundary>
           <ReactQueryDevtools initialIsOpen={false} />
         </QueryClientProvider>
