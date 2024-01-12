@@ -21,7 +21,7 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import EditIcon from "@mui/icons-material/Edit";
 import { getLocationFromLocationId } from "@/utilities/helperFn/getLocationFromLocationId";
 import { useEffect, useState } from "react";
-import logger from "../../../logger";
+import logger from "@/logger/*";
 
 export default function SelectWorld() {
   const { data: session, update, status } = useSession();

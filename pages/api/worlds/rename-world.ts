@@ -1,7 +1,7 @@
 import { getAPISession } from "@/utilities/functions/getServerSideSession";
 import { NextApiRequest, NextApiResponse } from "next";
 import { renameWorld } from "@/services/modifyData/modifyWorlds";
-import logger from "../../../logger";
+import logger from "@/logger/*";
 
 export default async function apiHandler(
   req: NextApiRequest,

@@ -1,6 +1,6 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import { prisma } from "../../../prisma/prisma";
-import logger from "../../../logger";
+import logger from "@/logger/*";
 import { getAPISession } from "@/utilities/functions/getServerSideSession";
 import { isUserGameMaster } from "@/utilities/helperFn/isUserGameMaster";
 

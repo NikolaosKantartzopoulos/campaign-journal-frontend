@@ -1,6 +1,6 @@
 import { sentient } from "@prisma/client";
 import { prisma } from "../../../prisma/prisma";
-import logger from "../../../logger";
+import logger from "@/logger/*";
 
 export async function createSentient({
   first_name,

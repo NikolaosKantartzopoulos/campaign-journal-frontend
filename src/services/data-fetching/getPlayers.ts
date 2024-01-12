@@ -1,6 +1,6 @@
 import { location, user } from "@prisma/client";
 import { prisma } from "../../../prisma/prisma";
-import logger from "../../../logger";
+import logger from "@/logger/*";
 import { userMinimumInfo } from "@/utilities/types/heroFactionTypes";
 
 export async function getPlayersSubscribedToWorld(

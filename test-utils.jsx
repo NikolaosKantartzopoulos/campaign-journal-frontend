@@ -1,14 +1,7 @@
-import React from 'react'
-import {render} from '@testing-library/react'
-import {
-  HydrationBoundary,
-  QueryClient,
-  QueryClientProvider,
-} from "@tanstack/react-query";
+import { render } from '@testing-library/react';
 import { ThemeProvider } from "@mui/material/styles";
 import { SessionProvider } from "next-auth/react";
 import { theme } from "./src/styles/muiTheme";
-import Layout from '@/Components/Layouts/Layout';
 
 const mockSession = {
   expires: new Date(Date.now() + 2 * 86400).toISOString(),
@@ -24,9 +17,9 @@ const AllTheProviders = ({children}) => {
         {/* <QueryClientProvider client={queryClient}> */}
           {/* <HydrationBoundary state={pageProps.dehydratedState}> */}
               {/* <CssBaseline /> */}
-              <Layout>
+              {/* <Layout> */}
         {children}
-        </Layout>
+        {/* </Layout> */}
           {/* </HydrationBoundary> */}
           {/* <ReactQueryDevtools initialIsOpen={false} /> */}
         {/* </QueryClientProvider> */}

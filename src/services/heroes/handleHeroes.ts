@@ -1,6 +1,6 @@
 import { sentient, user } from "@prisma/client";
 import { prisma } from "../../../prisma/prisma";
-import logger from "../../../logger";
+import logger from "@/logger/*";
 
 export async function addExistingSentientToUsersVanguard(
   sentient: sentient,

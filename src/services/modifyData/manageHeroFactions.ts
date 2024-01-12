@@ -1,5 +1,5 @@
 import { faction, location } from "@prisma/client";
-import logger from "../../../logger";
+import logger from "@/logger/*";
 import { prisma } from "../../../prisma/prisma";
 
 export async function addUserToFaction(

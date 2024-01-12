@@ -13,13 +13,18 @@
     "isolatedModules": true,
     "jsx": "preserve",
     "incremental": true,
+    "baseUrl": "./",
     "plugins": [
       {
         "name": "next"
       }
     ],
     "paths": {
-      "@/*": ["./src/*"]
+      "@/*": ["./src/*"],
+      "@/components/*": ["./src/components/*"],
+      "@/logger/*": ["./logger.js"],
+      "@/services/*": ["./src/services/*"],
+      "@/clients/*": ["./src/clients/*"]
     },
     "typeRoots": ["./src/utilities/types"]
   },

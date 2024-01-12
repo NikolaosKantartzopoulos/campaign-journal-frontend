@@ -1,5 +1,5 @@
 import { NextApiRequest, NextApiResponse } from "next";
-import logger from "../../../logger";
+import logger from "@/logger/*";
 import { getAPISession } from "@/utilities/functions/getServerSideSession";
 import { removeUserFromWorld } from "@/services/modifyData/userServices";
 import { userMinimumInfo } from "@/utilities/types/heroFactionTypes";

@@ -1,6 +1,6 @@
 import { faction, location } from "@prisma/client";
 import { prisma } from "../../../prisma/prisma";
-import logger from "../../../logger";
+import logger from "@/logger/*";
 
 export async function getWorldsHeroFactions(selectedWorld: location) {
   if (selectedWorld.location_scale !== "World") {

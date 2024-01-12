@@ -1,6 +1,6 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import { getAPISession } from "@/utilities/functions/getServerSideSession";
-import logger from "../../../../logger";
+import logger from "@/logger/*";
 import { getWorldsWhereUserIsGameMaster } from "@/clients/worlds/worldsDataClient";
 
 export default async function apiHandler(

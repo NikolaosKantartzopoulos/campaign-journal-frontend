@@ -5,7 +5,7 @@ import {
   readImageFromDrive,
   saveFile,
 } from "@/utilities/formidable";
-import logger from "../../../../logger";
+import logger from "@/logger/*";
 import { addProfileImageToSentient } from "@/services/modifyData/sentients";
 
 export const config = {

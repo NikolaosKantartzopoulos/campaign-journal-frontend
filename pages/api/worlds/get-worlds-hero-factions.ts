@@ -1,7 +1,7 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import { getAPISession } from "@/utilities/functions/getServerSideSession";
 import { getWorldsHeroFactions } from "@/services/data-fetching/getFactions";
-import logger from "../../../logger";
+import logger from "@/logger/*";
 
 export default async function apiHandler(
   req: NextApiRequest,

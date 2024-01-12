@@ -1,6 +1,6 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import { getAPISession } from "@/utilities/functions/getServerSideSession";
-import logger from "../../../../logger";
+import logger from "@/logger/*";
 import { getWorldFromId } from "@/services/data-fetching/getWorlds";
 
 export default async function apiHandler(

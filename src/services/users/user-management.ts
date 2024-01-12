@@ -1,5 +1,5 @@
 import { user } from "@prisma/client";
-import logger from "../../../logger";
+import logger from "@/logger/*";
 import { prisma } from "../../../prisma/prisma";
 import {
   updateUserName,

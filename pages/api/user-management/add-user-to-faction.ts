@@ -1,7 +1,7 @@
 import { addUserToFaction } from "@/services/modifyData/manageHeroFactions";
 import { getAPISession } from "@/utilities/functions/getServerSideSession";
 import { NextApiRequest, NextApiResponse } from "next";
-import logger from "../../../logger";
+import logger from "@/logger/*";
 import { isUserGameMaster } from "@/utilities/helperFn/isUserGameMaster";
 
 export default async function apiHandler(

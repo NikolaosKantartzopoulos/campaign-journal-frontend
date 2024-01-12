@@ -1,7 +1,7 @@
 import { location } from "@prisma/client";
 import { prisma } from "../../../prisma/prisma";
 import { getAllWorlds } from "../data-fetching/getWorlds";
-import logger from "../../../logger";
+import logger from "@/logger/*";
 
 export function addWorldToUsersAvailableWorlds(
   location_id: number,

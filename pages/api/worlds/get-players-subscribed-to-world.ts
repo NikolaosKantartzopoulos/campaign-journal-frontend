@@ -2,7 +2,7 @@ import { NextApiRequest, NextApiResponse } from "next";
 import { getPlayersSubscribedToWorld } from "@/services/data-fetching/getPlayers";
 import { getAPISession } from "@/utilities/functions/getServerSideSession";
 import { location } from "@prisma/client";
-import logger from "../../../logger";
+import logger from "@/logger/*";
 
 export default async function apiHandler(
   req: NextApiRequest,

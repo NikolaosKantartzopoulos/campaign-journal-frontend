@@ -4,7 +4,7 @@ import {
   createSentient,
   updateSentient,
 } from "@/services/modifyData/sentients";
-import logger from "../../../../logger";
+import logger from "@/logger/*";
 
 export default async function apiHandler(
   req: NextApiRequest,

@@ -1,4 +1,4 @@
-import logger from "../../../logger";
+import logger from "@/logger/*";
 import { prisma } from "../../../prisma/prisma";
 
 export async function getAllSentients({ world_id }: { world_id: number }) {
