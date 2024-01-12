@@ -33,7 +33,7 @@ export default function Layout({ children }: { children: ReactNode }) {
         >
           <Box
             sx={(theme) => ({
-              width: 200,
+              width: 150,
               backgroundColor: theme.palette.primary.main,
               height: "100%",
             })}

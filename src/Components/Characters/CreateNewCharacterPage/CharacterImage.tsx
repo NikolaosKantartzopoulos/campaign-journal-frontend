@@ -1,17 +1,25 @@
-import { Box, Button } from "@mui/material";
+import { Box, Button, IconButton, Input, TextField } from "@mui/material";
 import axios from "axios";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/router";
 import Image from "next/image";
 import { FlexBox } from "@/Components/CustomComponents/FlexBox";
+import { toastMessage } from "@/Components/CustomComponents/Toastify/Toast";
+import { useState } from "react";
+import UploadFileIcon from "@mui/icons-material/UploadFile";
+import { FileUploadOutlined } from "@mui/icons-material";
+import { sentient } from "@prisma/client";
+import ModeEditIcon from "@mui/icons-material/ModeEdit";
+import DeleteIcon from "@mui/icons-material/Delete";
 
 const CharacterImage = ({ characterImage }: { characterImage: string }) => {
   const { data: session } = useSession();
   const user = session?.user;
   const router = useRouter();
+  const queryClient = useQueryClient();
 
-  const { data: sentient } = useQuery({
+  const { data: sentient } = useQuery<sentient>({
     queryKey: [
       "sentient",
       { user_id: user?.user_id },
@@ -26,50 +34,63 @@ const CharacterImage = ({ characterImage }: { characterImage: string }) => {
     },
     enabled: !!user,
   });
+  const dataUrl = `data:image/png;base64,${characterImage}`;
+  const [selectedFile, setSelectedFile] = useState(null);
+  const [imageFile, setImageFile] = useState<string | null>(
+    characterImage ? `data:image/png;base64,${characterImage}` : null
+  );
 
-  // async function handleAddSentientPicture() {
-  //   console.log(sentient);
-  //   // try {
-  //   //   const { data: sentientCreated } = await axios.post<sentient>(
-  //   //     "/api/sentients/unique",
-  //   //     {
-  //   //       first_name: firstName,
-  //   //       last_name: lastName,
-  //   //       race_name: race,
-  //   //       short_title: shortTitle,
-  //   //       state: vitality,
-  //   //     }
-  //   //   );
-  //   // } catch (error) {
-  //   //   const err = error as AxiosError<{ message: string }>;
-  //   //   console.log(err);
-  //   //   toastMessage("There was an error", "error");
-  //   // }
-  // }
+  const handleFileChange = (event: any) => {
+    // Get the selected file from the input
+    const file = event.target.files[0];
+    setSelectedFile(file);
+  };
 
-  async function handleEditSentientPicture() {
-    console.log(sentient);
-    // try {
-    //   const { data } = await axios.post("/api/sentients/unique", {
-    //     first_name: firstName,
-    //     last_name: lastName,
-    //     race_name: race,
-    //     short_title: shortTitle,
-    //     state: vitality,
-    //   });
-    //   // setCharacterCreated(true);
-    // } catch (error) {
-    //   const err = error as AxiosError<{ message: string }>;
-    //   console.log(err);
-    //   toastMessage("There was an error", "error");
-    // }
-  }
+  const handleUpload = async () => {
+    if (!sentient) {
+      toastMessage("Error: non existent character", "error");
+      router.replace("/");
+    }
+    try {
+      if (!selectedFile) {
+        toastMessage("No image file", "error");
+        return;
+      }
+      const formData = new FormData();
+      formData.append("characterProfileImage", selectedFile);
+
+      await axios.post(
+        `/api/files/sentients/${sentient?.sentient_id}`,
+        formData
+      );
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        const result = event?.target?.result;
+        setImageFile(result as string);
+        setSelectedFile(null); // Move it here to ensure it's called after reading is complete
+      };
+
+      reader.readAsDataURL(selectedFile);
+    } catch (error: any) {
+      console.log(error.response?.data);
+    }
+  };
 
   async function handleDeleteSentientPicture() {
-    console.log(sentient);
+    try {
+      const { data } = await axios.delete(
+        `/api/files/sentients/${sentient?.sentient_id}`
+      );
+      toastMessage(data.message, "success");
+      // queryClient.invalidateQueries({ queryKey: ["sentient"] });
+      // router.reload();
+      setImageFile(null);
+      setSelectedFile(null);
+    } catch (err) {
+      toastMessage("Image not deleted. Please try again", "error");
+    }
   }
 
-  const dataUrl = `data:image/png;base64,${characterImage}`;
   return (
     <FlexBox
       sx={{
@@ -77,39 +98,88 @@ const CharacterImage = ({ characterImage }: { characterImage: string }) => {
         flexDirection: "row",
         gap: 1,
         alignItems: "flex-start",
-        marginTop: "1rem",
+        marginTop: "2rem",
       }}
     >
-      <Box sx={{ width: "240px", height: "320px", position: "relative" }}>
-        <Image
-          src={dataUrl}
-          alt="Character Image"
-          fill={true}
-          style={{
-            objectFit: "cover",
+      {imageFile && (
+        <Box sx={{ width: "240px", height: "320px", position: "relative" }}>
+          <Image
+            src={imageFile}
+            alt="Character Image"
+            fill={true}
+            style={{
+              objectFit: "cover",
+            }}
+          />
+        </Box>
+      )}
+      <FlexBox
+        sx={{
+          flexFlow: imageFile ? "column" : "row",
+          justifyContent: "center",
+        }}
+      >
+        <FlexBox
+          sx={{
+            display: "column",
+            flexDirection: "column",
+            alignItems: "stretch",
+            justifyContent: "center",
+            width: imageFile ? "100px" : "120px",
           }}
-        />
-      </Box>
-      <FlexBox sx={{ flexFlow: "column" }}>
-        <Button
-          onClick={() => {
-            handleEditSentientPicture();
-            console.log("TODO Change image");
-          }}
-          variant="outlined"
         >
-          Change
-        </Button>
-        <Button
-          onClick={() => {
-            handleDeleteSentientPicture();
-            console.log("TODO Delete image");
-          }}
-          color="error"
-          variant="outlined"
-        >
-          Delete
-        </Button>
+          {!selectedFile && (
+            <Button
+              component="label"
+              sx={(theme) => ({
+                border: `1px solid ${theme.palette.primary.main}`,
+                color: theme.palette.primary.main,
+                borderRadius: "4px",
+                fontSize: "14px",
+                textTransform: "uppercase",
+                width: "100px",
+                display: "flex",
+                justifyContent: "space-between",
+                height: "36px",
+              })}
+              startIcon={
+                <FileUploadOutlined sx={{ height: "20px", width: "20px" }} />
+              }
+            >
+              <input
+                style={{ display: "none" }}
+                type="file"
+                hidden
+                onChange={handleFileChange}
+                name="[licenseFile]"
+                accept=".jpeg, .jpg, .webp, .png"
+              />
+              image
+            </Button>
+          )}
+          {selectedFile && (
+            <Button
+              onClick={handleUpload}
+              variant="outlined"
+              disabled={!selectedFile}
+              startIcon={
+                <FileUploadOutlined sx={{ height: "20px", width: "20px" }} />
+              }
+            >
+              UPLOAD
+            </Button>
+          )}
+          {imageFile && (
+            <Button
+              onClick={handleDeleteSentientPicture}
+              color="error"
+              variant="outlined"
+              startIcon={<DeleteIcon />}
+            >
+              Delete
+            </Button>
+          )}
+        </FlexBox>
       </FlexBox>
     </FlexBox>
   );

@@ -38,6 +38,47 @@ export async function createSentient({
   }
 }
 
+export async function updateSentient({
+  sentient_id,
+  first_name,
+  last_name,
+  race_name,
+  short_title,
+  world_id,
+  state = "alive",
+}: {
+  sentient_id: number;
+  first_name: string;
+  last_name: string;
+  race_name: string;
+  short_title: string;
+  world_id: number;
+  state?: "alive" | "dead" | "undead" | "missing";
+}): Promise<sentient | undefined> {
+  try {
+    const newlyCreatedSentient = await prisma.sentient.update({
+      where: {
+        sentient_id: sentient_id,
+      },
+      data: {
+        first_name: first_name,
+        last_name: last_name,
+        race_name: race_name,
+        short_title: short_title,
+        world_id: world_id,
+        state: state,
+      },
+    });
+
+    if (!newlyCreatedSentient) {
+      throw Error("Sentient was not created");
+    }
+    return newlyCreatedSentient;
+  } catch (err) {
+    logger.error(err);
+  }
+}
+
 export async function addProfileImageToSentient({
   sentient_id,
 }: {

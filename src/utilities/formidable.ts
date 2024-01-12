@@ -17,16 +17,8 @@ export const saveFile = (
       process.env.FILE_STORAGE_PATH || "/public/",
       folderName || ""
     );
-    if (fileName) {
-      options.filename = (ext) => {
-        return fileName + ext;
-      };
-    } else {
-      // options.filename = (name, ext, path, form) => {
-      options.filename = (path: any) => {
-        return Date.now().toString() + "_" + path.originalFilename;
-      };
-    }
+
+    options.filename = () => fileName as string;
     options.keepExtensions = true;
   }
   options.maxFileSize = 4000 * 1024 * 1024;
@@ -48,13 +40,32 @@ export async function readImageFromDrive(
     folderName || "",
     fileName || ""
   );
-  console.log(imagePath);
   try {
     // Reading the image file using fs.promises.readFile()
     const image = await fs.readFile(imagePath);
     // Encode the image data to Base64
     const base64Image = Buffer.from(image).toString("base64");
     return base64Image;
+  } catch (err) {
+    logger.error("Error reading the file:", err);
+    return null; // Return null or handle the error accordingly
+  }
+}
+
+export async function deleteImageFromDrive(
+  folderName?: string,
+  fileName?: string
+) {
+  const imagePath = path.join(
+    process.env.FILE_STORAGE_PATH || "/public/",
+    folderName || "",
+    fileName || ""
+  );
+  try {
+    // Reading the image file using fs.promises.readFile()
+    console.log(imagePath);
+    await fs.unlink(imagePath);
+    // Encode the image data to Base64
   } catch (err) {
     logger.error("Error reading the file:", err);
     return null; // Return null or handle the error accordingly

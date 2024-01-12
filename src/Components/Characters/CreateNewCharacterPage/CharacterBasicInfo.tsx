@@ -5,6 +5,7 @@ import {
   FormControl,
   InputLabel,
   NativeSelect,
+  SelectChangeEvent,
   TextField,
 } from "@mui/material";
 import { FlexBox } from "@/Components/CustomComponents/FlexBox";
@@ -22,7 +23,7 @@ const CharacterBasicInfo = () => {
 
   const queryClient = useQueryClient();
 
-  const { data: sentient } = useQuery({
+  const { data: sentient } = useQuery<sentient>({
     queryKey: [
       "sentient",
       { user_id: user?.user_id },
@@ -68,20 +69,29 @@ const CharacterBasicInfo = () => {
 
   async function handleEditSentient() {
     console.log(firstName, lastName, race, shortTitle, vitality);
-    // try {
-    //   const { data } = await axios.post("/api/sentients/unique", {
-    //     first_name: firstName,
-    //     last_name: lastName,
-    //     race_name: race,
-    //     short_title: shortTitle,
-    //     state: vitality,
-    //   });
-    //   // setCharacterCreated(true);
-    // } catch (error) {
-    //   const err = error as AxiosError<{ message: string }>;
-    //   console.log(err);
-    //   toastMessage("There was an error", "error");
-    // }
+    try {
+      const { data } = await axios.patch("/api/sentients/unique", {
+        sentient_id: sentient?.sentient_id,
+        first_name: firstName,
+        last_name: lastName,
+        race_name: race,
+        short_title: shortTitle,
+        state: vitality,
+      });
+      queryClient.invalidateQueries({
+        queryKey: [
+          "sentient",
+          { user_id: user?.user_id },
+          { world_id: user?.selectedWorld?.location_id },
+          { sentient_id: router.query.sentient_id },
+        ],
+      });
+      toastMessage(data.message, "success");
+    } catch (error) {
+      const err = error as AxiosError<{ message: string }>;
+      console.log(err);
+      toastMessage("There was an error", "error");
+    }
   }
 
   return (
@@ -129,11 +139,11 @@ const CharacterBasicInfo = () => {
           </InputLabel>
           <NativeSelect
             size="small"
-            defaultValue={sentient.state}
+            defaultValue={sentient?.state || "alive"}
             inputProps={{
               name: "age",
             }}
-            onChange={(e) => setVitality(e.target.value)}
+            onChange={(e: any) => setVitality(e.target.value)}
           >
             <option value={"alive"}>Alive</option>
             <option value={"dead"}>Dead</option>
@@ -147,22 +157,24 @@ const CharacterBasicInfo = () => {
           Create
         </Button>
       )}
-      {sentient &&
-        (firstName !== sentient?.first_name ||
-          lastName !== sentient?.last_name ||
-          race !== sentient?.race_name ||
-          shortTitle !== sentient?.short_title ||
-          vitality !== sentient?.state) && (
-          <Button
-            variant="contained"
-            onClick={() => {
-              handleEditSentient();
-              console.log("TODO edit character");
-            }}
-          >
-            Edit
-          </Button>
-        )}
+      {sentient && (
+        <Button
+          variant="contained"
+          onClick={() => {
+            handleEditSentient();
+            console.log("TODO edit character");
+          }}
+          disabled={
+            firstName === sentient?.first_name &&
+            lastName === sentient?.last_name &&
+            race === sentient?.race_name &&
+            shortTitle === sentient?.short_title &&
+            vitality === sentient?.state
+          }
+        >
+          Edit
+        </Button>
+      )}
     </Box>
   );
 };
