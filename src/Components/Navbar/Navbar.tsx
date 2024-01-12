@@ -20,7 +20,7 @@ const Navbar = ({
 }) => {
   const theme = useTheme();
   const under600px = useMediaQuery(theme.breakpoints.down("sm"));
-
+  const under450px = useMediaQuery(theme.breakpoints.down(400));
   return (
     <AppBar position="static" sx={{ marginBottom: "2rem" }}>
       <Box
@@ -37,7 +37,6 @@ const Navbar = ({
             edge="start"
             color="inherit"
             aria-label="menu"
-            sx={{ mr: 2 }}
             onClick={toggleDrawer(true)}
             onKeyDown={toggleDrawer(false)}
           >
@@ -45,25 +44,7 @@ const Navbar = ({
           </IconButton>
         )}
 
-        {!under600px && (
-          <Box
-            sx={() => ({
-              display: {
-                xs: "none",
-                sm: "flex",
-                md: "flex",
-                lg: "flex",
-                xl: "flex",
-              },
-              flexFlow: "row wrap",
-              alignItems: "center",
-              justifyContent: "center",
-              alignContent: "stretch",
-            })}
-          >
-            <LinkSection />
-          </Box>
-        )}
+        {!under450px && <LinkSection showText={!under600px} />}
         <LoginButton color="inherit" />
       </Box>
     </AppBar>

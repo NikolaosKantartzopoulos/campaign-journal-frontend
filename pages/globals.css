@@ -1,5 +1,7 @@
 a {
   text-decoration: none;
+  flex-basis: 1;
+  flex-shrink: 0;
 }
 
 
@@ -13,4 +15,5 @@ a {
 
 .a:active {
   text-decoration: "none";
+
 }

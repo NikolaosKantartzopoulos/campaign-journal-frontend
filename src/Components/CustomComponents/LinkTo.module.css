@@ -1,9 +1,8 @@
 .LinkTo {
   margin: auto;
   flex-basis: 1;
-
+  flex-shrink: 0;
   text-decoration: "none",
-
 }
 
 

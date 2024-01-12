@@ -1,11 +1,5 @@
 import * as React from "react";
 import Box from "@mui/material/Box";
-import Stepper from "@mui/material/Stepper";
-import Step from "@mui/material/Step";
-import StepLabel from "@mui/material/StepLabel";
-import Button from "@mui/material/Button";
-import Typography from "@mui/material/Typography";
-import useHorizontalLinearStepper from "@/utilities/hooks/useCreateCharacterHorizontalLinearStepper";
 import CharacterBasicInfo from "@/Components/Characters/CreateNewCharacterPage/CharacterBasicInfo";
 import { authOptions } from "../../api/auth/[...nextauth]";
 import { QueryClient, dehydrate, useQuery } from "@tanstack/react-query";
@@ -19,8 +13,6 @@ import CharacterImage from "@/Components/Characters/CreateNewCharacterPage/Chara
 import { readImageFromDrive } from "@/utilities/formidable";
 import { sentient } from "@prisma/client";
 
-const steps = ["Core info", "Factions & Items"];
-
 export default function ManageCharacter({
   characterImage,
 }: {
@@ -30,7 +22,7 @@ export default function ManageCharacter({
   const user = session?.user;
   const router = useRouter();
 
-  const { data: sentient, isFetched } = useQuery<sentient>({
+  const { isFetched } = useQuery<sentient>({
     queryKey: [
       "sentient",
       { user_id: user?.user_id },
@@ -46,93 +38,28 @@ export default function ManageCharacter({
     enabled: !!user,
   });
 
-  const {
-    activeStep,
-    isStepOptional,
-    isStepSkipped,
-    handleReset,
-    handleBack,
-    handleSkip,
-    handleNext,
-  } = useHorizontalLinearStepper(steps, sentient || null);
-
   return (
     <Box sx={{ width: "100%", maxWidth: "500px", margin: "auto" }}>
-      <Stepper activeStep={activeStep}>
-        {steps.map((label, index) => {
-          const stepProps: { completed?: boolean } = {};
-          const labelProps: {
-            optional?: React.ReactNode;
-          } = {};
-          if (isStepOptional(index)) {
-            labelProps.optional = (
-              <Typography variant="caption">Optional</Typography>
-            );
-          }
-          if (isStepSkipped(index)) {
-            stepProps.completed = false;
-          }
-          return (
-            <Step key={label} {...stepProps}>
-              <StepLabel {...labelProps}>{label}</StepLabel>
-            </Step>
-          );
-        })}
-      </Stepper>
-      {activeStep === steps.length ? (
-        <React.Fragment>
-          <Typography sx={{ mt: 2, mb: 1 }}>
-            All steps completed - you&apos;re finished
-          </Typography>
-          <Box sx={{ display: "flex", flexDirection: "row", pt: 2 }}>
-            <Box sx={{ flex: "1 1 auto" }} />
-            <Button onClick={handleReset}>Reset</Button>
-          </Box>
-        </React.Fragment>
-      ) : (
-        <Card
-          sx={{
-            maxWidth: "500px",
-            margin: "1rem auto",
-            p: "1rem",
-            minHeight: "405px",
-            display: "flex",
-            flexDirection: "column",
-            alignItems: "space-between",
-          }}
-        >
-          <Box sx={{ flexGrow: "1" }}>
-            {activeStep === 0 && isFetched && (
-              <Box>
-                <CharacterBasicInfo />
-                <CharacterImage characterImage={characterImage} />
-              </Box>
-            )}
-
-            {activeStep === 1 && <h1>Create character 2</h1>}
-          </Box>
-
-          <Box sx={{ display: "flex", flexDirection: "row", pt: 2 }}>
-            <Button
-              color="inherit"
-              disabled={activeStep === 0}
-              onClick={handleBack}
-              sx={{ mr: 1 }}
-            >
-              Back
-            </Button>
-            <Box sx={{ flex: "1 1 auto" }} />
-            {isStepOptional(activeStep) && (
-              <Button color="inherit" onClick={handleSkip} sx={{ mr: 1 }}>
-                Skip
-              </Button>
-            )}
-            <Button onClick={handleNext} disabled={!sentient}>
-              {activeStep === steps.length - 1 ? "Finish" : "Next"}
-            </Button>
-          </Box>
-        </Card>
-      )}
+      <Card
+        sx={{
+          maxWidth: "500px",
+          margin: "1rem auto",
+          p: "1rem",
+          minHeight: "405px",
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "space-between",
+        }}
+      >
+        <Box sx={{ flexGrow: "1" }}>
+          {isFetched && (
+            <Box>
+              <CharacterBasicInfo />
+              <CharacterImage characterImage={characterImage} />
+            </Box>
+          )}
+        </Box>
+      </Card>
     </Box>
   );
 }
