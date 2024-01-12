@@ -11,6 +11,9 @@ export async function getAllSentients({ world_id }: { world_id: number }) {
       where: {
         world_id: world_id,
       },
+      orderBy: {
+        first_name: "asc",
+      },
     });
   } catch (err) {
     logger.error(err);

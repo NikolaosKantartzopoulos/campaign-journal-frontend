@@ -1,23 +1,20 @@
-import { Box, Button, IconButton, Input, TextField } from "@mui/material";
+import { Button } from "@mui/material";
 import axios from "axios";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/router";
-import Image from "next/image";
 import { FlexBox } from "@/Components/CustomComponents/FlexBox";
 import { toastMessage } from "@/Components/CustomComponents/Toastify/Toast";
 import { useState } from "react";
-import UploadFileIcon from "@mui/icons-material/UploadFile";
 import { FileUploadOutlined } from "@mui/icons-material";
 import { sentient } from "@prisma/client";
-import ModeEditIcon from "@mui/icons-material/ModeEdit";
 import DeleteIcon from "@mui/icons-material/Delete";
+import CharacterImageBox from "../CharacterImageBox";
 
 const CharacterImage = ({ characterImage }: { characterImage: string }) => {
   const { data: session } = useSession();
   const user = session?.user;
   const router = useRouter();
-  const queryClient = useQueryClient();
 
   const { data: sentient } = useQuery<sentient>({
     queryKey: [
@@ -34,7 +31,6 @@ const CharacterImage = ({ characterImage }: { characterImage: string }) => {
     },
     enabled: !!user,
   });
-  const dataUrl = `data:image/png;base64,${characterImage}`;
   const [selectedFile, setSelectedFile] = useState(null);
   const [imageFile, setImageFile] = useState<string | null>(
     characterImage ? `data:image/png;base64,${characterImage}` : null
@@ -82,8 +78,6 @@ const CharacterImage = ({ characterImage }: { characterImage: string }) => {
         `/api/files/sentients/${sentient?.sentient_id}`
       );
       toastMessage(data.message, "success");
-      // queryClient.invalidateQueries({ queryKey: ["sentient"] });
-      // router.reload();
       setImageFile(null);
       setSelectedFile(null);
     } catch (err) {
@@ -101,18 +95,7 @@ const CharacterImage = ({ characterImage }: { characterImage: string }) => {
         marginTop: "2rem",
       }}
     >
-      {imageFile && (
-        <Box sx={{ width: "240px", height: "320px", position: "relative" }}>
-          <Image
-            src={imageFile}
-            alt="Character Image"
-            fill={true}
-            style={{
-              objectFit: "cover",
-            }}
-          />
-        </Box>
-      )}
+      {imageFile && <CharacterImageBox imageFile={imageFile} />}
       <FlexBox
         sx={{
           flexFlow: imageFile ? "column" : "row",

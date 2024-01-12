@@ -5,7 +5,6 @@ import {
   FormControl,
   InputLabel,
   NativeSelect,
-  SelectChangeEvent,
   TextField,
 } from "@mui/material";
 import { FlexBox } from "@/Components/CustomComponents/FlexBox";
@@ -46,20 +45,22 @@ const CharacterBasicInfo = () => {
   const [vitality, setVitality] = useState(sentient?.state || "alive");
 
   async function handleCreateSentient() {
-    console.log(firstName, lastName, race, shortTitle, vitality);
     try {
-      const { data: sentientCreated } = await axios.post<sentient>(
-        "/api/sentients/unique",
-        {
-          first_name: firstName,
-          last_name: lastName,
-          race_name: race,
-          short_title: shortTitle,
-          state: vitality,
-        }
-      );
-      console.log(sentientCreated);
-      queryClient.invalidateQueries({ queryKey: ["allSentients"] });
+      await axios.post<sentient>("/api/sentients/unique", {
+        first_name: firstName,
+        last_name: lastName,
+        race_name: race,
+        short_title: shortTitle,
+        state: vitality,
+      });
+      queryClient.invalidateQueries({
+        queryKey: [
+          "allSentients",
+          { user_id: user?.user_id },
+          { world_id: session?.selectedWorld?.location_id },
+        ],
+      });
+      toastMessage("Character created", "success");
     } catch (error) {
       const err = error as AxiosError<{ message: string }>;
       console.log(err);

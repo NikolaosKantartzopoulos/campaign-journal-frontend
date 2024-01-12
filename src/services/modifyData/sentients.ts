@@ -79,6 +79,27 @@ export async function updateSentient({
   }
 }
 
+export async function deleteSentient({
+  sentient_id,
+}: {
+  sentient_id: number;
+}): Promise<sentient | undefined> {
+  try {
+    const deletedSentient = await prisma.sentient.delete({
+      where: {
+        sentient_id: sentient_id,
+      },
+    });
+
+    if (!deletedSentient) {
+      throw Error("Sentient was not created");
+    }
+    return deletedSentient;
+  } catch (err) {
+    logger.error(err);
+  }
+}
+
 export async function addProfileImageToSentient({
   sentient_id,
 }: {

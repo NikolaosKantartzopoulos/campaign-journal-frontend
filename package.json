@@ -9,7 +9,7 @@
     "build": "next build",
     "start": "next start",
     "pm2:start": "sudo pm2 start npm --name 'dnd-server' -- start -- --port 3500 && systemctl reload apache2",
-    "lint": "next lint",
+    "lint": "next lint --fix",
     "tsc": "tsc",
     "test": "jest",
     "test:watch": "jest --watch",

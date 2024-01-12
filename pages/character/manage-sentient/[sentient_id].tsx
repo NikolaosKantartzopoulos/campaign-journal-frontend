@@ -14,12 +14,10 @@ import { Session, getServerSession } from "next-auth";
 import axios from "axios";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/router";
-import { Card, Input } from "@mui/material";
+import { Card } from "@mui/material";
 import CharacterImage from "@/Components/Characters/CreateNewCharacterPage/CharacterImage";
 import { readImageFromDrive } from "@/utilities/formidable";
 import { sentient } from "@prisma/client";
-import { useState } from "react";
-import { toastMessage } from "@/Components/CustomComponents/Toastify/Toast";
 
 const steps = ["Core info", "Factions & Items"];
 
@@ -158,28 +156,6 @@ export const getServerSideProps: GetServerSideProps = async (
   }
   const queryClient = new QueryClient();
   const sentient_id = context?.params?.sentient_id;
-
-  // if (sentient_id) {
-  //   await queryClient.prefetchQuery({
-  //     queryKey: [
-  //       "sentient",
-  //       { user_id: user?.user_id },
-  //       { world_id: user?.selectedWorld?.location_id },
-  //       { sentient_id: sentient_id },
-  //     ],
-  //     queryFn: () => getSentientById(Number(sentient_id)),
-  //   });
-  //   await queryClient.prefetchQuery({
-  //     queryKey: [
-  //       "sentient",
-  //       "sentientImage",
-  //       { user_id: user?.user_id },
-  //       { world_id: user?.selectedWorld?.location_id },
-  //       { sentient_id: sentient_id },
-  //     ],
-  //     queryFn: () => readImageFromDrive(),
-  //   });
-  // }
 
   const characterImage = await readImageFromDrive(
     "characters",

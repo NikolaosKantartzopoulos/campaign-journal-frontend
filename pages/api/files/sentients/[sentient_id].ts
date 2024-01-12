@@ -24,7 +24,7 @@ const handler: NextApiHandler = async (req, res) => {
     const { sentient_id } = req.query;
     switch (req.method) {
       case "POST":
-        const data = await saveFile(
+        await saveFile(
           req,
           true,
           "characters",

@@ -1,4 +1,3 @@
-import CharacterBasicInfo from "@/Components/Characters/CreateNewCharacterPage/CharacterBasicInfo";
 import { FlexBox } from "@/Components/CustomComponents/FlexBox";
 import { toastMessage } from "@/Components/CustomComponents/Toastify/Toast";
 import {
@@ -14,13 +13,10 @@ import {
 import { sentient } from "@prisma/client";
 import { useQueryClient } from "@tanstack/react-query";
 import axios, { AxiosError } from "axios";
-import { useSession } from "next-auth/react";
 import { useRouter } from "next/router";
 import { useState } from "react";
 
 export default function CreateSentient() {
-  const { data: session } = useSession();
-  const user = session?.user;
   const router = useRouter();
 
   const queryClient = useQueryClient();
