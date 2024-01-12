@@ -24,7 +24,7 @@ export const getServerSideProps: GetServerSideProps = async (
   if (!session || !user || !world_id) {
     return {
       redirect: {
-        destination: "/",
+        destination: "/account/access",
         permanent: false,
       },
     };

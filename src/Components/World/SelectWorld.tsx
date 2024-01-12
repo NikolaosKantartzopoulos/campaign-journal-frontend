@@ -65,7 +65,11 @@ export default function SelectWorld() {
   });
 
   useEffect(() => {
-    if (playerLocations && !user?.selectedWorld) {
+    if (
+      playerLocations &&
+      playerLocations?.length > 0 &&
+      !user?.selectedWorld
+    ) {
       update({
         location_id: playerLocations[0].location_id,
         selectedWorld: getLocationFromLocationId(
@@ -134,9 +138,18 @@ export default function SelectWorld() {
     }
   }
 
-  // if (!user?.selectedWorld || !user?.location_id) {
-  //   return null;
-  // }
+  if (playerLocations?.length === 0) {
+    return (
+      <>
+        <Typography variant="h5" align="center">
+          No worlds available
+        </Typography>
+        <Typography variant="subtitle1" align="center">
+          You should create one!
+        </Typography>
+      </>
+    );
+  }
 
   if (status === "authenticated") {
     return (
@@ -160,6 +173,7 @@ export default function SelectWorld() {
           >
             {playerLocations?.map((el) => (
               <option key={el.location_id} value={el.location_name}>
+                {el.game_master === user?.user_id && "🔑 "}
                 {el.location_name}
               </option>
             ))}

@@ -1,6 +1,5 @@
-import { Box, Button, Divider, TextField } from "@mui/material";
+import { Box, Button, TextField } from "@mui/material";
 import { FlexBox } from "../CustomComponents/FlexBox";
-import SelectWorld from "./SelectWorld";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import axios from "axios";
 import { MouseEvent, useState } from "react";
@@ -13,6 +12,7 @@ import {
   userMinimumInfo,
 } from "@/utilities/types/heroFactionTypes";
 import CoolTitleBox from "../CustomComponents/CoolTitleBox";
+import { isUserGameMaster } from "@/utilities/helperFn/isUserGameMaster";
 
 const HeroesAndFactions = () => {
   const { data: session } = useSession();
@@ -60,6 +60,10 @@ const HeroesAndFactions = () => {
   );
 
   async function handleCreateHeroFaction() {
+    if (!isUserGameMaster(session)) {
+      toastMessage("This is not your world", "error");
+      return;
+    }
     try {
       const { data } = await axios.post("/api/worlds/create-hero-faction/", {
         newFactionName: factionInputValue,
@@ -76,6 +80,10 @@ const HeroesAndFactions = () => {
   }
 
   async function handleDeleteHeroFaction() {
+    if (!isUserGameMaster(session)) {
+      toastMessage("This is not your world", "error");
+      return;
+    }
     const selectedFactionEntry = worldsHeroFactions?.find(
       (entry) => entry.faction.faction_name === factionInputValue
     );
@@ -99,6 +107,10 @@ const HeroesAndFactions = () => {
   }
 
   const handleAddPlayerToWorld = async () => {
+    if (!isUserGameMaster(session)) {
+      toastMessage("This is not your world", "error");
+      return;
+    }
     if (
       playersSubscribedToWorld
         ?.map((player) => player.user_name)
@@ -111,7 +123,6 @@ const HeroesAndFactions = () => {
     try {
       const { data } = await axios.post(`/api/worlds/add-user`, {
         user_name: newUsername,
-        location_id: user?.location_id,
       });
       toastMessage(data.message, "success");
       setNewUsername("");
@@ -125,6 +136,10 @@ const HeroesAndFactions = () => {
   };
 
   async function addUserToHeroFaction(e: MouseEvent, user_id: string) {
+    if (!isUserGameMaster(session)) {
+      toastMessage("This is not your world", "error");
+      return;
+    }
     if (!worldsHeroFactions) return;
     if (!selectedFactionName) {
       toastMessage("Select a User Faction", "warning");
@@ -151,6 +166,10 @@ const HeroesAndFactions = () => {
   }
 
   async function handleDeleteUserFromFaction(e: MouseEvent, itemId: string) {
+    if (!isUserGameMaster(session)) {
+      toastMessage("This is not your world", "error");
+      return;
+    }
     const selectedFactionEntry = worldsHeroFactions?.find(
       (entry) => entry.faction.faction_name === selectedFactionName
     ) as heroFactionTypes;
@@ -170,6 +189,10 @@ const HeroesAndFactions = () => {
   }
 
   async function handleRemovePlayerFromWorld() {
+    if (!isUserGameMaster(session)) {
+      toastMessage("This is not your world", "error");
+      return;
+    }
     if (!playersSubscribedToWorld) {
       return;
     }
@@ -244,76 +267,78 @@ const HeroesAndFactions = () => {
       <Box>
         {/* <SelectWorld /> */}
 
-        <FlexBox
-          sx={{
-            my: "1rem",
-            justifyContent: "center",
-            alignItems: "center",
-            flexFlow: "row wrap",
-          }}
-        >
-          <FlexBox sx={{ gap: 0, alignItems: "stretch", width: "320px" }}>
-            <TextField
-              label="Player's Name"
-              value={newUsername}
-              onChange={(e) => setNewUsername(e.target.value)}
-              onKeyDown={(e) => {
-                if (e.key === "Enter") {
-                  handleAddPlayerToWorld();
-                }
-              }}
-              size="small"
-            />
-            <Button
-              onClick={handleAddPlayerToWorld}
-              variant="outlined"
-              disabled={!newUsername}
-              sx={{ width: "85px" }}
-            >
-              Invite
-            </Button>
-            <Button
-              onClick={handleRemovePlayerFromWorld}
-              variant="outlined"
-              color="error"
-              disabled={!newUsername}
-              sx={{ width: "85px" }}
-            >
-              Delete
-            </Button>
-          </FlexBox>
+        {isUserGameMaster(session) && (
+          <FlexBox
+            sx={{
+              my: "1rem",
+              justifyContent: "center",
+              alignItems: "center",
+              flexFlow: "row wrap",
+            }}
+          >
+            <FlexBox sx={{ gap: 0, alignItems: "stretch", width: "320px" }}>
+              <TextField
+                label="Player's Name"
+                value={newUsername}
+                onChange={(e) => setNewUsername(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") {
+                    handleAddPlayerToWorld();
+                  }
+                }}
+                size="small"
+              />
+              <Button
+                onClick={handleAddPlayerToWorld}
+                variant="outlined"
+                disabled={!newUsername}
+                sx={{ width: "85px" }}
+              >
+                Invite
+              </Button>
+              <Button
+                onClick={handleRemovePlayerFromWorld}
+                variant="outlined"
+                color="error"
+                disabled={!newUsername}
+                sx={{ width: "85px" }}
+              >
+                Delete
+              </Button>
+            </FlexBox>
 
-          <FlexBox sx={{ gap: 0, alignItems: "stretch", width: "320px" }}>
-            <TextField
-              label="Faction name"
-              value={factionInputValue}
-              onChange={(e) => setFactionInputValue(e.target.value)}
-              onKeyDown={(e) => {
-                if (e.key === "Enter") {
-                  handleCreateHeroFaction();
-                }
-              }}
-              size="small"
-            />
-            <Button
-              onClick={handleCreateHeroFaction}
-              disabled={!factionInputValue}
-              variant="outlined"
-              sx={{ width: "85px" }}
-            >
-              Create
-            </Button>
-            <Button
-              onClick={handleDeleteHeroFaction}
-              color="error"
-              disabled={!factionInputValue}
-              variant="outlined"
-              sx={{ width: "85px" }}
-            >
-              Delete
-            </Button>
+            <FlexBox sx={{ gap: 0, alignItems: "stretch", width: "320px" }}>
+              <TextField
+                label="Faction name"
+                value={factionInputValue}
+                onChange={(e) => setFactionInputValue(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") {
+                    handleCreateHeroFaction();
+                  }
+                }}
+                size="small"
+              />
+              <Button
+                onClick={handleCreateHeroFaction}
+                disabled={!factionInputValue}
+                variant="outlined"
+                sx={{ width: "85px" }}
+              >
+                Create
+              </Button>
+              <Button
+                onClick={handleDeleteHeroFaction}
+                color="error"
+                disabled={!factionInputValue}
+                variant="outlined"
+                sx={{ width: "85px" }}
+              >
+                Delete
+              </Button>
+            </FlexBox>
           </FlexBox>
-        </FlexBox>
+        )}
         <Box
           sx={{
             my: "1rem",

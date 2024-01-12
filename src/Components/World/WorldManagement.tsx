@@ -1,6 +1,6 @@
 import { Box, Button, TextField, Typography } from "@mui/material";
 import { useSession } from "next-auth/react";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import OptionsCard from "../CustomComponents/OptionsCard";
 import axios from "axios";
 import { TextareaAutosize } from "@mui/base/TextareaAutosize";

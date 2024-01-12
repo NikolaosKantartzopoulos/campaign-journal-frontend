@@ -1,4 +1,4 @@
-import { GetServerSideProps } from "next";
+import { GetServerSideProps, GetServerSidePropsContext } from "next";
 import { Box, Button, Typography } from "@mui/material";
 import { useSession } from "next-auth/react";
 import fs from "fs/promises";
@@ -7,6 +7,8 @@ import { useState } from "react";
 import axios from "axios";
 import { sentient } from "@prisma/client";
 import { toastMessage } from "@/Components/CustomComponents/Toastify/Toast";
+import { Session, getServerSession } from "next-auth";
+import { authOptions } from "./api/auth/[...nextauth]";
 
 export default function Home({ image }: { image: string }) {
   const { data: session } = useSession();
@@ -42,7 +44,7 @@ export default function Home({ image }: { image: string }) {
         `/api/files/sentients/${newSentientData.sentient_id}`,
         formData
       );
-      console.log(data)
+      console.log(data);
     } catch (error: any) {
       console.log(error.response?.data);
     }
@@ -72,7 +74,24 @@ export default function Home({ image }: { image: string }) {
   );
 }
 
-export const getServerSideProps: GetServerSideProps = async () => {
+export const getServerSideProps: GetServerSideProps = async (
+  context: GetServerSidePropsContext
+) => {
+  const session = (await getServerSession(
+    context.req,
+    context.res,
+    authOptions
+  )) as Session;
+
+  if (!session) {
+    return {
+      redirect: {
+        destination: "/account/access",
+        permanent: false,
+      },
+    };
+  }
+
   const imageBuffer = await fs.readFile("/home/nik/sambashare/vox.png");
   const base64Image = imageBuffer.toString("base64");
   return {
