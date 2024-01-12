@@ -241,9 +241,8 @@ const HeroesAndFactions = () => {
 
   return (
     <>
-      <Divider />
       <Box>
-        <SelectWorld />
+        {/* <SelectWorld /> */}
 
         <FlexBox
           sx={{

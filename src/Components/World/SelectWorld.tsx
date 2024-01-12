@@ -20,7 +20,7 @@ import LoadingSpinner from "../CustomComponents/LoadingSpinner";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import EditIcon from "@mui/icons-material/Edit";
 import { getLocationFromLocationId } from "@/utilities/helperFn/getLocationFromLocationId";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import logger from "../../../logger";
 
 export default function SelectWorld() {
@@ -62,6 +62,18 @@ export default function SelectWorld() {
       }
     },
     enabled: !!user,
+  });
+
+  useEffect(() => {
+    if (playerLocations && !user?.selectedWorld) {
+      update({
+        location_id: playerLocations[0].location_id,
+        selectedWorld: getLocationFromLocationId(
+          Number(playerLocations[0].location_id),
+          playerLocations
+        ),
+      });
+    }
   });
 
   if (isLoading) {
@@ -122,13 +134,13 @@ export default function SelectWorld() {
     }
   }
 
-  if (!user?.selectedWorld || !user?.location_id) {
-    return null;
-  }
+  // if (!user?.selectedWorld || !user?.location_id) {
+  //   return null;
+  // }
 
   if (status === "authenticated") {
     return (
-      <Box sx={{ width: "100%", mb: "1rem" }}>
+      <Box sx={{ width: "100%" }}>
         <FlexBox>
           <Typography
             variant="h6"

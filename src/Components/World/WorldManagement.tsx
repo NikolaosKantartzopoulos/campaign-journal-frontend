@@ -1,6 +1,6 @@
 import { Box, Button, TextField, Typography } from "@mui/material";
 import { useSession } from "next-auth/react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import OptionsCard from "../CustomComponents/OptionsCard";
 import axios from "axios";
 import { TextareaAutosize } from "@mui/base/TextareaAutosize";
@@ -10,6 +10,7 @@ import { location } from "@prisma/client";
 import LoadingSpinner from "../CustomComponents/LoadingSpinner";
 import { useQueryClient } from "@tanstack/react-query";
 import HeroesAndFactions from "./HeroesAndFactions";
+import SelectWorld from "./SelectWorld";
 
 const WorldManagement = ({
   playerLocations,
@@ -176,7 +177,7 @@ const WorldManagement = ({
           </Button>
         </FlexBox>
       )}
-
+      <SelectWorld />
       {user.selectedWorld ? <HeroesAndFactions /> : null}
     </OptionsCard>
   );
