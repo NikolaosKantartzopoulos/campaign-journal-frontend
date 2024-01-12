@@ -1,8 +1,8 @@
 import { NextApiRequest, NextApiResponse } from "next";
-import { prisma } from "../../../prisma/prisma";
 import { user } from "@prisma/client";
 import {
   checkIfUserNameIsUnique,
+  createUserService,
   editUsersCredentials,
 } from "@/services/users/user-management";
 import { getAPISession } from "@/utilities/functions/getServerSideSession";
@@ -27,16 +27,11 @@ export default async function apiHandler(
       res.status(400);
     }
     try {
-      await prisma.user.create({
-        data: {
-          user_name: user_name,
-          user_password: user_password,
-        },
-      });
+      await createUserService(user_name, user_password);
 
       res.status(200).json({ text: "User created" });
     } catch (e) {
-      res.status(400).json({ text: "There was an error" });
+      res.status(400).json({ message: "There was an error" });
     }
   }
 

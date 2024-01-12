@@ -1,5 +1,5 @@
 import { Box, Button, TextField } from "@mui/material";
-import axios from "axios";
+import axios, { AxiosError } from "axios";
 import { GetServerSideProps } from "next";
 import { useState } from "react";
 import { toastMessage } from "../CustomComponents/Toastify/Toast";
@@ -57,7 +57,9 @@ const LogInSignUpScreen = () => {
       setUserName("");
       setUserPassword("");
     } catch (e) {
-      toastMessage("There was an error", "error");
+      const err = e as AxiosError<{ message: string }>;
+      console.log(err);
+      toastMessage(err?.response?.data?.message as string, "error");
     }
   }
 

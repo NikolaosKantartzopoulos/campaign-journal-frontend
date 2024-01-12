@@ -6,6 +6,7 @@ import {
   updateUserNameAndUserPassword,
   updateUserPassword,
 } from "@/clients/sentient/users/userDataClient";
+import { createUser } from "@/clients/user/userDataClient";
 
 export async function checkIfUserNameIsUnique({
   user_name,
@@ -60,5 +61,18 @@ export async function editUsersCredentials({
     return userRetrieved;
   } catch (err) {
     logger.error(err);
+  }
+}
+
+export async function createUserService(
+  user_name: string,
+  user_password: string
+) {
+  try {
+    await checkIfUserNameIsUnique({ user_name });
+    await createUser(user_name, user_password);
+  } catch (err) {
+    logger.error(err);
+    throw Error("User not created");
   }
 }
