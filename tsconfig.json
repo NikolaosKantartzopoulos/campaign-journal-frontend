@@ -24,7 +24,8 @@
       "@/components/*": ["./src/components/*"],
       "@/logger/*": ["./logger.js"],
       "@/services/*": ["./src/services/*"],
-      "@/clients/*": ["./src/clients/*"]
+      "@/clients/*": ["./src/clients/*"],
+      "@/pages/*": ["./pages/*"]
     },
     "typeRoots": ["./src/utilities/types"]
   },
@@ -34,8 +35,9 @@
     "**/*.tsx",
     ".next/types/**/*.ts",
     "pages/api/auth/[...nextauth].ts",
-    "jest.config.js",
-    "tests/homepage.test.js"
+    "jest.config.ts",
+    "tests/homepage.test.js",
+    "tests/Factions.test.jsx"
   ],
   "exclude": ["node_modules"]
 }
