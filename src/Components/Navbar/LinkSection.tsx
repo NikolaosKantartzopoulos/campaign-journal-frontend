@@ -34,7 +34,7 @@ const LinkSection = ({ showText = true }: { showText?: boolean }) => {
       <LinkTo
         href="/"
         startIcon={<Home />}
-        linkText="Home"
+        linkText={under600px ? "Home" : ""}
         showText={showText}
       />
       <LinkTo

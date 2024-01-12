@@ -1,5 +1,6 @@
 import logger from "@/logger/*";
 import { prisma } from "../../../prisma/prisma";
+import { changeUsersActiveWorldClient } from "@/clients/worlds/worldsDataClient";
 
 export async function removeUserFromWorld({
   user_id,
@@ -45,5 +46,18 @@ export async function removeUserFromWorld({
   } catch (err) {
     logger.error(err);
     throw err;
+  }
+}
+
+export async function changeUsersActiveWorld(
+  location_id: number,
+  user_id: number
+) {
+  try {
+    const data = await changeUsersActiveWorldClient(location_id, user_id);
+    return data;
+  } catch (err) {
+    logger.error("Change active world API", err);
+    throw Error("Error while changing user's active world");
   }
 }

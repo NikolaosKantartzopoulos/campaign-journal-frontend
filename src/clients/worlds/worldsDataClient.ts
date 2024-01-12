@@ -7,3 +7,17 @@ export async function getWorldsWhereUserIsGameMaster(user_id: number) {
     },
   });
 }
+
+export async function changeUsersActiveWorldClient(
+  user_id: number,
+  location_id: number
+) {
+  return prisma.user.update({
+    where: {
+      user_id: user_id,
+    },
+    data: {
+      location_id: location_id,
+    },
+  });
+}

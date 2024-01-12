@@ -1,4 +1,4 @@
-import { GetServerSideProps, GetServerSidePropsContext } from "next";
+import { GetServerSideProps } from "next";
 import { Typography } from "@mui/material";
 import { useSession } from "next-auth/react";
 import { Session, getServerSession } from "next-auth";

@@ -1,5 +1,5 @@
 import { NextApiRequest, NextApiResponse } from "next";
-import { prisma } from "../../../prisma/prisma";
+import { changeUsersActiveWorld } from "@/services/modifyData/userServices";
 
 export default async function apiHandler(
   req: NextApiRequest,
@@ -8,17 +8,10 @@ export default async function apiHandler(
   if (req.method === "PUT") {
     const { location_id, user_id } = req.body;
     try {
-      const data = await prisma.user.update({
-        where: {
-          user_id: user_id,
-        },
-        data: {
-          location_id: location_id,
-        },
-      });
+      const data = await changeUsersActiveWorld(user_id, location_id);
       res.status(200).json(data);
     } catch (err) {
-      res.status(400);
+      res.status(400).json({ message: "Could not save user's active world" });
     }
   }
 }

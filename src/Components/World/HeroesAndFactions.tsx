@@ -148,7 +148,14 @@ const HeroesAndFactions = () => {
     const selectedFactionEntry = worldsHeroFactions?.find(
       (entry) => entry.faction.faction_name === selectedFactionName
     );
-
+    if (
+      selectedFactionEntry?.usersSubscribed
+        .map((u) => u.user_id)
+        .includes(Number(user_id))
+    ) {
+      toastMessage("User already in faction", "error");
+      return;
+    }
     try {
       const { data } = await axios.put(
         "/api/user-management/add-user-to-faction",
