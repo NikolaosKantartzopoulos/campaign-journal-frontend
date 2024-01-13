@@ -5,15 +5,14 @@ import {
   QueryClient,
   QueryClientProvider,
 } from "@tanstack/react-query";
-import { ThemeProvider } from "@mui/material/styles";
 import { SessionProvider } from "next-auth/react";
 import CssBaseline from "@mui/material/CssBaseline";
 import { EmotionCache } from "@emotion/react";
-import { theme } from "../src/styles/muiTheme";
 import Layout from "@/Components/Layouts/Layout";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import "toastify-js/src/toastify.css";
 import "./globals.css";
+import ToggleColorMode from "@/Context/ColorModeContext";
 
 // Client-side cache, shared for the whole session of the user in the browser.
 
@@ -41,7 +40,7 @@ export default function MyApp(props: MyAppProps) {
   );
 
   return (
-    <ThemeProvider theme={theme}>
+    <ToggleColorMode>
       <SessionProvider session={session}>
         <QueryClientProvider client={queryClient}>
           <HydrationBoundary state={pageProps.dehydratedState}>
@@ -53,6 +52,6 @@ export default function MyApp(props: MyAppProps) {
           <ReactQueryDevtools initialIsOpen={false} />
         </QueryClientProvider>
       </SessionProvider>
-    </ThemeProvider>
+    </ToggleColorMode>
   );
 }

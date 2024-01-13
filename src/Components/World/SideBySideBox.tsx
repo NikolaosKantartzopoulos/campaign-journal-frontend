@@ -45,7 +45,10 @@ const SideBySideBox = ({
             px: "1rem",
             cursor: "pointer",
             "&:hover": { scale: "1.01" },
-            background: theme.palette.primary.light,
+            backgroundColor:
+              theme.palette.mode === "light"
+                ? theme.palette.primary.main
+                : theme.palette.secondary.dark,
             color: "white",
           })}
           onClick={(e) => {
@@ -62,15 +65,19 @@ const SideBySideBox = ({
           {itemsArray.map((item) => (
             <Typography
               key={item[idUsed]}
-              sx={{
+              sx={(theme) => ({
                 pl: "1rem",
                 m: 0,
                 width: "100%",
                 "&:hover": {
-                  backgroundColor: "#efefef",
+                  backgroundColor:
+                    theme.palette.mode === "light"
+                      ? theme.palette.primary.light
+                      : theme.palette.secondary.light,
+                  color: theme.palette.mode === "light" ? "white" : "black",
                   cursor: "pointer",
                 },
-              }}
+              })}
               onClick={(e: MouseEvent) => {
                 if (boxTitle) {
                   onItemClick(e, item[idUsed], boxTitle);

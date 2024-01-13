@@ -169,7 +169,12 @@ export default function SelectWorld() {
           <select
             defaultValue={session.user.selectedWorld?.location_name}
             onChange={handleWorldSelection}
-            style={{ height: "2rem", minWidth: "150px", paddingLeft: "0.5rem" }}
+            style={{
+              height: "2rem",
+              minWidth: "150px",
+              paddingLeft: "0.5rem",
+              backgroundColor: "white",
+            }}
           >
             {playerLocations?.map((el) => (
               <option key={el.location_id} value={el.location_name}>

@@ -29,14 +29,15 @@ const LinkTo = ({
     flexShrink: 0,
     textAlign: "center",
     justifySelf: "center",
+    alignSelf: "center",
     whiteSpace: "nowrap",
     gap: "0.5rem",
     display: "flex",
     padding: "0.25rem",
-    justifyContent: "center",
     alignItems: "center",
     textDecorationLine: "none",
-    maxWidth: !showText ? "32px" : "150px",
+    width: "100%",
+    // maxWidth: !showText ? "32px" : "150px",
     "&:hover": {
       color: "white",
     },
@@ -59,7 +60,6 @@ const LinkTo = ({
       style={{
         // border: isActiveLink ? "1px solid white" : "1px solid rgba(0,0,0,0)",
         color: isActiveLink ? "white" : "red",
-        maxWidth: !showText ? "36px" : "150px",
       }}
     >
       <LinkButton
@@ -68,6 +68,8 @@ const LinkTo = ({
         sx={{
           color: isActiveLink ? "white" : "#ddd",
           fontWeight: isActiveLink ? "bold" : "none",
+          justifyContent: showText ? "flex-start" : "center",
+          p: 1,
         }}
         size="small"
       >

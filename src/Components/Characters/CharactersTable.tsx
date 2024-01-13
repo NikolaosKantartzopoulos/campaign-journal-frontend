@@ -108,7 +108,7 @@ export default function CharactersTable() {
       <TableContainer component={Paper}>
         <Table sx={{ minWidth: 650 }} aria-label="simple table" size="small">
           <TableHead>
-            <TableRow sx={{ backgroundColor: "#eee" }}>
+            <TableRow>
               {isUserGameMaster(session) && (
                 <>
                   <TableCell align="left" sx={{ width: "34px" }}></TableCell>

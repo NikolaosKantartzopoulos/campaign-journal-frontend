@@ -21,14 +21,21 @@ const LinkSection = ({ showText = true }: { showText?: boolean }) => {
   return (
     <Box
       sx={{
-        display: "flex",
-        flexFlow:
-          under600px && showText ? "column" : under600px ? "row" : "row wrap",
-        justifyContent: under600px ? "flex-start" : "space-around",
-        alignItems: "flex-start",
+        display: "grid",
+        gridTemplateColumns:
+          showText && under600px
+            ? "1fr"
+            : {
+                xs: "repeat(4, 1fr)",
+                sm: "1fr 1fr 1fr  1fr",
+                md: "repeat(4, 1fr)",
+                lg: "repeat(4, 1fr)",
+                xl: "repeat(8, 1fr)",
+              },
+        justifyContent: under600px ? "flex-start" : "center",
+        alignItems: under600px ? "flex-start" : "center",
         flex: "1 1 0",
-        position: "relative",
-        left: under600px && !showText ? "-20px" : null,
+        width: "100%",
       }}
     >
       <LinkTo

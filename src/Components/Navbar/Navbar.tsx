@@ -10,6 +10,7 @@ import LoginButton from "../Authentication/AccountButton";
 import LinkSection from "./LinkSection";
 
 import * as React from "react";
+import { ColorModeContext } from "@/Context/ColorModeContext";
 
 const Navbar = ({
   toggleDrawer,
@@ -20,15 +21,26 @@ const Navbar = ({
 }) => {
   const theme = useTheme();
   const under600px = useMediaQuery(theme.breakpoints.down("sm"));
-  const under450px = useMediaQuery(theme.breakpoints.down(400));
+  // const under450px = useMediaQuery(theme.breakpoints.down(400));
+  const under450px = false;
+  const { setMode } = React.useContext(ColorModeContext);
+
+  React.useEffect(() => {
+    const currentTheme = localStorage.getItem("theme");
+    if (currentTheme === "light") {
+      setMode("light");
+    } else if (currentTheme === "dark") {
+      setMode("dark");
+    }
+  });
+
   return (
     <AppBar position="static" sx={{ marginBottom: "2rem" }}>
       <Box
         sx={{
           display: "flex",
           justifyContent: "space-between",
-          padding: under600px ? "0px 0.5rem" : 1,
-          height: under600px ? "32px" : null,
+          // height: under600px ? "32px" : null,
         }}
       >
         {under600px && (
@@ -45,7 +57,8 @@ const Navbar = ({
         )}
 
         {!under450px && <LinkSection showText={!under600px} />}
-        <LoginButton color="inherit" />
+
+        {!under600px && <LoginButton color="inherit" />}
       </Box>
     </AppBar>
   );

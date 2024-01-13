@@ -1,8 +1,9 @@
 import { ReactNode, useState } from "react";
 import Navbar from "../Navbar/Navbar";
 import Drawer from "@mui/material/Drawer";
-import { Box, useMediaQuery, useTheme } from "@mui/material";
+import { Box, Divider, useMediaQuery, useTheme } from "@mui/material";
 import LinkSection from "../Navbar/LinkSection";
+import AccountButton from "../Authentication/AccountButton";
 
 export default function Layout({ children }: { children: ReactNode }) {
   const [isDrawerOpen, setDrawerOpen] = useState(false);
@@ -34,12 +35,17 @@ export default function Layout({ children }: { children: ReactNode }) {
           <Box
             sx={(theme) => ({
               width: 150,
-              backgroundColor: theme.palette.primary.main,
+              backgroundColor:
+                theme.palette.mode === "light"
+                  ? theme.palette.primary.main
+                  : null,
               height: "100%",
             })}
             role="presentation"
           >
             <LinkSection />
+            <Divider />
+            <AccountButton />
           </Box>
         </Drawer>
       )}
