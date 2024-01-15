@@ -26,6 +26,7 @@ import { FlexBox } from "../CustomComponents/FlexBox";
 import BuildIcon from "@mui/icons-material/Build";
 import SearchBox from "../CustomComponents/SearchBox";
 import { locationAndPartOfLocationIncluded } from "@/clients/Locations/locationsClient";
+import TwoLevelCheckboxFilter from "../CustomComponents/TwoLevelCheckboxFilter";
 
 const LocationsPage = () => {
   const { data: session } = useSession();
@@ -178,61 +179,6 @@ const LocationsPage = () => {
       <Button onClick={createLocationClickHandler} variant="outlined">
         Create
       </Button>
-      <Box>
-        <Box>All Continents</Box>
-        <FlexBox sx={{ justifyContent: "flex-start", gap: 0, height: "2rem" }}>
-          <Checkbox
-            checked={selectedContinentOptions.viewAll}
-            onChange={() =>
-              setSelectedContinentOptions((p) => ({
-                viewAll: !p.viewAll,
-                selected: p.viewAll
-                  ? []
-                  : [...availableOptions.availableContinents],
-              }))
-            }
-            inputProps={{ "aria-label": "controlled" }}
-          />
-          <Typography variant="body1">Continents</Typography>
-        </FlexBox>
-
-        <Box sx={{ marginLeft: "1rem" }}>
-          {availableOptions.availableContinents.map((el) => (
-            <FlexBox
-              sx={{ justifyContent: "flex-start", gap: 0, height: "2rem" }}
-              key={el}
-            >
-              <Checkbox
-                checked={selectedContinentOptions.selected.includes(el)}
-                onChange={() => {
-                  const hasOptionAlreadySelected =
-                    selectedContinentOptions.selected.includes(el);
-                  setSelectedContinentOptions((p) => ({
-                    viewAll:
-                      !hasOptionAlreadySelected &&
-                      selectedContinentOptions.selected.length ===
-                        availableOptions.availableContinents.length - 1
-                        ? true
-                        : hasOptionAlreadySelected &&
-                          selectedContinentOptions.selected.length === 1
-                        ? false
-                        : p.viewAll,
-                    selected: hasOptionAlreadySelected
-                      ? [
-                          ...selectedContinentOptions.selected.filter(
-                            (a) => a !== el
-                          ),
-                        ]
-                      : [...selectedContinentOptions.selected, el],
-                  }));
-                }}
-                inputProps={{ "aria-label": "controlled" }}
-              />
-              <Typography variant="body1">{el}</Typography>
-            </FlexBox>
-          ))}
-        </Box>
-      </Box>
       <FlexBox sx={{ flexDirection: "column", paddingTop: "1rem" }}>
         <FlexBox sx={{ gap: "0", alignItems: "stretch" }}>
           {isUserGameMaster(session) && (
@@ -252,6 +198,11 @@ const LocationsPage = () => {
             clearSearchField={resetFilterContent}
           />
         </FlexBox>
+        <TwoLevelCheckboxFilter
+          availableOptions={availableOptions.availableContinents}
+          selectedOptions={selectedContinentOptions}
+          setSelectedOptions={setSelectedContinentOptions}
+        />
         <TableContainer component={Paper}>
           <Table sx={{ minWidth: 650 }} aria-label="simple table" size="small">
             <TableHead>
