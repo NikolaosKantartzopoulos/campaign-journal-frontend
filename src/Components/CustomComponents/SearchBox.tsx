@@ -34,9 +34,10 @@ const SearchBox = ({
             handleSearch();
           }
         }}
+        type="text"
         value={searchFieldState}
         InputProps={{
-          autoComplete: "off",
+          autoComplete: "new-password",
           endAdornment: (
             <InputAdornment
               position="end"

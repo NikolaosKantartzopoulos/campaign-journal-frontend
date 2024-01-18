@@ -29,7 +29,6 @@ export default async function apiHandler(
         res.status(401).json({ message: "You do not own this world." });
         return;
       }
-      console.log(user);
       if (!user?.selectedWorld?.location_id) {
         res.status(400).json({ message: "No world_id selected" });
         return;

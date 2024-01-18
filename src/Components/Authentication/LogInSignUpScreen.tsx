@@ -58,7 +58,7 @@ const LogInSignUpScreen = () => {
       setUserPassword("");
     } catch (e) {
       const err = e as AxiosError<{ message: string }>;
-      console.log(err);
+
       toastMessage(err?.response?.data?.message as string, "error");
     }
   }

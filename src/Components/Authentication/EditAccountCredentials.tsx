@@ -37,7 +37,7 @@ const EditAccountCredentials = () => {
         enableEditUserName,
         enablePasswordChange,
       });
-      console.log(data.userRetrieved);
+
       update({ user: data.userRetrieved });
       toastMessage("User updated", "success");
       setNewUserName("");

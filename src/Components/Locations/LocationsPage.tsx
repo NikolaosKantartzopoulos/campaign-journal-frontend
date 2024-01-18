@@ -1,7 +1,6 @@
 import {
   Box,
   Button,
-  Checkbox,
   IconButton,
   Paper,
   Table,
@@ -10,7 +9,6 @@ import {
   TableContainer,
   TableHead,
   TableRow,
-  Typography,
 } from "@mui/material";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import axios from "axios";
@@ -27,6 +25,12 @@ import BuildIcon from "@mui/icons-material/Build";
 import SearchBox from "../CustomComponents/SearchBox";
 import { locationAndPartOfLocationIncluded } from "@/clients/Locations/locationsClient";
 import TwoLevelCheckboxFilter from "../CustomComponents/TwoLevelCheckboxFilter";
+import {
+  availableOptions,
+  getSelectedLocations,
+  locationFilterState,
+  separateLocationScales,
+} from "@/utilities/helperFn/locations";
 
 const LocationsPage = () => {
   const { data: session } = useSession();
@@ -51,78 +55,62 @@ const LocationsPage = () => {
     enabled: !!user,
   });
 
-  function separateLocationScales(
-    locationsArray: locationAndPartOfLocationIncluded[]
-  ): {
-    worldName: string;
-    availableContinents: string[];
-    availableKingdoms: string[];
-    availableProvinces: string[];
-    availableAreas: string[];
-  } {
-    const toRet: {
-      worldName: string;
-      availableContinents: string[];
-      availableKingdoms: string[];
-      availableProvinces: string[];
-      availableAreas: string[];
-    } = {
-      worldName: "",
-      availableContinents: [],
-      availableKingdoms: [],
-      availableProvinces: [],
-      availableAreas: [],
-    };
-    for (const el of locationsArray) {
-      switch (el.location_scale) {
-        case "World":
-          toRet.worldName = el.location_name;
-          break;
-        case "Continent":
-          toRet.availableContinents.push(el.location_name);
-          break;
-        case "Kingdom":
-          toRet.availableKingdoms.push(el.location_name);
-          break;
-        case "Province":
-          toRet.availableProvinces.push(el.location_name);
-          break;
-        case "Area":
-          toRet.availableAreas.push(el.location_name);
-          break;
-      }
-    }
-    return toRet;
+  const availableOptions: availableOptions = separateLocationScales(
+    worldLocations || []
+  );
+
+  function selectAllLocations() {
+    setContinents(availableOptions?.availableContinents);
+    setKingdoms(availableOptions?.availableKingdoms);
+    setProvinces(availableOptions?.availableProvinces);
+    setAreas(availableOptions?.availableAreas);
   }
 
-  const availableOptions = separateLocationScales(worldLocations || []);
+  function deselectAllLocations() {
+    setContinents(() =>
+      availableOptions?.availableContinents.map((el) => ({
+        ...el,
+        isSelected: false,
+        isVisible: true,
+      }))
+    );
+    setKingdoms(() =>
+      availableOptions?.availableKingdoms.map((el) => ({
+        ...el,
+        isSelected: false,
+        isVisible: false,
+      }))
+    );
+    setProvinces(() =>
+      availableOptions?.availableProvinces.map((el) => ({
+        ...el,
+        isSelected: false,
+        isVisible: false,
+      }))
+    );
+    setAreas(() =>
+      availableOptions?.availableAreas.map((el) => ({
+        ...el,
+        isSelected: false,
+        isVisible: false,
+      }))
+    );
+  }
 
-  const [selectedContinentOptions, setSelectedContinentOptions] = useState(
-    { viewAll: true, selected: availableOptions?.availableContinents } || {
-      viewAll: true,
-      selected: [],
-    }
+  const [continents, setContinents] = useState<locationFilterState[]>(
+    availableOptions?.availableContinents
   );
-  const [selectedKingdomOptions, setSelectedKingdomOptions] = useState(
-    { viewAll: true, selected: availableOptions?.availableKingdoms } || {
-      viewAll: true,
-      selected: [],
-    }
+  const [kingdoms, setKingdoms] = useState<locationFilterState[]>(
+    availableOptions?.availableKingdoms
   );
-  const [selectedProvinceOptions, setSelectedProvinceOptions] = useState(
-    { viewAll: true, selected: availableOptions?.availableProvinces } || {
-      viewAll: true,
-      selected: [],
-    }
+  const [provinces, setProvinces] = useState<locationFilterState[]>(
+    availableOptions?.availableProvinces
   );
-  const [selectedAreaOptions, setSelectedKAreaOptions] = useState(
-    { viewAll: true, selected: availableOptions?.availableAreas } || {
-      viewAll: true,
-      selected: [],
-    }
+  const [areas, setAreas] = useState<locationFilterState[]>(
+    availableOptions?.availableAreas
   );
-  console.log(selectedContinentOptions);
 
+  const [selectedLocations, setSelectedLocations] = useState(worldLocations);
   async function createLocationClickHandler() {}
 
   const {
@@ -133,11 +121,25 @@ const LocationsPage = () => {
     handleSearchFieldKeyStroke,
     handleSearch,
     resetFilterContent,
-  } = useFilterContent(worldLocations || []);
+  } = useFilterContent(selectedLocations || []);
 
   useEffect(() => {
-    setFilterContentState(worldLocations || []);
-  }, [worldLocations, setFilterContentState]);
+    const newSelectedLocations = [
+      ...getSelectedLocations(continents),
+      ...getSelectedLocations(kingdoms),
+      ...getSelectedLocations(provinces),
+      ...getSelectedLocations(areas),
+    ];
+    setSelectedLocations(newSelectedLocations);
+    setFilterContentState(newSelectedLocations || []);
+  }, [
+    worldLocations,
+    continents,
+    kingdoms,
+    provinces,
+    areas,
+    searchFieldState,
+  ]);
 
   function handleLocationRowClick(e: React.MouseEvent, location: location) {
     router.push(`/world/location/${location.location_id}`);
@@ -160,9 +162,7 @@ const LocationsPage = () => {
           { world_id: session?.selectedWorld?.location_id },
         ],
       });
-    } catch (err) {
-      console.log(err);
-    }
+    } catch (err) {}
   }
 
   if (!user || !session) {
@@ -172,13 +172,67 @@ const LocationsPage = () => {
   if (isLoading) {
     return <LoadingSpinner />;
   }
-  console.log(availableOptions.availableContinents);
   return (
-    <Box>
-      Locations
-      <Button onClick={createLocationClickHandler} variant="outlined">
-        Create
-      </Button>
+    <Box
+      sx={{
+        maxWidth: "900px",
+        margin: "auto",
+      }}
+    >
+      <FlexBox
+        sx={{
+          alignItems: "flex-start",
+          justifyContent: "flex-start",
+          width: "100%",
+          p: 1,
+        }}
+      >
+        <FlexBox sx={{ flexDirection: "column", alignItems: "stretch" }}>
+          <Button variant="outlined" onClick={selectAllLocations}>
+            SelectAll
+          </Button>
+          <Button variant="outlined" onClick={deselectAllLocations}>
+            None
+          </Button>
+        </FlexBox>
+        <TwoLevelCheckboxFilter
+          availableOptions={availableOptions.availableContinents}
+          selectedOptions={continents}
+          setSelectedOptions={setContinents}
+          boxTitle="Continents"
+          childState={kingdoms}
+          setChildState={setKingdoms}
+        />
+        {getSelectedLocations(continents).length > 0 && (
+          <TwoLevelCheckboxFilter
+            availableOptions={availableOptions.availableKingdoms}
+            selectedOptions={kingdoms}
+            setSelectedOptions={setKingdoms}
+            boxTitle="Kingdoms"
+            childState={provinces}
+            setChildState={setProvinces}
+          />
+        )}
+        {getSelectedLocations(kingdoms).length > 0 && (
+          <TwoLevelCheckboxFilter
+            availableOptions={availableOptions.availableProvinces}
+            selectedOptions={provinces}
+            setSelectedOptions={setProvinces}
+            boxTitle="Provinces"
+            childState={areas}
+            setChildState={setAreas}
+          />
+        )}
+        {getSelectedLocations(provinces).length > 0 && (
+          <TwoLevelCheckboxFilter
+            availableOptions={availableOptions.availableAreas}
+            selectedOptions={areas}
+            setSelectedOptions={setAreas}
+            boxTitle="Areas"
+          />
+        )}
+      </FlexBox>
+
       <FlexBox sx={{ flexDirection: "column", paddingTop: "1rem" }}>
         <FlexBox sx={{ gap: "0", alignItems: "stretch" }}>
           {isUserGameMaster(session) && (
@@ -198,18 +252,20 @@ const LocationsPage = () => {
             clearSearchField={resetFilterContent}
           />
         </FlexBox>
-        <TwoLevelCheckboxFilter
-          availableOptions={availableOptions.availableContinents}
-          selectedOptions={selectedContinentOptions}
-          setSelectedOptions={setSelectedContinentOptions}
-        />
+
         <TableContainer component={Paper}>
-          <Table sx={{ minWidth: 650 }} aria-label="simple table" size="small">
+          <Table
+            sx={{
+              maxWidth: "900px",
+            }}
+            aria-label="simple table"
+            size="small"
+          >
             <TableHead>
               <TableRow>
                 {isUserGameMaster(session) && (
                   <>
-                    <TableCell align="left" sx={{ width: "34px" }}></TableCell>
+                    <TableCell align="left"></TableCell>
                   </>
                 )}
                 <TableCell
@@ -236,7 +292,7 @@ const LocationsPage = () => {
             </TableHead>
             <TableBody>
               {filterContentState &&
-                filterContentState.map((location) => (
+                filterContentState?.map((location) => (
                   <TableRow
                     key={location.location_id}
                     hover

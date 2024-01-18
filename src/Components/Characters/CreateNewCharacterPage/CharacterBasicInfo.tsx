@@ -63,13 +63,12 @@ const CharacterBasicInfo = () => {
       toastMessage("Character created", "success");
     } catch (error) {
       const err = error as AxiosError<{ message: string }>;
-      console.log(err);
+
       toastMessage("There was an error", "error");
     }
   }
 
   async function handleEditSentient() {
-    console.log(firstName, lastName, race, shortTitle, vitality);
     try {
       const { data } = await axios.patch("/api/sentients/unique", {
         sentient_id: sentient?.sentient_id,
@@ -90,7 +89,6 @@ const CharacterBasicInfo = () => {
       toastMessage(data.message, "success");
     } catch (error) {
       const err = error as AxiosError<{ message: string }>;
-      console.log(err);
       toastMessage("There was an error", "error");
     }
   }

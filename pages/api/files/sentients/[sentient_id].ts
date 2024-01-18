@@ -43,7 +43,6 @@ const handler: NextApiHandler = async (req, res) => {
         return;
 
       case "DELETE":
-        console.log("first");
         await deleteImageFromDrive(
           "characters",
           `${user.location_id}_${sentient_id}`

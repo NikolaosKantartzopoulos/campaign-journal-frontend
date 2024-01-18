@@ -39,12 +39,10 @@ export default function CreateSentient() {
           state: vitality,
         }
       );
-      console.log(sentientCreated);
       queryClient.invalidateQueries({ queryKey: ["allSentients"] });
       router.push(`/character/manage-sentient/${sentientCreated.sentient_id}`);
     } catch (error) {
       const err = error as AxiosError<{ message: string }>;
-      console.log(err);
       toastMessage("There was an error", "error");
     }
   }
