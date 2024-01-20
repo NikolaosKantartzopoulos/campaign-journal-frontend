@@ -9,7 +9,7 @@ import { useState } from "react";
 import { FileUploadOutlined } from "@mui/icons-material";
 import { sentient } from "@prisma/client";
 import DeleteIcon from "@mui/icons-material/Delete";
-import CharacterImageBox from "../CharacterImageBox";
+import ItemImageBox from "@/Components/PresentItem/ItemImage";
 
 const CharacterImage = ({ characterImage }: { characterImage: string }) => {
   const { data: session } = useSession();
@@ -95,7 +95,9 @@ const CharacterImage = ({ characterImage }: { characterImage: string }) => {
         marginTop: "2rem",
       }}
     >
-      {imageFile && <CharacterImageBox imageFile={imageFile} />}
+      {imageFile && (
+        <ItemImageBox imageFile={imageFile} altText="Character Image" />
+      )}
       <FlexBox
         sx={{
           flexFlow: imageFile ? "column" : "row",

@@ -21,3 +21,20 @@ export async function getAllWorldsLocations(
     },
   });
 }
+
+export async function getUniqueLocationById(
+  location_id: number
+): Promise<locationAndPartOfLocationIncluded | null> {
+  return prisma.location.findUnique({
+    where: {
+      location_id: location_id,
+    },
+    include: {
+      location: {
+        include: {
+          location: true, // Include the parent location
+        },
+      },
+    },
+  });
+}

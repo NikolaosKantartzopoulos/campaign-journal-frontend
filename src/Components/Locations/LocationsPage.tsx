@@ -142,11 +142,11 @@ const LocationsPage = () => {
   ]);
 
   function handleLocationRowClick(e: React.MouseEvent, location: location) {
-    router.push(`/world/location/${location.location_id}`);
+    router.push(`/location/${location.location_id}`);
   }
 
   function handleEditLocationClick(e: React.MouseEvent, location: location) {
-    router.push(`/world/location/${location.location_id}`);
+    router.push(`/location/manage-location/${location.location_id}`);
   }
 
   async function handleDeleteLocationClick(
@@ -154,7 +154,7 @@ const LocationsPage = () => {
     location: location
   ) {
     try {
-      await axios.delete(`/api/world/location/${location.location_id}`);
+      await axios.delete(`/api/locations/${location.location_id}`);
       queryClient.invalidateQueries({
         queryKey: [
           "worldLocations",
@@ -187,7 +187,13 @@ const LocationsPage = () => {
           p: 1,
         }}
       >
-        <FlexBox sx={{ flexDirection: "column", alignItems: "stretch" }}>
+        <FlexBox
+          sx={{
+            flexDirection: "column",
+            alignItems: "stretch",
+            height: "208px",
+          }}
+        >
           <Button variant="outlined" onClick={selectAllLocations}>
             SelectAll
           </Button>

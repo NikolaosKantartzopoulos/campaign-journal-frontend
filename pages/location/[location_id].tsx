@@ -1,36 +1,38 @@
-import { getUniqueSentientById } from "@/services/data-fetching/getSentients";
+import {
+  getUniqueLocationById,
+} from "@/clients/Locations/locationsClient";
 import { readImageFromDrive } from "@/utilities/formidable";
 import { QueryClient, dehydrate } from "@tanstack/react-query";
 import { GetServerSideProps, GetServerSidePropsContext } from "next";
 import { Session, getServerSession } from "next-auth";
-import { useSession } from "next-auth/react";
-import { useRouter } from "next/router";
 import { authOptions } from "../api/auth/[...nextauth]";
 import axios from "axios";
+import { useSession } from "next-auth/react";
+import { useRouter } from "next/router";
 import ItemPage from "@/Components/PresentItem/ItemPage";
 
-const Character = ({ characterImage }: { characterImage: string }) => {
+const LocationPage = ({ locationImage }: { locationImage: string }) => {
   const router = useRouter();
   const { data: session } = useSession();
   const user = session?.user;
 
   return (
     <ItemPage
-      itemImage={characterImage}
+      itemImage={locationImage}
       queryKey={[
-        "sentient",
+        "location",
         { user_id: user?.user_id },
-        { world_id: user?.selectedWorld?.location_id },
-        { sentient_id: router.query.sentient_id },
+        { location_id: router.query.location_id },
       ]}
       queryFn={async () => {
-        const { data: sentient } = await axios(
-          `/api/sentients/unique/${router.query.sentient_id}`
+        const { data: location } = await axios(
+          `/api/locations/${router.query.location_id}`
         );
-        return sentient;
+        return location;
       }}
-      itemSubtitle={"short_title"}
-      itemName={"first_name"}
+      itemSubtitle={"location.location_name"}
+      itemName={"location_name"}
+      prependString="part of "
       altText={"Character Image"}
     />
   );
@@ -54,24 +56,23 @@ export const getServerSideProps: GetServerSideProps = async (
     };
   }
   const queryClient = new QueryClient();
-  const sentient_id = context?.params?.sentient_id;
+  const location_id = context?.params?.location_id;
 
   await queryClient.prefetchQuery({
     queryKey: [
-      "sentient",
+      "location",
       { user_id: user?.user_id },
-      { world_id: user?.selectedWorld?.location_id },
-      { sentient_id: context.query.sentient_id },
+      { location_id: context.query.location_id },
     ],
-    queryFn: () => getUniqueSentientById(Number(context.query.sentient_id)),
+    queryFn: () => getUniqueLocationById(Number(context.query.location_id)),
   });
-
-  const characterImage = await readImageFromDrive(
-    "characters",
-    `${user.selectedWorld?.location_id}_${sentient_id}`
+  console.log("===>", `${user.selectedWorld?.location_id}_${location_id}`);
+  const locationImage = await readImageFromDrive(
+    "locations",
+    `${user.selectedWorld?.location_id}_${location_id}`
   );
-
-  return { props: { characterImage, dehydratedState: dehydrate(queryClient) } };
+  console.log(locationImage);
+  return { props: { locationImage, dehydratedState: dehydrate(queryClient) } };
 };
 
-export default Character;
+export default LocationPage;

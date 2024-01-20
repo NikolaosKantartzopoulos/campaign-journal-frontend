@@ -20,43 +20,51 @@ const SearchBox = ({
 }: SearchBoxProps) => {
   return (
     <Box sx={{ display: "flex", gap: "0px" }}>
-      <TextField
-        size="small"
-        onChange={(e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) =>
-          handleSearchFieldKeyStroke(e)
-        }
-        onKeyDown={(e) => {
-          if (e.key === "Enter") {
-            if (searchFieldState === "") {
-              clearSearchField();
-              return;
-            }
-            handleSearch();
+      <form
+        noValidate
+        autoComplete="off"
+        onSubmit={(e) => {
+          e.preventDefault();
+        }}
+      >
+        <TextField
+          size="small"
+          onChange={(e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) =>
+            handleSearchFieldKeyStroke(e)
           }
-        }}
-        type="text"
-        value={searchFieldState}
-        InputProps={{
-          autoComplete: "new-password",
-          endAdornment: (
-            <InputAdornment
-              position="end"
-              onClick={clearSearchField}
-              sx={{
-                "&:hover": {
-                  cursor: "pointer",
-                },
-              }}
-            >
-              <ClearIcon />
-            </InputAdornment>
-          ),
-        }}
-        sx={{ margin: "auto" }}
-      />
-      <Button variant="contained" onClick={handleSearch}>
-        <SearchIcon />
-      </Button>
+          onKeyDown={(e) => {
+            if (e.key === "Enter") {
+              if (searchFieldState === "") {
+                clearSearchField();
+                return;
+              }
+              handleSearch();
+            }
+          }}
+          type="text"
+          value={searchFieldState}
+          InputProps={{
+            autoComplete: "new-password",
+            endAdornment: (
+              <InputAdornment
+                position="end"
+                onClick={clearSearchField}
+                sx={{
+                  "&:hover": {
+                    cursor: "pointer",
+                  },
+                }}
+              >
+                <ClearIcon />
+              </InputAdornment>
+            ),
+          }}
+          sx={{ margin: "auto" }}
+        />
+        <Button variant="contained" onClick={handleSearch}>
+          <SearchIcon />
+        </Button>
+      </form>
     </Box>
   );
 };
