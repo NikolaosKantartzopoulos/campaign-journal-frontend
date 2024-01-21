@@ -1,10 +1,11 @@
-import { Box, Typography } from "@mui/material";
+import { Box, Card, Divider, Paper, Typography } from "@mui/material";
 import { useQuery } from "@tanstack/react-query";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/router";
 import React from "react";
 import LoadingSpinner from "../CustomComponents/LoadingSpinner";
 import ItemImageBox from "./ItemImage";
+import { FlexBox } from "../CustomComponents/FlexBox";
 
 interface ItemPageProps<T> {
   itemImage: string;
@@ -15,6 +16,7 @@ interface ItemPageProps<T> {
   prependString?: string; // New prop to prepend a string to the value
   children?: React.ReactNode;
   altText: string;
+  descriptionText?: keyof T;
 }
 
 const ItemPage = <T,>({
@@ -26,6 +28,7 @@ const ItemPage = <T,>({
   prependString = "", // Default to an empty string
   children,
   altText,
+  descriptionText,
 }: ItemPageProps<T>) => {
   const router = useRouter();
   const { data: session } = useSession();
@@ -48,11 +51,29 @@ const ItemPage = <T,>({
 
     return prependString + nestedValue;
   };
+  const showDescription =
+    descriptionText &&
+    item.hasOwnProperty(descriptionText) &&
+    (item[descriptionText] as string)
+      ? true
+      : false;
+
+  if (!item[itemName]) {
+    router.push("/");
+  }
 
   return (
-    <Box sx={{ m: 1, p: 1 }}>
-      <Box>
-        <Typography variant="h5">{item[itemName] as string}</Typography>
+    <FlexBox
+      sx={{
+        margin: "auto",
+        p: 1,
+        width: "100%",
+        alignItems: "stretch",
+        justifyContent: "space-between",
+      }}
+    >
+      <Card sx={{ width: "100%", height: "100%", p: 1 }}>
+        <Typography variant="h4">{item[itemName] as string}</Typography>
         <Typography
           variant="caption"
           sx={(theme) => ({ color: theme.palette.text.secondary })}
@@ -61,12 +82,27 @@ const ItemPage = <T,>({
             ? getNestedValue(item, itemSubtitle)
             : (item[itemSubtitle] as React.ReactNode)}
         </Typography>
+        {showDescription && descriptionText && (
+          <Box sx={{ mt: 2 }}>
+            <Divider />
+            <Paper
+              elevation={5}
+              sx={{ p: 2, maxHeight: "300px", overflow: "auto" }}
+            >
+              <Typography variant="body1" sx={{ whiteSpace: "pre-wrap" }}>
+                {item[descriptionText] as string}
+              </Typography>
+            </Paper>
+          </Box>
+        )}
+      </Card>
+      <Box>
+        {itemImageUrl && (
+          <ItemImageBox imageFile={itemImageUrl} altText={altText} />
+        )}
       </Box>
-      {itemImageUrl && (
-        <ItemImageBox imageFile={itemImageUrl} altText={altText} />
-      )}
       <Box>{children}</Box>
-    </Box>
+    </FlexBox>
   );
 };
 

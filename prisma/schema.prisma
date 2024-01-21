@@ -156,6 +156,7 @@ model sentient {
   state                                     sentient_state?
   world_id                                  Int
   profile_image_path                        Boolean?             @default(false)
+  sentient_description                      String?              @db.Text
   event_sentient                            event_sentient[]
   faction                                   faction[]
   faction_membership                        faction_membership[]

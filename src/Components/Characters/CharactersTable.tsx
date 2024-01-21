@@ -85,15 +85,38 @@ export default function CharactersTable() {
     return <Typography variant="h5">No characters added!</Typography>;
   }
 
+  // [theme.breakpoints.down("sm")]: {
+  //   flexDirection: "column",
+  //   alignItems: "stretch",
+  // },
+
   return (
-    <FlexBox sx={{ flexDirection: "column", paddingTop: "1rem" }}>
-      <FlexBox sx={{ gap: "0", alignItems: "stretch" }}>
+    <FlexBox
+      sx={{
+        flexDirection: "column",
+        alignItems: "center",
+        justifyContent: "center",
+      }}
+    >
+      <FlexBox
+        sx={(theme) => ({
+          flexDirection: "row",
+          alignItems: "center",
+          [theme.breakpoints.down("sm")]: {
+            flexDirection: "column",
+            alignItems: "stretch",
+            justifyContent: "center",
+            maxWidth: "331px",
+          },
+        })}
+      >
         {isUserGameMaster(session) && (
           <Button
             variant="outlined"
             onClick={() => {
               router.push(`/character/manage-sentient/`);
             }}
+            sx={{ height: "40px" }}
           >
             Create
           </Button>

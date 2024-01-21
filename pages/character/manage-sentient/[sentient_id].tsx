@@ -1,10 +1,8 @@
 import * as React from "react";
 import Box from "@mui/material/Box";
 import CharacterBasicInfo from "@/Components/Characters/CreateNewCharacterPage/CharacterBasicInfo";
-import { authOptions } from "../../api/auth/[...nextauth]";
 import { QueryClient, dehydrate, useQuery } from "@tanstack/react-query";
 import { GetServerSideProps, GetServerSidePropsContext } from "next";
-import { Session, getServerSession } from "next-auth";
 import axios from "axios";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/router";
@@ -12,6 +10,7 @@ import { Card } from "@mui/material";
 import CharacterImage from "@/Components/Characters/CreateNewCharacterPage/CharacterImage";
 import { readImageFromDrive } from "@/utilities/formidable";
 import { sentient } from "@prisma/client";
+import { withServerSessionGuard } from "@/utilities/functions/getServerSideSession";
 
 export default function ManageCharacter({
   characterImage,
@@ -65,28 +64,15 @@ export default function ManageCharacter({
 }
 
 export const getServerSideProps: GetServerSideProps = async (
-  context: GetServerSidePropsContext
+  ctx: GetServerSidePropsContext
 ) => {
-  const session = (await getServerSession(
-    context.req,
-    context.res,
-    authOptions
-  )) as Session;
-  const user = session?.user;
-  if (!session || !user) {
-    return {
-      redirect: {
-        destination: "/",
-        permanent: false,
-      },
-    };
-  }
+  const { user } = await withServerSessionGuard(ctx);
   const queryClient = new QueryClient();
-  const sentient_id = context?.params?.sentient_id;
+  const sentient_id = ctx?.params?.sentient_id;
 
   const characterImage = await readImageFromDrive(
     "characters",
-    `${user.selectedWorld?.location_id}_${sentient_id}`
+    `${user?.selectedWorld?.location_id}_${sentient_id}`
   );
 
   return { props: { characterImage, dehydratedState: dehydrate(queryClient) } };

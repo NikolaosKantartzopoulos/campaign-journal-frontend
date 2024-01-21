@@ -17,7 +17,14 @@ export default async function apiHandler(
   }
   try {
     if (req.method === "POST") {
-      const { first_name, last_name, race_name, short_title, state } = req.body;
+      const {
+        first_name,
+        last_name,
+        race_name,
+        short_title,
+        state,
+        sentient_description,
+      } = req.body;
       const newlyCreatedSentient = await createSentient({
         first_name,
         last_name,
@@ -25,6 +32,7 @@ export default async function apiHandler(
         short_title,
         state,
         world_id: user?.location_id,
+        sentient_description,
       });
       res.status(200).json(newlyCreatedSentient);
       return;
@@ -37,6 +45,7 @@ export default async function apiHandler(
         race_name,
         short_title,
         state,
+        sentient_description,
       } = req.body;
       const editedSentient = await updateSentient({
         sentient_id,
@@ -46,6 +55,7 @@ export default async function apiHandler(
         short_title,
         state,
         world_id: user?.location_id,
+        sentient_description,
       });
       res.status(200).json({ editedSentient, message: "Character updated" });
       return;

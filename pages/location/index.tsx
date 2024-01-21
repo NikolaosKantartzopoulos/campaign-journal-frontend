@@ -17,9 +17,8 @@ import axios, { AxiosError } from "axios";
 import { useRouter } from "next/router";
 import { useState } from "react";
 
-export default function CreateSentient() {
+export default function CreateLocation() {
   const router = useRouter();
-
   const queryClient = useQueryClient();
 
   const [firstName, setFirstName] = useState("");
@@ -29,7 +28,7 @@ export default function CreateSentient() {
   const [vitality, setVitality] = useState("alive");
   const [sentientDescription, setSentientDescription] = useState("");
 
-  async function handleCreateSentient() {
+  async function handleCreateLocation() {
     try {
       const { data: sentientCreated } = await axios.post<sentient>(
         "/api/sentients/unique",
@@ -124,7 +123,7 @@ export default function CreateSentient() {
           value={sentientDescription}
           onChange={(e) => setSentientDescription(e.target.value)}
         />
-        <Button variant="contained" onClick={handleCreateSentient}>
+        <Button variant="contained" onClick={handleCreateLocation}>
           Create
         </Button>
       </Box>

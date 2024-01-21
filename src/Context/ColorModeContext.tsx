@@ -42,6 +42,13 @@ export default function ToggleColorMode({ children }: { children: ReactNode }) {
           mode,
         },
         components: {
+          MuiTableHead: {
+            styleOverrides: {
+              root: {
+                height: "2rem",
+              },
+            },
+          },
           MuiTableRow: {
             styleOverrides: {
               root: {

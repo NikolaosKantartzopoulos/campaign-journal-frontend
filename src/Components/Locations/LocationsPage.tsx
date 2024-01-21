@@ -19,7 +19,7 @@ import useFilterContent from "@/utilities/functions/hooks/useFilterContent";
 import { isUserGameMaster } from "@/utilities/helperFn/isUserGameMaster";
 import { Delete } from "@mui/icons-material";
 import { useRouter } from "next/router";
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { FlexBox } from "../CustomComponents/FlexBox";
 import BuildIcon from "@mui/icons-material/Build";
 import SearchBox from "../CustomComponents/SearchBox";
@@ -31,6 +31,7 @@ import {
   locationFilterState,
   separateLocationScales,
 } from "@/utilities/helperFn/locations";
+import AddIcon from "@mui/icons-material/Add";
 
 const LocationsPage = () => {
   const { data: session } = useSession();
@@ -165,6 +166,13 @@ const LocationsPage = () => {
     } catch (err) {}
   }
 
+  function handleCreateLocationClick(
+    e: React.MouseEvent,
+    location: locationAndPartOfLocationIncluded
+  ) {
+    router.push(`/location/manage-location/part-of/${location.location_id}`);
+  }
+
   if (!user || !session) {
     signOut();
   }
@@ -181,26 +189,35 @@ const LocationsPage = () => {
     >
       <FlexBox
         sx={{
+          flexDirection: "row",
+          alignItems: "stretch",
+          mx: 2,
+        }}
+      >
+        <Button
+          variant="outlined"
+          onClick={selectAllLocations}
+          sx={{ flex: "1 1 0" }}
+        >
+          SelectAll
+        </Button>
+        <Button
+          variant="outlined"
+          onClick={deselectAllLocations}
+          sx={{ flex: "1 1 0" }}
+        >
+          None
+        </Button>
+      </FlexBox>
+      <FlexBox
+        sx={{
           alignItems: "flex-start",
           justifyContent: "flex-start",
           width: "100%",
           p: 1,
+          overflow: "auto",
         }}
       >
-        <FlexBox
-          sx={{
-            flexDirection: "column",
-            alignItems: "stretch",
-            height: "208px",
-          }}
-        >
-          <Button variant="outlined" onClick={selectAllLocations}>
-            SelectAll
-          </Button>
-          <Button variant="outlined" onClick={deselectAllLocations}>
-            None
-          </Button>
-        </FlexBox>
         <TwoLevelCheckboxFilter
           availableOptions={availableOptions.availableContinents}
           selectedOptions={continents}
@@ -241,16 +258,6 @@ const LocationsPage = () => {
 
       <FlexBox sx={{ flexDirection: "column", paddingTop: "1rem" }}>
         <FlexBox sx={{ gap: "0", alignItems: "stretch" }}>
-          {isUserGameMaster(session) && (
-            <Button
-              variant="outlined"
-              onClick={() => {
-                router.push(`/location/manage-location/`);
-              }}
-            >
-              Create
-            </Button>
-          )}
           <SearchBox
             handleSearchFieldKeyStroke={handleSearchFieldKeyStroke}
             handleSearch={handleSearch}
@@ -307,7 +314,18 @@ const LocationsPage = () => {
                     }
                   >
                     {isUserGameMaster(session) && (
-                      <TableCell align="left" sx={{ width: "68px" }}>
+                      <TableCell align="left" sx={{ width: "104px" }}>
+                        <IconButton
+                          onClickCapture={(
+                            e: React.MouseEvent<HTMLElement>
+                          ) => {
+                            e.stopPropagation();
+                            handleCreateLocationClick(e, location);
+                          }}
+                          size="small"
+                        >
+                          <AddIcon />
+                        </IconButton>
                         <IconButton
                           onClickCapture={(
                             e: React.MouseEvent<HTMLElement>

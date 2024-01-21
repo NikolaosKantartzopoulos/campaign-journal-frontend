@@ -30,8 +30,9 @@ const Character = ({ characterImage }: { characterImage: string }) => {
         return sentient;
       }}
       itemSubtitle={"short_title"}
-      itemName={"first_name"}
+      itemName={"sentient_full_name"}
       altText={"Character Image"}
+      descriptionText={"sentient_description"}
     />
   );
 };

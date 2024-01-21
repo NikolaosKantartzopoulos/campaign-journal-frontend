@@ -61,7 +61,11 @@ const SearchBox = ({
           }}
           sx={{ margin: "auto" }}
         />
-        <Button variant="contained" onClick={handleSearch}>
+        <Button
+          variant="contained"
+          onClick={handleSearch}
+          sx={{ height: "100%" }}
+        >
           <SearchIcon />
         </Button>
       </form>

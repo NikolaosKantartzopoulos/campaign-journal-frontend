@@ -1,6 +1,4 @@
-import {
-  getUniqueLocationById,
-} from "@/clients/Locations/locationsClient";
+import { getUniqueLocationById } from "@/clients/Locations/locationsClient";
 import { readImageFromDrive } from "@/utilities/formidable";
 import { QueryClient, dehydrate } from "@tanstack/react-query";
 import { GetServerSideProps, GetServerSidePropsContext } from "next";

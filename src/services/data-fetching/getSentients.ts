@@ -1,5 +1,11 @@
 import logger from "@/logger/*";
 import { prisma } from "../../../prisma/prisma";
+import getSentientFullName from "@/utilities/helperFn/getSentientFullName";
+import { sentient } from "@prisma/client";
+
+interface sentientWithFullName extends sentient {
+  sentient_full_name: string;
+}
 
 export async function getAllSentients({ world_id }: { world_id: number }) {
   if (!world_id) {
@@ -22,11 +28,16 @@ export async function getAllSentients({ world_id }: { world_id: number }) {
 
 export async function getUniqueSentientById(sentient_id: number) {
   try {
-    return prisma.sentient.findUnique({
+    const prismaSentient = await prisma.sentient.findUnique({
       where: {
         sentient_id: sentient_id,
       },
     });
+
+    return {
+      ...prismaSentient,
+      sentient_full_name: getSentientFullName(prismaSentient as sentient),
+    };
   } catch (err) {
     logger.error(err);
   }

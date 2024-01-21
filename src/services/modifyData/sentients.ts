@@ -9,6 +9,7 @@ export async function createSentient({
   short_title,
   world_id,
   state = "alive",
+  sentient_description,
 }: {
   first_name: string;
   last_name: string;
@@ -16,6 +17,7 @@ export async function createSentient({
   short_title: string;
   world_id: number;
   state?: "alive" | "dead" | "undead" | "missing";
+  sentient_description: string;
 }): Promise<sentient | undefined> {
   try {
     const newlyCreatedSentient = await prisma.sentient.create({
@@ -26,6 +28,7 @@ export async function createSentient({
         short_title: short_title,
         world_id: world_id,
         state: state,
+        sentient_description: sentient_description,
       },
     });
 
@@ -46,6 +49,7 @@ export async function updateSentient({
   short_title,
   world_id,
   state = "alive",
+  sentient_description,
 }: {
   sentient_id: number;
   first_name: string;
@@ -54,6 +58,7 @@ export async function updateSentient({
   short_title: string;
   world_id: number;
   state?: "alive" | "dead" | "undead" | "missing";
+  sentient_description: string;
 }): Promise<sentient | undefined> {
   try {
     const newlyCreatedSentient = await prisma.sentient.update({
@@ -66,6 +71,7 @@ export async function updateSentient({
         race_name: race_name,
         short_title: short_title,
         world_id: world_id,
+        sentient_description: sentient_description,
         state: state,
       },
     });

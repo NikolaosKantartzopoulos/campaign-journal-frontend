@@ -11,7 +11,7 @@ const ItemImageBox = ({
   return (
     <Paper
       sx={{ width: "160px", height: "240px", position: "relative" }}
-      elevation={3}
+      elevation={12}
     >
       <Image
         src={imageFile}

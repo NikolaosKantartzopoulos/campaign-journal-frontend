@@ -6,6 +6,8 @@ import {
   InputLabel,
   NativeSelect,
   TextField,
+  TextareaAutosize,
+  Typography,
 } from "@mui/material";
 import { FlexBox } from "@/Components/CustomComponents/FlexBox";
 import { toastMessage } from "@/Components/CustomComponents/Toastify/Toast";
@@ -43,6 +45,9 @@ const CharacterBasicInfo = () => {
   const [race, setRace] = useState(sentient?.race_name || "");
   const [shortTitle, setShortTitle] = useState(sentient?.short_title || "");
   const [vitality, setVitality] = useState(sentient?.state || "alive");
+  const [sentientDescription, setSentientDescription] = useState(
+    sentient?.sentient_description || ""
+  );
 
   async function handleCreateSentient() {
     try {
@@ -77,6 +82,7 @@ const CharacterBasicInfo = () => {
         race_name: race,
         short_title: shortTitle,
         state: vitality,
+        sentient_description: sentientDescription,
       });
       queryClient.invalidateQueries({
         queryKey: [
@@ -151,6 +157,18 @@ const CharacterBasicInfo = () => {
           </NativeSelect>
         </FormControl>
       </FlexBox>
+      <Typography variant="h5" align="center">
+        Info
+      </Typography>
+      <TextareaAutosize
+        style={{
+          width: "100%",
+          minHeight: "4rem",
+          padding: "1rem",
+        }}
+        value={sentientDescription}
+        onChange={(e) => setSentientDescription(e.target.value)}
+      />
       {!sentient && (
         <Button variant="contained" onClick={handleCreateSentient}>
           Create
@@ -168,7 +186,8 @@ const CharacterBasicInfo = () => {
             lastName === sentient?.last_name &&
             race === sentient?.race_name &&
             shortTitle === sentient?.short_title &&
-            vitality === sentient?.state
+            vitality === sentient?.state &&
+            sentientDescription === sentient?.sentient_description
           }
         >
           Edit
