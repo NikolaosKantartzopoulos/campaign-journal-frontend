@@ -65,6 +65,7 @@ const LocationsPage = () => {
     setKingdoms(availableOptions?.availableKingdoms);
     setProvinces(availableOptions?.availableProvinces);
     setAreas(availableOptions?.availableAreas);
+    setAreas(availableOptions?.availablePlaces);
   }
 
   function deselectAllLocations() {
@@ -96,6 +97,13 @@ const LocationsPage = () => {
         isVisible: false,
       }))
     );
+    setPlaces(() =>
+      availableOptions?.availablePlaces.map((el) => ({
+        ...el,
+        isSelected: false,
+        isVisible: false,
+      }))
+    );
   }
 
   const [continents, setContinents] = useState<locationFilterState[]>(
@@ -109,6 +117,9 @@ const LocationsPage = () => {
   );
   const [areas, setAreas] = useState<locationFilterState[]>(
     availableOptions?.availableAreas
+  );
+  const [places, setPlaces] = useState<locationFilterState[]>(
+    availableOptions?.availablePlaces
   );
 
   const [selectedLocations, setSelectedLocations] = useState(worldLocations);
@@ -130,6 +141,7 @@ const LocationsPage = () => {
       ...getSelectedLocations(kingdoms),
       ...getSelectedLocations(provinces),
       ...getSelectedLocations(areas),
+      ...getSelectedLocations(places),
     ];
     setSelectedLocations(newSelectedLocations);
     setFilterContentState(newSelectedLocations || []);
@@ -139,6 +151,7 @@ const LocationsPage = () => {
     kingdoms,
     provinces,
     areas,
+    places,
     searchFieldState,
   ]);
 
@@ -230,6 +243,14 @@ const LocationsPage = () => {
             selectedOptions={areas}
             setSelectedOptions={setAreas}
             boxTitle="Areas"
+          />
+        )}
+        {getSelectedLocations(areas).length > 0 && (
+          <TwoLevelCheckboxFilter
+            availableOptions={availableOptions.availablePlaces}
+            selectedOptions={places}
+            setSelectedOptions={setPlaces}
+            boxTitle="Places"
           />
         )}
       </FlexBox>
@@ -348,7 +369,7 @@ const LocationsPage = () => {
                           handleCreateLocationClick(e, location);
                         }}
                         size="small"
-                        disabled={location.location_scale === "Area"}
+                        disabled={location.location_scale === "Place"}
                       >
                         <AddIcon />
                       </IconButton>

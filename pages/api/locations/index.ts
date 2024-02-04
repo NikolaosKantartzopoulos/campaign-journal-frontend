@@ -41,6 +41,7 @@ export default async function apiHandler(
         "Kingdom",
         "Province",
         "Area",
+        "Place",
       ];
 
       const childLocationScale =
@@ -71,7 +72,9 @@ export default async function apiHandler(
           | "Continent"
           | "Kingdom"
           | "Province"
-          | "Area",
+          | "Area"
+          | "Place",
+
         location_description,
         part_of: Number(part_of),
         game_master: user.user_id,

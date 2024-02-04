@@ -204,14 +204,6 @@ model world_user {
   @@index([world_id], map: "location_id")
 }
 
-enum location_location_scale {
-  World
-  Continent
-  Kingdom
-  Province
-  Area
-}
-
 enum item_item_state {
   on_person @map("on person")
   missing
@@ -223,4 +215,13 @@ enum sentient_state {
   dead
   undead
   missing
+}
+
+enum location_location_scale {
+  World
+  Continent
+  Kingdom
+  Province
+  Area
+  Place
 }

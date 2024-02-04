@@ -10,7 +10,13 @@ export async function createNewLocationService({
   world_id,
 }: {
   location_name: string;
-  location_scale: "World" | "Continent" | "Kingdom" | "Province" | "Area";
+  location_scale:
+    | "World"
+    | "Continent"
+    | "Kingdom"
+    | "Province"
+    | "Area"
+    | "Place";
   location_description: string;
   part_of: number;
   game_master: number;

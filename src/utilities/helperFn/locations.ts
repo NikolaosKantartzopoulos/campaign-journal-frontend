@@ -10,6 +10,7 @@ export interface availableOptions {
   availableKingdoms: locationFilterState[];
   availableProvinces: locationFilterState[];
   availableAreas: locationFilterState[];
+  availablePlaces: locationFilterState[];
 }
 
 export function separateLocationScales(
@@ -20,6 +21,7 @@ export function separateLocationScales(
     availableKingdoms: [],
     availableProvinces: [],
     availableAreas: [],
+    availablePlaces: [],
   };
   for (const el of locationsArray) {
     const newEl = { ...el, isSelected: true, isVisible: true };
@@ -36,6 +38,9 @@ export function separateLocationScales(
         break;
       case "Area":
         toRet.availableAreas.push(newEl);
+        break;
+      case "Place":
+        toRet.availablePlaces.push(newEl);
         break;
       default:
         throw new Error("asdf");
@@ -73,12 +78,20 @@ export function getInitialOptions(availableOptions: availableOptions) {
     viewAll: true,
     selected: [],
   };
+  const initialPlaceOptions = {
+    viewAll: true,
+    selected: availableOptions?.availablePlaces,
+  } || {
+    viewAll: true,
+    selected: [],
+  };
 
   return {
     initialContinentOptions,
     initialKingdomOptions,
     initialProvinceOptions,
     initialAreaOptions,
+    initialPlaceOptions,
   };
 }
 
