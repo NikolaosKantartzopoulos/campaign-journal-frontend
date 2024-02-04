@@ -9,6 +9,8 @@ import { readImageFromDrive } from "@/utilities/formidable";
 import { location } from "@prisma/client";
 import { withServerSessionGuard } from "@/utilities/functions/getServerSideSession";
 import ImageUploader from "@/Components/CustomComponents/ImageUploader";
+import CharacterBasicInfo from "@/Components/Characters/CreateNewCharacterPage/CharacterBasicInfo";
+import LocationBasicInfo from "@/Components/Locations/LocationBasicInfo";
 
 export default function ManageLocation({
   locationImage,
@@ -51,8 +53,7 @@ export default function ManageLocation({
         <Box sx={{ flexGrow: "1" }}>
           {isFetched && (
             <Box>
-              {/* <CharacterBasicInfo /> */}
-              {location?.location_name}
+              <LocationBasicInfo />
               <ImageUploader
                 currentImageFile={locationImage}
                 queryKey={[

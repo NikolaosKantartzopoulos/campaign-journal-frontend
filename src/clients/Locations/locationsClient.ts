@@ -60,15 +60,6 @@ export async function createNewLocationClient({
   game_master: number;
   world_id: number;
 }): Promise<location> {
-  console.log("createNewLocationClient", {
-    location_name,
-    location_scale,
-    location_description,
-    part_of,
-    game_master,
-    world_id,
-  });
-
   return prisma.location.create({
     data: {
       location_name,
@@ -77,6 +68,26 @@ export async function createNewLocationClient({
       part_of,
       game_master,
       world_id,
+    },
+  });
+}
+
+export async function editLocationClient({
+  location_id,
+  location_name,
+  location_description,
+}: {
+  location_name: string;
+  location_id: number;
+  location_description: string;
+}): Promise<location> {
+  return prisma.location.update({
+    where: {
+      location_id: location_id,
+    },
+    data: {
+      location_name,
+      location_description,
     },
   });
 }
