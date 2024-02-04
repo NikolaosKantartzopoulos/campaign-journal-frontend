@@ -2,12 +2,11 @@ import { getUniqueLocationById } from "@/clients/Locations/locationsClient";
 import { readImageFromDrive } from "@/utilities/formidable";
 import { QueryClient, dehydrate } from "@tanstack/react-query";
 import { GetServerSideProps, GetServerSidePropsContext } from "next";
-import { Session, getServerSession } from "next-auth";
-import { authOptions } from "../api/auth/[...nextauth]";
 import axios from "axios";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/router";
 import ItemPage from "@/Components/PresentItem/ItemPage";
+import { withServerSessionGuard } from "@/utilities/functions/getServerSideSession";
 
 const LocationPage = ({ locationImage }: { locationImage: string }) => {
   const router = useRouter();
@@ -32,6 +31,7 @@ const LocationPage = ({ locationImage }: { locationImage: string }) => {
       itemName={"location_name"}
       prependString="part of "
       altText={"Character Image"}
+      descriptionText={"location_description"}
     />
   );
 };
@@ -39,11 +39,7 @@ const LocationPage = ({ locationImage }: { locationImage: string }) => {
 export const getServerSideProps: GetServerSideProps = async (
   context: GetServerSidePropsContext
 ) => {
-  const session = (await getServerSession(
-    context.req,
-    context.res,
-    authOptions
-  )) as Session;
+  const { session } = await withServerSessionGuard(context);
   const user = session?.user;
   if (!session || !user) {
     return {
@@ -64,12 +60,10 @@ export const getServerSideProps: GetServerSideProps = async (
     ],
     queryFn: () => getUniqueLocationById(Number(context.query.location_id)),
   });
-  console.log("===>", `${user.selectedWorld?.location_id}_${location_id}`);
   const locationImage = await readImageFromDrive(
     "locations",
     `${user.selectedWorld?.location_id}_${location_id}`
   );
-  console.log(locationImage);
   return { props: { locationImage, dehydratedState: dehydrate(queryClient) } };
 };
 

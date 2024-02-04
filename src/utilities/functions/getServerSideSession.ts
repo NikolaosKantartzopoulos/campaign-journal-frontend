@@ -15,10 +15,10 @@ export const withServerSessionGuard = async (
     authOptions
   )) as Session;
   const user = session?.user;
-  if (!session || !user) {
+  if (!session || !user || !user.selectedWorld || !user.location_id) {
     return {
       redirect: {
-        destination: "/",
+        destination: "/account/access",
         permanent: false,
       },
     };
@@ -32,5 +32,9 @@ export const getAPISession = async (
 ) => {
   const session = (await getServerSession(req, res, authOptions)) as Session;
   const user = session?.user;
+  if (!session || !user) {
+    throw new Error("Not authorized");
+  }
+
   return { user, session };
 };

@@ -3,8 +3,6 @@ import AddHeroPage from "@/Components/Heroes/AddHeroPage";
 import { QueryClient, dehydrate, useQuery } from "@tanstack/react-query";
 import axios from "axios";
 import { GetServerSideProps, GetServerSidePropsContext } from "next";
-import { authOptions } from "./api/auth/[...nextauth]";
-import { Session, getServerSession } from "next-auth";
 import {
   getAllSentientsInUsersVanguard,
   getAllSentientsNotInUsersVanguard,
@@ -13,6 +11,7 @@ import { useSession } from "next-auth/react";
 import { sentient } from "@prisma/client";
 import LoadingSpinner from "@/Components/CustomComponents/LoadingSpinner";
 import getSentientFullName from "@/utilities/helperFn/getSentientFullName";
+import { withServerSessionGuard } from "@/utilities/functions/getServerSideSession";
 
 const Heroes = () => {
   const { data: session } = useSession();
@@ -67,19 +66,7 @@ const Heroes = () => {
 export const getServerSideProps: GetServerSideProps = async (
   context: GetServerSidePropsContext
 ) => {
-  const session = (await getServerSession(
-    context.req,
-    context.res,
-    authOptions
-  )) as Session;
-  if (!session) {
-    return {
-      redirect: {
-        destination: "/",
-        permanent: false,
-      },
-    };
-  }
+  const { session } = await withServerSessionGuard(context);
   const user = session?.user;
 
   const queryClient = new QueryClient();
@@ -92,8 +79,8 @@ export const getServerSideProps: GetServerSideProps = async (
     ],
     queryFn: () =>
       getAllSentientsNotInUsersVanguard({
-        world_id: user.selectedWorld?.location_id as number,
-        user_id: Number(user.user_id),
+        world_id: user?.selectedWorld?.location_id as number,
+        user_id: Number(user?.user_id),
       }),
   });
   await queryClient.prefetchQuery({
@@ -104,8 +91,8 @@ export const getServerSideProps: GetServerSideProps = async (
     ],
     queryFn: () =>
       getAllSentientsInUsersVanguard({
-        world_id: user.selectedWorld?.location_id as number,
-        user_id: Number(user.user_id),
+        world_id: user?.selectedWorld?.location_id as number,
+        user_id: Number(user?.user_id),
       }),
   });
 

@@ -1,8 +1,7 @@
 import { GetServerSideProps } from "next";
 import { Typography } from "@mui/material";
 import { useSession } from "next-auth/react";
-import { Session, getServerSession } from "next-auth";
-import { authOptions } from "./api/auth/[...nextauth]";
+import { withServerSessionGuard } from "@/utilities/functions/getServerSideSession";
 
 export default function Home() {
   const { data: session } = useSession();
@@ -18,11 +17,7 @@ export default function Home() {
 }
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
-  const session = (await getServerSession(
-    context.req,
-    context.res,
-    authOptions
-  )) as Session;
+  const { session } = await withServerSessionGuard(context);
 
   if (!session) {
     return {

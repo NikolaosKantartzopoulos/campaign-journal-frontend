@@ -1,8 +1,8 @@
-import { Box, Card, Divider, Paper, Typography } from "@mui/material";
+import { Box, Card, Paper, Typography } from "@mui/material";
 import { useQuery } from "@tanstack/react-query";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/router";
-import React from "react";
+import React, { ReactNode } from "react";
 import LoadingSpinner from "../CustomComponents/LoadingSpinner";
 import ItemImageBox from "./ItemImage";
 import { FlexBox } from "../CustomComponents/FlexBox";
@@ -17,6 +17,7 @@ interface ItemPageProps<T> {
   children?: React.ReactNode;
   altText: string;
   descriptionText?: keyof T;
+  CardChildren?: ReactNode;
 }
 
 const ItemPage = <T,>({
@@ -29,6 +30,7 @@ const ItemPage = <T,>({
   children,
   altText,
   descriptionText,
+  CardChildren,
 }: ItemPageProps<T>) => {
   const router = useRouter();
   const { data: session } = useSession();
@@ -63,46 +65,52 @@ const ItemPage = <T,>({
   }
 
   return (
-    <FlexBox
-      sx={{
-        margin: "auto",
-        p: 1,
-        width: "100%",
-        alignItems: "stretch",
-        justifyContent: "space-between",
-      }}
-    >
-      <Card sx={{ width: "100%", height: "100%", p: 1 }}>
-        <Typography variant="h4">{item[itemName] as string}</Typography>
-        <Typography
-          variant="caption"
-          sx={(theme) => ({ color: theme.palette.text.secondary })}
+    <>
+      <FlexBox sx={{ justifyContent: "stretch", flexDirection: "column" }}>
+        <FlexBox
+          sx={{
+            margin: "auto",
+            p: 1,
+            width: "100%",
+            alignItems: "stretch",
+            justifyContent: "space-between",
+            flex: "1 1 0",
+          }}
         >
-          {typeof itemSubtitle === "string"
-            ? getNestedValue(item, itemSubtitle)
-            : (item[itemSubtitle] as React.ReactNode)}
-        </Typography>
-        {showDescription && descriptionText && (
-          <Box sx={{ mt: 2 }}>
-            <Divider />
-            <Paper
-              elevation={5}
-              sx={{ p: 2, maxHeight: "300px", overflow: "auto" }}
+          <Card sx={{ width: "100%", height: "100%", p: 1 }}>
+            <Typography variant="h4">{item[itemName] as string}</Typography>
+            <Typography
+              variant="caption"
+              sx={(theme) => ({ color: theme.palette.text.secondary })}
             >
-              <Typography variant="body1" sx={{ whiteSpace: "pre-wrap" }}>
-                {item[descriptionText] as string}
-              </Typography>
-            </Paper>
+              {typeof itemSubtitle === "string"
+                ? getNestedValue(item, itemSubtitle)
+                : (item[itemSubtitle] as React.ReactNode)}
+            </Typography>
+            {CardChildren}
+          </Card>
+          <Box>
+            {itemImageUrl && (
+              <ItemImageBox imageFile={itemImageUrl} altText={altText} />
+            )}
           </Box>
-        )}
-      </Card>
-      <Box>
-        {itemImageUrl && (
-          <ItemImageBox imageFile={itemImageUrl} altText={altText} />
-        )}
-      </Box>
+        </FlexBox>
+      </FlexBox>
+
+      {showDescription && descriptionText && (
+        <Box sx={{ m: 1 }}>
+          <Paper
+            elevation={5}
+            sx={{ p: 2, maxHeight: "300px", overflow: "auto" }}
+          >
+            <Typography variant="body1" sx={{ whiteSpace: "pre-wrap" }}>
+              {item[descriptionText] as string}
+            </Typography>
+          </Paper>
+        </Box>
+      )}
       <Box>{children}</Box>
-    </FlexBox>
+    </>
   );
 };
 

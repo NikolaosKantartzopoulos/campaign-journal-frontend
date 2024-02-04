@@ -168,7 +168,7 @@ const LocationsPage = () => {
 
   function handleCreateLocationClick(
     e: React.MouseEvent,
-    location: locationAndPartOfLocationIncluded
+    location: locationAndPartOfLocationIncluded | location
   ) {
     router.push(`/location/manage-location/part-of/${location.location_id}`);
   }
@@ -187,28 +187,6 @@ const LocationsPage = () => {
         margin: "auto",
       }}
     >
-      <FlexBox
-        sx={{
-          flexDirection: "row",
-          alignItems: "stretch",
-          mx: 2,
-        }}
-      >
-        <Button
-          variant="outlined"
-          onClick={selectAllLocations}
-          sx={{ flex: "1 1 0" }}
-        >
-          SelectAll
-        </Button>
-        <Button
-          variant="outlined"
-          onClick={deselectAllLocations}
-          sx={{ flex: "1 1 0" }}
-        >
-          None
-        </Button>
-      </FlexBox>
       <FlexBox
         sx={{
           alignItems: "flex-start",
@@ -255,9 +233,45 @@ const LocationsPage = () => {
           />
         )}
       </FlexBox>
-
-      <FlexBox sx={{ flexDirection: "column", paddingTop: "1rem" }}>
-        <FlexBox sx={{ gap: "0", alignItems: "stretch" }}>
+      <FlexBox
+        sx={{
+          flexFlow: "row wrap",
+          alignItems: "stretch",
+          gap: "1rem",
+          m: 2,
+        }}
+      >
+        <FlexBox
+          sx={{
+            flexDirection: "row",
+            alignItems: "stretch",
+            flex: "1 1 0",
+            height: "40px",
+          }}
+        >
+          <Button
+            variant="outlined"
+            onClick={selectAllLocations}
+            sx={{ flex: "1 1 0" }}
+          >
+            SelectAll
+          </Button>
+          <Button
+            variant="outlined"
+            onClick={deselectAllLocations}
+            sx={{ flex: "1 1 0" }}
+          >
+            None
+          </Button>
+        </FlexBox>
+        <FlexBox
+          sx={{
+            gap: "0",
+            alignItems: "stretch",
+            flex: "1 1 0",
+            minWidth: "325px",
+          }}
+        >
           <SearchBox
             handleSearchFieldKeyStroke={handleSearchFieldKeyStroke}
             handleSearch={handleSearch}
@@ -265,104 +279,109 @@ const LocationsPage = () => {
             clearSearchField={resetFilterContent}
           />
         </FlexBox>
+      </FlexBox>
 
-        <TableContainer component={Paper}>
-          <Table
-            sx={{
-              maxWidth: "900px",
-            }}
-            aria-label="simple table"
-            size="small"
-          >
-            <TableHead>
-              <TableRow>
-                {isUserGameMaster(session) && (
-                  <>
-                    <TableCell align="left"></TableCell>
-                  </>
-                )}
-                <TableCell
-                  align="left"
-                  onClick={(e: React.MouseEvent) =>
-                    sortTableColumn(e, "location_name")
+      <TableContainer component={Paper}>
+        <Table
+          sx={{
+            maxWidth: "900px",
+          }}
+          aria-label="simple table"
+          size="small"
+        >
+          <TableHead>
+            <TableRow>
+              {isUserGameMaster(session) && (
+                <>
+                  <TableCell align="left">
+                    <Button
+                      startIcon={<AddIcon />}
+                      sx={{ fontSize: "0.7rem" }}
+                      onClick={(e) => {
+                        user?.selectedWorld
+                          ? handleCreateLocationClick(e, user?.selectedWorld)
+                          : null;
+                      }}
+                    >
+                      Continent
+                    </Button>
+                  </TableCell>
+                </>
+              )}
+              <TableCell
+                align="left"
+                onClick={(e: React.MouseEvent) =>
+                  sortTableColumn(e, "location_name")
+                }
+              >
+                Name
+              </TableCell>
+              <TableCell
+                align="left"
+                onClick={(e) => sortTableColumn(e, "part_of")}
+              >
+                Part of
+              </TableCell>
+              <TableCell
+                align="left"
+                onClick={(e) => sortTableColumn(e, "location_scale")}
+              >
+                Scale
+              </TableCell>
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {filterContentState &&
+              filterContentState?.map((location) => (
+                <TableRow
+                  key={location.location_id}
+                  hover
+                  onClick={(e: React.MouseEvent<HTMLElement>) =>
+                    handleLocationRowClick(e, location)
                   }
                 >
-                  Name
-                </TableCell>
-                <TableCell
-                  align="left"
-                  onClick={(e) => sortTableColumn(e, "part_of")}
-                >
-                  Part of
-                </TableCell>
-                <TableCell
-                  align="left"
-                  onClick={(e) => sortTableColumn(e, "location_scale")}
-                >
-                  Scale
-                </TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {filterContentState &&
-                filterContentState?.map((location) => (
-                  <TableRow
-                    key={location.location_id}
-                    hover
-                    onClick={(e: React.MouseEvent<HTMLElement>) =>
-                      handleLocationRowClick(e, location)
-                    }
-                  >
-                    {isUserGameMaster(session) && (
-                      <TableCell align="left" sx={{ width: "104px" }}>
-                        <IconButton
-                          onClickCapture={(
-                            e: React.MouseEvent<HTMLElement>
-                          ) => {
-                            e.stopPropagation();
-                            handleCreateLocationClick(e, location);
-                          }}
-                          size="small"
-                        >
-                          <AddIcon />
-                        </IconButton>
-                        <IconButton
-                          onClickCapture={(
-                            e: React.MouseEvent<HTMLElement>
-                          ) => {
-                            e.stopPropagation();
-                            handleEditLocationClick(e, location);
-                          }}
-                          size="small"
-                        >
-                          <BuildIcon />
-                        </IconButton>
-                        <IconButton
-                          onClickCapture={(
-                            e: React.MouseEvent<HTMLElement>
-                          ) => {
-                            e.stopPropagation();
-                            handleDeleteLocationClick(e, location);
-                          }}
-                          size="small"
-                        >
-                          <Delete />
-                        </IconButton>
-                      </TableCell>
-                    )}
-                    <TableCell align="left">{location.location_name}</TableCell>
-                    <TableCell align="left">
-                      {location?.location?.location_name}
+                  {isUserGameMaster(session) && (
+                    <TableCell align="left" sx={{ width: "104px" }}>
+                      <IconButton
+                        onClickCapture={(e: React.MouseEvent<HTMLElement>) => {
+                          e.stopPropagation();
+                          handleCreateLocationClick(e, location);
+                        }}
+                        size="small"
+                        disabled={location.location_scale === "Area"}
+                      >
+                        <AddIcon />
+                      </IconButton>
+                      <IconButton
+                        onClickCapture={(e: React.MouseEvent<HTMLElement>) => {
+                          e.stopPropagation();
+                          handleEditLocationClick(e, location);
+                        }}
+                        size="small"
+                      >
+                        <BuildIcon />
+                      </IconButton>
+                      <IconButton
+                        onClickCapture={(e: React.MouseEvent<HTMLElement>) => {
+                          e.stopPropagation();
+                          handleDeleteLocationClick(e, location);
+                        }}
+                        size="small"
+                      >
+                        <Delete />
+                      </IconButton>
                     </TableCell>
-                    <TableCell align="left">
-                      {location.location_scale}
-                    </TableCell>
-                  </TableRow>
-                ))}
-            </TableBody>
-          </Table>
-        </TableContainer>
-      </FlexBox>
+                  )}
+                  <TableCell align="left">{location.location_name}</TableCell>
+                  <TableCell align="left">
+                    {location?.location?.location_name}
+                  </TableCell>
+                  <TableCell align="left">{location.location_scale}</TableCell>
+                </TableRow>
+              ))}
+          </TableBody>
+        </Table>
+      </TableContainer>
     </Box>
   );
 };

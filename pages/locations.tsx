@@ -1,20 +1,16 @@
 import LocationsPage from "@/Components/Locations/LocationsPage";
-import { getAllWorldsLocations } from "@/clients/Locations/locationsClient";
+import { getAllLocationsWithWorldId } from "@/clients/Locations/locationsClient";
 import { QueryClient, dehydrate } from "@tanstack/react-query";
 import { GetServerSideProps } from "next";
-import { Session, getServerSession } from "next-auth";
-import { authOptions } from "./api/auth/[...nextauth]";
+import { withServerSessionGuard } from "@/utilities/functions/getServerSideSession";
 
 const Locations = () => {
   return <LocationsPage />;
 };
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
-  const session = (await getServerSession(
-    context.req,
-    context.res,
-    authOptions
-  )) as Session;
+  const { session } = await withServerSessionGuard(context);
+
   const user = session?.user;
   if (!session || !user) {
     return {
@@ -34,7 +30,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
       { world_id: user?.selectedWorld?.location_id },
     ],
     queryFn: () =>
-      getAllWorldsLocations(Number(user.selectedWorld?.location_id)),
+      getAllLocationsWithWorldId(Number(user.selectedWorld?.location_id)),
   });
 
   return {

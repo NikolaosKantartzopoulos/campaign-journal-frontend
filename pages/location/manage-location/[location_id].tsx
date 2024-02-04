@@ -1,3 +1,4 @@
+import { withServerSessionGuard } from "@/utilities/functions/getServerSideSession";
 import { GetServerSideProps } from "next";
 
 const EditLocation = () => {
@@ -5,6 +6,7 @@ const EditLocation = () => {
 };
 
 export const getServerSideProps: GetServerSideProps = async (ctx) => {
+  const { session } = await withServerSessionGuard(ctx);
   return {
     props: {},
   };

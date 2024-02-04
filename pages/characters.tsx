@@ -2,8 +2,7 @@ import CharactersTable from "@/Components/Characters/CharactersTable";
 import { GetServerSideProps, GetServerSidePropsContext } from "next";
 import { QueryClient, dehydrate } from "@tanstack/react-query";
 import { getAllSentients } from "@/services/data-fetching/getSentients";
-import { Session, getServerSession } from "next-auth";
-import { authOptions } from "./api/auth/[...nextauth]";
+import { withServerSessionGuard } from "@/utilities/functions/getServerSideSession";
 
 const Characters = () => {
   return <CharactersTable />;
@@ -12,14 +11,10 @@ const Characters = () => {
 export const getServerSideProps: GetServerSideProps = async (
   context: GetServerSidePropsContext
 ) => {
-  const session = (await getServerSession(
-    context.req,
-    context.res,
-    authOptions
-  )) as Session;
+  const { session } = await withServerSessionGuard(context);
 
   const user = session?.user;
-  const world_id = user.selectedWorld?.location_id;
+  const world_id = user?.selectedWorld?.location_id;
 
   if (!session || !user || !world_id) {
     return {

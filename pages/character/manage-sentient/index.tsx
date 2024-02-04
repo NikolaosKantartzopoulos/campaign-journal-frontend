@@ -1,5 +1,6 @@
 import { FlexBox } from "@/Components/CustomComponents/FlexBox";
 import { toastMessage } from "@/Components/CustomComponents/Toastify/Toast";
+import { withServerSessionGuard } from "@/utilities/functions/getServerSideSession";
 import {
   Box,
   Button,
@@ -14,6 +15,7 @@ import {
 import { sentient } from "@prisma/client";
 import { useQueryClient } from "@tanstack/react-query";
 import axios, { AxiosError } from "axios";
+import { GetServerSideProps, GetServerSidePropsContext } from "next";
 import { useRouter } from "next/router";
 import { useState } from "react";
 
@@ -131,3 +133,11 @@ export default function CreateSentient() {
     </Card>
   );
 }
+
+export const getServerSideProps: GetServerSideProps = async (
+  ctx: GetServerSidePropsContext
+) => {
+  const { user } = await withServerSessionGuard(ctx);
+
+  return { props: {} };
+};

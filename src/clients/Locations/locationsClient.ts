@@ -5,7 +5,7 @@ export interface locationAndPartOfLocationIncluded extends location {
   location: location | null;
 }
 
-export async function getAllWorldsLocations(
+export async function getAllLocationsWithWorldId(
   world_id: number
 ): Promise<locationAndPartOfLocationIncluded[] | null> {
   return prisma.location.findMany({
@@ -35,6 +35,42 @@ export async function getUniqueLocationById(
           location: true, // Include the parent location
         },
       },
+    },
+  });
+}
+
+export async function createNewLocationClient({
+  location_name,
+  location_scale,
+  location_description,
+  part_of,
+  game_master,
+  world_id,
+}: {
+  location_name: string;
+  location_scale: "World" | "Continent" | "Kingdom" | "Province" | "Area";
+  location_description: string;
+  part_of: number;
+  game_master: number;
+  world_id: number;
+}): Promise<location> {
+  console.log("createNewLocationClient", {
+    location_name,
+    location_scale,
+    location_description,
+    part_of,
+    game_master,
+    world_id,
+  });
+
+  return prisma.location.create({
+    data: {
+      location_name,
+      location_scale,
+      location_description,
+      part_of,
+      game_master,
+      world_id,
     },
   });
 }

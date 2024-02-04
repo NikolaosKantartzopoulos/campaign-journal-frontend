@@ -10,6 +10,7 @@ export default async function apiHandler(
       Number(req.query.location_id)
     );
     res.status(200).json(location);
+    return;
   }
   // if (req.method === "DELETE") {
   //   const { user } = await getAPISession(req, res);

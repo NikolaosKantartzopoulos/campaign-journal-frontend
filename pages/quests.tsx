@@ -1,3 +1,4 @@
+import { withServerSessionGuard } from "@/utilities/functions/getServerSideSession";
 import { Box, Button } from "@mui/material";
 import { GetServerSideProps } from "next";
 import { signIn, useSession } from "next-auth/react";
@@ -18,7 +19,9 @@ const Quests = () => {
   );
 };
 
-export const getServerSideProps: GetServerSideProps = async () => {
+export const getServerSideProps: GetServerSideProps = async (context) => {
+  const {} = await withServerSessionGuard(context);
+
   return {
     props: {},
   };

@@ -2,12 +2,11 @@ import { getUniqueSentientById } from "@/services/data-fetching/getSentients";
 import { readImageFromDrive } from "@/utilities/formidable";
 import { QueryClient, dehydrate } from "@tanstack/react-query";
 import { GetServerSideProps, GetServerSidePropsContext } from "next";
-import { Session, getServerSession } from "next-auth";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/router";
-import { authOptions } from "../api/auth/[...nextauth]";
 import axios from "axios";
 import ItemPage from "@/Components/PresentItem/ItemPage";
+import { withServerSessionGuard } from "@/utilities/functions/getServerSideSession";
 
 const Character = ({ characterImage }: { characterImage: string }) => {
   const router = useRouter();
@@ -40,11 +39,7 @@ const Character = ({ characterImage }: { characterImage: string }) => {
 export const getServerSideProps: GetServerSideProps = async (
   context: GetServerSidePropsContext
 ) => {
-  const session = (await getServerSession(
-    context.req,
-    context.res,
-    authOptions
-  )) as Session;
+  const { session } = await withServerSessionGuard(context);
   const user = session?.user;
   if (!session || !user) {
     return {

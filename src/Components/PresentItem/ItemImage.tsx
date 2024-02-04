@@ -1,4 +1,4 @@
-import { Paper } from "@mui/material";
+import { Card } from "@mui/material";
 import Image from "next/image";
 
 const ItemImageBox = ({
@@ -9,10 +9,7 @@ const ItemImageBox = ({
   altText: string;
 }) => {
   return (
-    <Paper
-      sx={{ width: "160px", height: "240px", position: "relative" }}
-      elevation={12}
-    >
+    <Card sx={{ width: "160px", height: "240px", position: "relative" }}>
       <Image
         src={imageFile}
         alt={altText}
@@ -21,7 +18,7 @@ const ItemImageBox = ({
           objectFit: "cover",
         }}
       />
-    </Paper>
+    </Card>
   );
 };
 

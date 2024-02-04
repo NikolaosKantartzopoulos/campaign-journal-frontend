@@ -19,14 +19,14 @@ const SearchBox = ({
   handleSearch,
 }: SearchBoxProps) => {
   return (
-    <Box sx={{ display: "flex", gap: "0px" }}>
-      <form
-        noValidate
-        autoComplete="off"
-        onSubmit={(e) => {
-          e.preventDefault();
-        }}
-      >
+    <form
+      noValidate
+      autoComplete="off"
+      onSubmit={(e) => {
+        e.preventDefault();
+      }}
+    >
+      <Box sx={{ display: "flex", gap: "0px", height: "40px" }}>
         <TextField
           size="small"
           onChange={(e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) =>
@@ -68,8 +68,8 @@ const SearchBox = ({
         >
           <SearchIcon />
         </Button>
-      </form>
-    </Box>
+      </Box>
+    </form>
   );
 };
 
