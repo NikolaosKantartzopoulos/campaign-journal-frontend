@@ -30,25 +30,27 @@ const ManageLocation = () => {
     ],
     queryFn: async () => {
       const { data: location } = await axios(
-        `/api/locations/${router.query.location_id}`
+        `/api/locations/${router.query.parent_location_id}`
       );
       return location;
     },
     enabled: !!user,
   });
-  console.log(location);
+  console.log(parent_location_id);
 
   const [locationName, setLocationName] = useState<string>("");
   const [locationDescription, setLocationDescription] = useState<string>("");
 
   async function handleCreateLocation() {
     try {
-      const createdLocation = await axios.post("/api/locations/", {
+      const { data: createdLocation } = await axios.post("/api/locations/", {
         location_name: locationName,
         location_description: locationDescription,
         part_of: parent_location_id,
       });
       toastMessage("Location created", "success");
+      console.log(createdLocation);
+      router.push(`/location/manage-location/${createdLocation?.location_id}`);
     } catch (err) {
       toastMessage("Error: Try again", "error");
     }
@@ -64,9 +66,12 @@ const ManageLocation = () => {
         },
       })}
     >
-      <Typography variant="h4">Create new location</Typography>
+      <Typography variant="h4">
+        Create new location in World: {user?.selectedWorld?.location_name}
+      </Typography>
+
       <Typography variant="h6">
-        as a part of {user?.selectedWorld?.location_name} world
+        as a part of {location?.location_name}
       </Typography>
 
       <FlexBox sx={{ flexFlow: "column", alignItems: "center" }}>
@@ -109,7 +114,6 @@ export const getServerSideProps: GetServerSideProps = async (
   const { user } = await withServerSessionGuard(ctx);
 
   const queryClient = new QueryClient();
-  const location_id = ctx?.params?.location_id;
 
   await queryClient.prefetchQuery({
     queryKey: [

@@ -30,7 +30,7 @@ const LocationPage = ({ locationImage }: { locationImage: string }) => {
       itemSubtitle={"location.location_name"}
       itemName={"location_name"}
       prependString="part of "
-      altText={"Character Image"}
+      altText={"Location Image"}
       descriptionText={"location_description"}
     />
   );
