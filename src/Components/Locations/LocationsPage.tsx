@@ -10,10 +10,8 @@ import {
   TableHead,
   TableRow,
 } from "@mui/material";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
 import axios from "axios";
 import { signOut, useSession } from "next-auth/react";
-import LoadingSpinner from "../CustomComponents/LoadingSpinner";
 import { location } from "@prisma/client";
 import useFilterContent from "@/utilities/functions/hooks/useFilterContent";
 import { isUserGameMaster } from "@/utilities/helperFn/isUserGameMaster";
@@ -32,29 +30,16 @@ import {
   separateLocationScales,
 } from "@/utilities/helperFn/locations";
 import AddIcon from "@mui/icons-material/Add";
+import { toastMessage } from "../CustomComponents/Toastify/Toast";
 
-const LocationsPage = () => {
+const LocationsPage = ({
+  worldLocations,
+}: {
+  worldLocations: locationAndPartOfLocationIncluded[];
+}) => {
   const { data: session } = useSession();
   const user = session?.user;
   const router = useRouter();
-  const queryClient = useQueryClient();
-
-  const { data: worldLocations, isLoading } = useQuery<
-    locationAndPartOfLocationIncluded[]
-  >({
-    queryKey: [
-      `getAllLocationsInSelectedWorld`,
-      { user_id: user?.user_id },
-      { world_id: user?.selectedWorld?.location_id },
-    ],
-    queryFn: async () => {
-      const { data } = await axios(
-        `/api/worlds/locations/${user?.selectedWorld?.location_id}`
-      );
-      return data;
-    },
-    enabled: !!user,
-  });
 
   const availableOptions: availableOptions = separateLocationScales(
     worldLocations || []
@@ -145,15 +130,7 @@ const LocationsPage = () => {
     ];
     setSelectedLocations(newSelectedLocations);
     setFilterContentState(newSelectedLocations || []);
-  }, [
-    worldLocations,
-    continents,
-    kingdoms,
-    provinces,
-    areas,
-    places,
-    searchFieldState,
-  ]);
+  }, [continents, kingdoms, provinces, areas, places, searchFieldState]);
 
   function handleLocationRowClick(e: React.MouseEvent, location: location) {
     router.push(`/location/${location.location_id}`);
@@ -169,13 +146,8 @@ const LocationsPage = () => {
   ) {
     try {
       await axios.delete(`/api/locations/${location.location_id}`);
-      queryClient.invalidateQueries({
-        queryKey: [
-          "worldLocations",
-          { user_id: session?.user?.user_id },
-          { world_id: session?.selectedWorld?.location_id },
-        ],
-      });
+      toastMessage("Location deleted", "success");
+      router.reload();
     } catch (err) {}
   }
 
@@ -190,9 +162,6 @@ const LocationsPage = () => {
     signOut();
   }
 
-  if (isLoading) {
-    return <LoadingSpinner />;
-  }
   return (
     <Box
       sx={{
@@ -275,7 +244,7 @@ const LocationsPage = () => {
             onClick={selectAllLocations}
             sx={{ flex: "1 1 0" }}
           >
-            SelectAll
+            Select All
           </Button>
           <Button
             variant="outlined"

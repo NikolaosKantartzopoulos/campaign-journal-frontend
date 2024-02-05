@@ -9,34 +9,19 @@ import {
   TextareaAutosize,
   Typography,
 } from "@mui/material";
-import { QueryClient, dehydrate, useQuery } from "@tanstack/react-query";
-import axios from "axios";
+import { location } from "@prisma/client";
+import { QueryClient, dehydrate, useQueryClient } from "@tanstack/react-query";
+import axios, { AxiosError } from "axios";
 import { GetServerSideProps, GetServerSidePropsContext } from "next";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/router";
 import { useState } from "react";
 
-const ManageLocation = () => {
+const ManageLocation = ({ parentLocation }: { parentLocation: location }) => {
   const { data: session } = useSession();
   const user = session?.user;
   const router = useRouter();
-  const parent_location_id = router.query.parent_location_id;
-
-  const { data: location } = useQuery({
-    queryKey: [
-      "location",
-      { user_id: user?.user_id },
-      { location_id: router.query.location_id },
-    ],
-    queryFn: async () => {
-      const { data: location } = await axios(
-        `/api/locations/${router.query.parent_location_id}`
-      );
-      return location;
-    },
-    enabled: !!user,
-  });
-  console.log(parent_location_id);
+  const queryClient = useQueryClient();
 
   const [locationName, setLocationName] = useState<string>("");
   const [locationDescription, setLocationDescription] = useState<string>("");
@@ -46,13 +31,24 @@ const ManageLocation = () => {
       const { data: createdLocation } = await axios.post("/api/locations/", {
         location_name: locationName,
         location_description: locationDescription,
-        part_of: parent_location_id,
+        part_of: parentLocation.location_id,
       });
       toastMessage("Location created", "success");
+
       console.log(createdLocation);
+
+      queryClient.invalidateQueries({
+        queryKey: ["worldLocations"],
+      });
+
       router.push(`/location/manage-location/${createdLocation?.location_id}`);
-    } catch (err) {
-      toastMessage("Error: Try again", "error");
+    } catch (error) {
+      const err = error as AxiosError;
+      toastMessage(
+        // @ts-expect-error Error
+        err?.response?.data?.message || "Try again",
+        "error"
+      );
     }
   }
 
@@ -71,7 +67,7 @@ const ManageLocation = () => {
       </Typography>
 
       <Typography variant="h6">
-        as a part of {location?.location_name}
+        as a part of {parentLocation?.location_name}
       </Typography>
 
       <FlexBox sx={{ flexFlow: "column", alignItems: "center" }}>
@@ -82,6 +78,7 @@ const ManageLocation = () => {
           onChange={(e) => setLocationName(e.target.value)}
           label="Name"
           sx={{ margin: "2rem auto" }}
+          inputRef={input => input && input.focus()}
         />
         <Typography variant="h5" align="center">
           Info
@@ -111,20 +108,14 @@ const ManageLocation = () => {
 export const getServerSideProps: GetServerSideProps = async (
   ctx: GetServerSidePropsContext
 ) => {
-  const { user } = await withServerSessionGuard(ctx);
+  await withServerSessionGuard(ctx);
 
+  const parentLocation = await getUniqueLocationById(
+    Number(ctx.query.parent_location_id)
+  );
   const queryClient = new QueryClient();
 
-  await queryClient.prefetchQuery({
-    queryKey: [
-      "location",
-      { user_id: user?.user_id },
-      { location_id: ctx.query.location_id },
-    ],
-    queryFn: () => getUniqueLocationById(Number(ctx.query.location_id)),
-  });
-
-  return { props: { dehydratedState: dehydrate(queryClient) } };
+  return { props: { parentLocation, dehydratedState: dehydrate(queryClient) } };
 };
 
 export default ManageLocation;

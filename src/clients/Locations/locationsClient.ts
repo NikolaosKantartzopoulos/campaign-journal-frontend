@@ -91,3 +91,32 @@ export async function editLocationClient({
     },
   });
 }
+
+export async function deleteLocationClient({
+  location_id,
+}: {
+  location_id: number;
+}) {
+  return prisma.location.deleteMany({
+    where: {
+      location_id: location_id,
+    },
+  });
+}
+
+export async function getLocationsAndParentsIdsClient({
+  world_id,
+}: {
+  world_id: number;
+}) {
+  return prisma.location.findMany({
+    where: {
+      world_id: world_id,
+    },
+    select: {
+      location_id: true,
+      part_of: true,
+      location_scale: true,
+    },
+  });
+}

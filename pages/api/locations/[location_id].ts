@@ -1,7 +1,10 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import { getUniqueLocationByIdService } from "@/services/locations/getLocations";
 import { getAPISession } from "@/utilities/functions/getServerSideSession";
-import { editLocationService } from "@/services/locations/manageLocationsService";
+import {
+  deleteLocationAndChildren,
+  editLocationService,
+} from "@/services/locations/manageLocationsService";
 import logger from "@/logger/*";
 
 export default async function apiHandler(
@@ -27,26 +30,35 @@ export default async function apiHandler(
       });
 
       res.status(200).json({ message: "Location updated" });
+      return;
     } catch (err) {
       logger.error("[Locations API]: Location failed to update");
     }
   }
 
-  // if (req.method === "DELETE") {
-  //   const { user } = await getAPISession(req, res);
-  //   if (!user || !user?.location_id) {
-  //     res.status(401);
-  //     return;
-  //   }
-  //   if (!req.query.location_id) {
-  //     res.status(400);
-  //     return;
-  //   }
+  if (req.method === "DELETE") {
+    try {
+      logger.info("[Locations API]: Delete location called");
 
-  //   const editedSentient = await deleteSentient({
-  //     location_id: Number(req.query.location_id),
-  //   });
-  //   res.status(200).json({ editedSentient, message: "Character updated" });
-  //   return;
-  // }
+      const { user } = await getAPISession(req, res);
+      if (!user || !user?.location_id) {
+        res.status(401);
+        return;
+      }
+      if (!req.query.location_id) {
+        res.status(400);
+        return;
+      }
+
+      const locationsAndParentsIds = await deleteLocationAndChildren({
+        world_id: Number(user.selectedWorld?.location_id),
+        location_id: Number(req.query.location_id),
+      });
+
+      res.status(200).json({ message: "Location deleted" });
+      return;
+    } catch (err) {
+      logger.error("[Locations API]: Failed to delete location", err);
+    }
+  }
 }

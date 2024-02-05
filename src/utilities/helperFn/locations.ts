@@ -43,7 +43,7 @@ export function separateLocationScales(
         toRet.availablePlaces.push(newEl);
         break;
       default:
-        throw new Error("asdf");
+        throw new Error("[helperFn]: separateLocationScales");
     }
   }
   return toRet;
@@ -116,4 +116,44 @@ export function createNewLocationState(
   );
   console.log(newState);
   return newState;
+}
+
+export function separateLocationsBySize<
+  T extends { location_scale: string | null }
+>(locationsArray: T[]) {
+  const toRet: {
+    availableContinents: T[];
+    availableKingdoms: T[];
+    availableProvinces: T[];
+    availableAreas: T[];
+    availablePlaces: T[];
+  } = {
+    availableContinents: [],
+    availableKingdoms: [],
+    availableProvinces: [],
+    availableAreas: [],
+    availablePlaces: [],
+  };
+  for (const el of locationsArray) {
+    switch (el.location_scale) {
+      case "Continent":
+        toRet.availableContinents.push(el);
+        break;
+      case "Kingdom":
+        toRet.availableKingdoms.push(el);
+        break;
+      case "Province":
+        toRet.availableProvinces.push(el);
+        break;
+      case "Area":
+        toRet.availableAreas.push(el);
+        break;
+      case "Place":
+        toRet.availablePlaces.push(el);
+        break;
+      default:
+        throw new Error("[helperFn]: separateLocationScales");
+    }
+  }
+  return toRet;
 }

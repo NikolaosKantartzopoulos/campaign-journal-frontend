@@ -1,11 +1,18 @@
 import LocationsPage from "@/Components/Locations/LocationsPage";
-import { getAllLocationsWithWorldId } from "@/clients/Locations/locationsClient";
+import {
+  getAllLocationsWithWorldId,
+  locationAndPartOfLocationIncluded,
+} from "@/clients/Locations/locationsClient";
 import { QueryClient, dehydrate } from "@tanstack/react-query";
 import { GetServerSideProps } from "next";
 import { withServerSessionGuard } from "@/utilities/functions/getServerSideSession";
 
-const Locations = () => {
-  return <LocationsPage />;
+const Locations = ({
+  worldLocations,
+}: {
+  worldLocations: locationAndPartOfLocationIncluded[];
+}) => {
+  return <LocationsPage worldLocations={worldLocations} />;
 };
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
@@ -23,19 +30,14 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 
   const queryClient = new QueryClient();
 
-  await queryClient.prefetchQuery({
-    queryKey: [
-      `getAllLocationsInSelectedWorld`,
-      { user_id: user?.user_id },
-      { world_id: user?.selectedWorld?.location_id },
-    ],
-    queryFn: () =>
-      getAllLocationsWithWorldId(Number(user.selectedWorld?.location_id)),
-  });
+  const worldLocations = await getAllLocationsWithWorldId(
+    Number(user.selectedWorld?.location_id)
+  );
 
   return {
     props: {
       session,
+      worldLocations,
       dehydratedState: JSON.parse(JSON.stringify(dehydrate(queryClient))),
     },
   };

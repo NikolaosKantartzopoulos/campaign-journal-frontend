@@ -1,0 +1,12 @@
+echo "\n\nImport input date\n\n"
+
+inputDate=$(date '+%y%m%d');
+
+docker exec -i mysql-prod mysql -uroot -prpwd -e "drop database campaign_journal;" 
+
+docker exec -i mysql-prod mysql -uroot -prpwd -e "create database campaign_journal;" 
+
+
+docker exec -i mysql-prod mysql -uroot -prpwd campaign_journal --force < /home/nik/code/databases/mysql/backups/$inputDate.sql
+
+cp -r ~/sambashare/development ~/sambashare/production

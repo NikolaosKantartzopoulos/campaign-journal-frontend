@@ -1,5 +1,10 @@
 import Box from "@mui/material/Box";
-import { QueryClient, dehydrate, useQuery } from "@tanstack/react-query";
+import {
+  QueryClient,
+  dehydrate,
+  useQuery,
+  useQueryClient,
+} from "@tanstack/react-query";
 import { GetServerSideProps, GetServerSidePropsContext } from "next";
 import axios from "axios";
 import { useSession } from "next-auth/react";
@@ -9,8 +14,8 @@ import { readImageFromDrive } from "@/utilities/formidable";
 import { location } from "@prisma/client";
 import { withServerSessionGuard } from "@/utilities/functions/getServerSideSession";
 import ImageUploader from "@/Components/CustomComponents/ImageUploader";
-import CharacterBasicInfo from "@/Components/Characters/CreateNewCharacterPage/CharacterBasicInfo";
 import LocationBasicInfo from "@/Components/Locations/LocationBasicInfo";
+import { useEffect } from "react";
 
 export default function ManageLocation({
   locationImage,
@@ -20,6 +25,7 @@ export default function ManageLocation({
   const { data: session } = useSession();
   const user = session?.user;
   const router = useRouter();
+  const queryClient = useQueryClient();
 
   const { data: location, isFetched } = useQuery<location>({
     queryKey: [
@@ -36,7 +42,19 @@ export default function ManageLocation({
     },
     enabled: !!user,
   });
-  console.log(location);
+
+  useEffect(() => {
+    if (user && session) {
+      queryClient.invalidateQueries({
+        queryKey: [
+          `worldLocations`,
+          { user_id: user?.user_id },
+          { world_id: user?.selectedWorld?.location_id },
+        ],
+      });
+    }
+  }, []);
+
   return (
     <Box sx={{ width: "100%", maxWidth: "500px", margin: "auto" }}>
       <Card

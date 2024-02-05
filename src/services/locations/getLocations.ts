@@ -12,5 +12,6 @@ export async function getUniqueLocationByIdService(
     return location;
   } catch (err) {
     logger.error(`[getUniqueLocationByIdService]: ${err}`);
+    throw new Error("Location exists");
   }
 }

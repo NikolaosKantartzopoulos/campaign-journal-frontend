@@ -8,7 +8,7 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "pm2:start": "sudo pm2 start npm --name 'dnd-server' -- start -- --port 3500 && systemctl reload apache2",
+    "pm2:start": "pm2 start npm --name 'dnd-server' -- start -- --port 3500",
     "lint": "next lint --fix",
     "tsc": "tsc",
     "test": "jest",
@@ -22,6 +22,8 @@
     "dbd:prod": "docker compose -f /home/nik/code/campaign-journal/campaign-journal-backend/Docker/docker-compose-prod.yml down",
     "db:dev:backup": "docker exec mysql-dev /usr/bin/mysqldump -u root --password=rpwd campaign_journal > /home/nik/code/databases/mysql/backups/$(date +'%y%m%d').sql",
     "db:prod:restore": "infra/scripts/restoreProductionDatabase.sh",
+    "predb:prod:cp": "yarn db:dev:backup",
+    "db:prod:cp": "infra/scripts/restoreTodaysProductionDatabase.sh",
     "db:prod:drop": "infra/scripts/dropProductionDatabase.sh",
     "prod:deploy": "infra/scripts/deployToServer.sh"
   },

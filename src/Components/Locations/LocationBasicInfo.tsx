@@ -2,9 +2,6 @@ import Button from "@mui/material/Button";
 import { useState } from "react";
 import {
   Box,
-  FormControl,
-  InputLabel,
-  NativeSelect,
   TextField,
   TextareaAutosize,
   Typography,
@@ -12,7 +9,7 @@ import {
 import { FlexBox } from "@/Components/CustomComponents/FlexBox";
 import { toastMessage } from "@/Components/CustomComponents/Toastify/Toast";
 import axios, { AxiosError } from "axios";
-import { location, sentient } from "@prisma/client";
+import { location } from "@prisma/client";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/router";

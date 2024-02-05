@@ -17,7 +17,7 @@ export default async function apiHandler(
         return;
       }
       const { location_name, location_description, part_of } = req.body;
-
+      console.log(req.body);
       const parentLocation = await getUniqueLocationByIdService(
         Number(part_of)
       );
@@ -27,12 +27,16 @@ export default async function apiHandler(
         return;
       }
 
-      const worldsLocations = await getAllLocationsWithWorldId(Number(part_of));
+      const worldsLocations = await getAllLocationsWithWorldId(
+        Number(parentLocation.world_id)
+      );
       const worldLocationsNames = worldsLocations?.map(
         (location) => location.location_name
       );
+      console.log("==========================", worldLocationsNames);
       if (worldLocationsNames?.includes(location_name)) {
-        res.status(406);
+        res.status(406).json({ message: "Location name not unique" });
+        return;
       }
 
       const locationScales = [
