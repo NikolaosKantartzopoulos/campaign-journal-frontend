@@ -1,15 +1,22 @@
+import ItemsPage from "@/Components/Items/ItemsPage";
+import { getAllItemsService } from "@/services/data-fetching/getItems";
 import { withServerSessionGuard } from "@/utilities/functions/getServerSideSession";
 import { GetServerSideProps } from "next";
 
-const Items = () => {
-  return <h3>Items</h3>;
+const Items = ({ items }) => {
+  return <ItemsPage items={items} />;
 };
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
-  const { session } = await withServerSessionGuard(context);
+  const { user } = await withServerSessionGuard(context);
+
+  const items = await getAllItemsService({
+    world_id: Number(user?.selectedWorld?.location_id),
+  });
+
 
   return {
-    props: {},
+    props: { items: [] },
   };
 };
 

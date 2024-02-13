@@ -7,6 +7,12 @@ interface sentientWithFullName extends sentient {
   sentient_full_name: string;
 }
 
+export interface sentientFullNameAndId {
+  fullName: string;
+  sentient_id: number;
+  label?: string;
+}
+
 export async function getAllSentients({ world_id }: { world_id: number }) {
   if (!world_id) {
     logger.error("getAllSentients missing world_id");
@@ -38,6 +44,39 @@ export async function getUniqueSentientById(sentient_id: number) {
       ...prismaSentient,
       sentient_full_name: getSentientFullName(prismaSentient as sentient),
     };
+  } catch (err) {
+    logger.error(err);
+  }
+}
+
+export async function getSentientFullNamesAndIdsService({
+  world_id,
+}: {
+  world_id: number;
+}): Promise<sentientFullNameAndId[] | undefined> {
+  if (!world_id) {
+    logger.error("getAllSentients missing world_id");
+    throw Error("getAllSentients missing world_id");
+  }
+  try {
+    const allSentients = await prisma.sentient.findMany({
+      where: {
+        world_id: world_id,
+      },
+      orderBy: {
+        first_name: "asc",
+      },
+      select: {
+        first_name: true,
+        last_name: true,
+        sentient_id: true,
+      },
+    });
+
+    return allSentients.map((el) => ({
+      fullName: getSentientFullName(el as sentient),
+      sentient_id: el.sentient_id,
+    }));
   } catch (err) {
     logger.error(err);
   }

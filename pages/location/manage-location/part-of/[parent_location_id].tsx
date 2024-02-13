@@ -35,8 +35,6 @@ const ManageLocation = ({ parentLocation }: { parentLocation: location }) => {
       });
       toastMessage("Location created", "success");
 
-      console.log(createdLocation);
-
       queryClient.invalidateQueries({
         queryKey: ["worldLocations"],
       });
@@ -78,7 +76,6 @@ const ManageLocation = ({ parentLocation }: { parentLocation: location }) => {
           onChange={(e) => setLocationName(e.target.value)}
           label="Name"
           sx={{ margin: "2rem auto" }}
-          inputRef={input => input && input.focus()}
         />
         <Typography variant="h5" align="center">
           Info

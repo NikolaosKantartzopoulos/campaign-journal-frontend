@@ -1,8 +1,15 @@
-import { location } from "@prisma/client";
+import { location, location_location_scale } from "@prisma/client";
 import { prisma } from "prisma/prisma";
 
 export interface locationAndPartOfLocationIncluded extends location {
   location: location | null;
+}
+
+export interface locationFullNameAndIdInterface {
+  location_id: number;
+  location_name: string;
+  parent_location_scale: location_location_scale;
+  parent_location_name: string;
 }
 
 export async function getAllLocationsWithWorldId(
@@ -119,4 +126,44 @@ export async function getLocationsAndParentsIdsClient({
       location_scale: true,
     },
   });
+}
+
+export async function getLocationFullNamesAndIdsClient({
+  world_id,
+}: {
+  world_id: number;
+}): Promise<locationFullNameAndIdInterface[]> {
+  return prisma.$queryRaw`
+SELECT 
+    l.location_id,
+    l.location_name,
+    p.location_name AS parent_location_name,
+    p.location_scale AS parent_location_scale
+FROM
+    location l
+        LEFT JOIN
+    location p ON l.part_of = p.location_id
+WHERE
+    l.world_id = ${world_id};
+  `;
+}
+
+export async function getLocationsFullNamesAndIdClient({
+  location_id,
+}: {
+  location_id: number;
+}) {
+  return prisma.$queryRaw`
+  SELECT 
+    l.location_id,
+    l.location_name,
+    p.location_name AS parent_location_name,
+    p.location_scale AS parent_location_scale
+  FROM
+    location l
+  LEFT JOIN
+    location p ON l.part_of = p.location_id
+  WHERE
+    l.location_id = ${location_id};
+  `;
 }
