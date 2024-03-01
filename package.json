@@ -21,6 +21,7 @@
     "dbu:prod": "docker compose -f /home/nik/code/campaign-journal/campaign-journal-backend/Docker/docker-compose-prod.yml up -d",
     "dbd:prod": "docker compose -f /home/nik/code/campaign-journal/campaign-journal-backend/Docker/docker-compose-prod.yml down",
     "db:dev:backup": "docker exec mysql-dev /usr/bin/mysqldump -u root --password=rpwd campaign_journal > /home/nik/code/databases/mysql/backups/$(date +'%y%m%d').sql",
+    "db:dev:no-data-backup": "docker exec mysql-dev /usr/bin/mysqldump --no-data -u root --password=rpwd campaign_journal > /home/nik/code/databases/mysql/backups/$(date +'%y%m%d')-no-data.sql",
     "db:prod:restore": "infra/scripts/restoreProductionDatabase.sh",
     "predb:prod:cp": "yarn db:dev:backup",
     "db:prod:cp": "infra/scripts/restoreTodaysProductionDatabase.sh",
