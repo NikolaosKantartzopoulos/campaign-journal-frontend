@@ -27,7 +27,7 @@
     "predb:prod:cp": "yarn db:dev:backup",
     "db:prod:cp": "infra/scripts/restoreTodaysProductionDatabase.sh",
     "db:prod:drop": "infra/scripts/dropProductionDatabase.sh",
-    "prod:deploy": "infra/scripts/deployToServer.sh"
+    "deploy": "sudo chmod u+x infra/scripts/deployFEtoServer.sh && infra/scripts/deployFEtoServer.sh"
   },
   "dependencies": {
     "@auth/prisma-adapter": "^1.0.12",
