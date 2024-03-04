@@ -10,15 +10,14 @@ import React, { useEffect } from "react";
 import useFilterContent from "@/utilities/functions/hooks/useFilterContent";
 import { Button, IconButton, Typography } from "@mui/material";
 import { FlexBox } from "../CustomComponents/FlexBox";
-import { item, sentient } from "@prisma/client";
+import { item } from "@prisma/client";
 import SearchBox from "../CustomComponents/SearchBox";
 import { isUserGameMaster } from "@/utilities/helperFn/isUserGameMaster";
 import { useSession } from "next-auth/react";
 import BuildIcon from "@mui/icons-material/Build";
 import { Delete } from "@mui/icons-material";
 import axios from "axios";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
-import LoadingSpinner from "../CustomComponents/LoadingSpinner";
+import { useQueryClient } from "@tanstack/react-query";
 
 export default function ItemsTable({ items }: { items: item[] }) {
   const { data: session } = useSession();

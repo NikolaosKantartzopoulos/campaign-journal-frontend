@@ -22,6 +22,7 @@
     "dbd:prod": "docker compose -f ../campaign-journal-backend/Docker/docker-compose-prod.yml down",
     "db:dev:backup": "docker exec mysql-dev /usr/bin/mysqldump -u root --password=rpwd campaign_journal > ../campaign-journal-backend/mysql/backups/$(date +'%y%m%d').sql",
     "db:dev:no-data-backup": "docker exec mysql-dev /usr/bin/mysqldump --no-data -u root --password=rpwd campaign_journal > ../campaign-journal-backend/mysql/backups/$(date +'%y%m%d')-no-data.sql",
+    "db:dev:restore": "infra/scripts/restoreDevelopmentDatabase.sh",
     "db:prod:restore": "infra/scripts/restoreProductionDatabase.sh",
     "predb:prod:cp": "yarn db:dev:backup",
     "db:prod:cp": "infra/scripts/restoreTodaysProductionDatabase.sh",

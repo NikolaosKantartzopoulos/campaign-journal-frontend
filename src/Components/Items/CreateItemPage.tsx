@@ -1,15 +1,14 @@
 import {
+  Autocomplete,
   Box,
-  Typography,
-  TextField,
-  TextareaAutosize,
   Button,
   FormControl,
   InputLabel,
   NativeSelect,
-  Autocomplete,
+  TextField,
+  TextareaAutosize,
+  Typography,
 } from "@mui/material";
-import { useSession } from "next-auth/react";
 import { useRouter } from "next/router";
 import { useState } from "react";
 import { FlexBox } from "../CustomComponents/FlexBox";

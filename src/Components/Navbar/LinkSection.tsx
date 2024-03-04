@@ -38,12 +38,12 @@ const LinkSection = ({ showText = true }: { showText?: boolean }) => {
         width: "100%",
       }}
     >
-      <LinkTo
+      {/* <LinkTo
         href="/"
         startIcon={<Home />}
         linkText={under600px ? "Home" : ""}
         showText={showText}
-      />
+      /> */}
       <LinkTo
         href="/characters"
         svgDefault={Helmet}
@@ -59,7 +59,7 @@ const LinkSection = ({ showText = true }: { showText?: boolean }) => {
         linkText="Locations"
         showText={showText}
       />
-      <LinkTo
+      {/* <LinkTo
         href="/items"
         svgDefault={Sword}
         svgHovered={SwordWhite}
@@ -92,7 +92,7 @@ const LinkSection = ({ showText = true }: { showText?: boolean }) => {
         startIcon={<SecurityIcon />}
         linkText="Heroes"
         showText={showText}
-      />
+      /> */}
     </Box>
   );
 };
