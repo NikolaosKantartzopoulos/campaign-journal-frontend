@@ -10,7 +10,6 @@ export const saveFile = (
   folderName?: string,
   fileName?: string
 ): Promise<{ fields: formidable.Fields; files: formidable.Files }> => {
-  console.log(`${process.env.FILE_STORAGE_PATH}`, folderName);
   const options: formidable.Options = {};
   if (saveLocally) {
     options.uploadDir = path.join(
@@ -63,7 +62,6 @@ export async function deleteImageFromDrive(
   );
   try {
     // Reading the image file using fs.promises.readFile()
-    console.log(imagePath);
     await fs.unlink(imagePath);
     // Encode the image data to Base64
   } catch (err) {
