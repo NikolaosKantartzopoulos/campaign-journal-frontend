@@ -29,7 +29,7 @@ const LogInSignUpScreen = () => {
         { user_name, user_password }
       ).then((res) => {
         if (res?.ok) {
-          router.push("/");
+          router.push("/account/control");
         } else {
           toastMessage("Wrong username or password", "error");
         }
